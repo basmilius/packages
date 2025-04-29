@@ -15,6 +15,8 @@ node_modules
 .vscode/*
 !.vscode/extensions.json
 .idea
+!.idea/.name
+!.idea/icon.svg
 .DS_Store
 *.suo
 *.ntvs*
