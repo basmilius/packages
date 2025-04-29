@@ -1,4 +1,4 @@
-name: Publish Any Commit
+name: 👀 Publish Any Commit
 
 on:
     push:
