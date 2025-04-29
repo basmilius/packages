@@ -1,0 +1,57 @@
+{
+    "name": "@basmilius/vite-preset",
+    "description": "Commonly used presets used in Vite + Vue setups.",
+    "version": "0.0.0",
+    "type": "module",
+    "license": "MIT",
+    "funding": "https://github.com/sponsors/basmilius",
+    "author": {
+        "name": "Bas Milius",
+        "email": "bas@mili.us",
+        "url": "https://bas.dev"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/basmilius/packages.git",
+        "directory": "packages/vite-preset"
+    },
+    "keywords": [
+        "build",
+        "vite",
+        "preset",
+        "vue"
+    ],
+    "files": [
+        "dist",
+        "src"
+    ],
+    "publishConfig": {
+        "access": "public",
+        "provenance": true
+    },
+    "scripts": {
+        "build": "bun -b build.ts"
+    },
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "typings": "./dist/index.d.ts",
+    "sideEffects": false,
+    "exports": {
+        ".": {
+            "default": "./dist/index.js",
+            "types": "./dist/index.d.ts"
+        }
+    },
+    "dependencies": {
+        "@laynezh/vite-plugin-lib-assets": "^1.1.0",
+        "change-case": "^5.4.4",
+        "css-class-generator": "^2.0.0",
+        "lightningcss": "^1.29.3",
+        "vite-css-modules": "^1.8.6",
+        "vite-plugin-dts": "^4.5.3"
+    },
+    "devDependencies": {
+        "@basmilius/tools": "workspace:*",
+        "vite": "^6.3.3"
+    }
+}

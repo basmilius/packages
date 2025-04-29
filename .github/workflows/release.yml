@@ -1,0 +1,44 @@
+name: 🚀 Release packages
+
+on:
+    release:
+        types: [ released ]
+
+env:
+    RELEASE_VERSION: ${{ github.event.release.tag_name }}
+
+permissions:
+    id-token: write
+
+jobs:
+    publish:
+        runs-on: ubuntu-latest
+        name: 🚀 Publish to Registry
+        steps:
+            -   name: 👀 Checkout
+                uses: actions/checkout@v4
+
+            -   name: ⚙️ Setup Bun
+                uses: oven-sh/setup-bun@v2
+
+            -   name: 📦️ Install dependencies
+                run: bun install --frozen-lockfile
+
+            -   name: ✏️ Tag v${{ env.RELEASE_VERSION }}
+                run: |
+                    sed -i 's/0.0.0/${{ env.RELEASE_VERSION }}/g' packages/*/package.json
+                    sed -i 's/workspace:\*/${{ env.RELEASE_VERSION }}/g' packages/*/package.json
+
+            -   name: 🔨 Build
+                run: |
+                    bun --cwd packages/tools build
+                    bun --cwd packages/utils build
+                    bun --cwd packages/vite-preset build
+
+            -   name: 🚀 Publish v${{ env.RELEASE_VERSION }}
+                run: |
+                    bun publish --cwd packages/tools --access public
+                    bun publish --cwd packages/utils --access public
+                    bun publish --cwd packages/vite-preset --access public
+                env:
+                    NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}

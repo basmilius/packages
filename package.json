@@ -1,0 +1,7 @@
+{
+    "name": "basmilius-packages",
+    "private": true,
+    "workspaces": [
+        "packages/*"
+    ]
+}
