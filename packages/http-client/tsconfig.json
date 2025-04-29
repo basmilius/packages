@@ -1,0 +1,35 @@
+{
+    "compilerOptions": {
+        "target": "es2022",
+        "lib": [
+            "dom",
+            "dom.iterable",
+            "es2022"
+        ],
+        "allowJs": true,
+        "skipLibCheck": true,
+        "strict": false,
+        "forceConsistentCasingInFileNames": true,
+        "esModuleInterop": true,
+        "module": "es2022",
+        "moduleResolution": "bundler",
+        "resolveJsonModule": false,
+        "isolatedModules": true,
+        "jsx": "react-jsx",
+        "baseUrl": ".",
+        "rootDir": "src",
+        "outDir": "dist",
+        "declaration": true,
+        "declarationDir": "dist",
+        "emitDeclarationOnly": true,
+        "experimentalDecorators": true
+    },
+    "include": [
+        "src/**/*.ts",
+        "build.ts"
+    ],
+    "exclude": [
+        "dist",
+        "node_modules"
+    ]
+}

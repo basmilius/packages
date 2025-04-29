@@ -34,11 +34,13 @@ jobs:
                     bun --cwd packages/tools build
                     bun --cwd packages/utils build
                     bun --cwd packages/vite-preset build
+                    bun --cwd packages/http-client build
 
             -   name: 🚀 Publish v${{ env.RELEASE_VERSION }}
                 run: |
                     bun publish --cwd packages/tools --access public --tag next
                     bun publish --cwd packages/utils --access public --tag next
                     bun publish --cwd packages/vite-preset --access public --tag next
+                    bun publish --cwd packages/http-client --access public --tag next
                 env:
                     NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}

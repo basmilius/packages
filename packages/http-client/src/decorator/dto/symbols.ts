@@ -1,0 +1,11 @@
+export const ARGS: unique symbol = Symbol();
+export const CHILDREN: unique symbol = Symbol();
+export const DESCRIPTORS: unique symbol = Symbol();
+export const DIRTY: unique symbol = Symbol();
+export const NAME: unique symbol = Symbol();
+export const PARENT: unique symbol = Symbol();
+export const PARENT_KEY: unique symbol = Symbol();
+export const PROPERTIES: unique symbol = Symbol();
+export const PROXY: unique symbol = Symbol();
+export const TRACK: unique symbol = Symbol();
+export const TRIGGER: unique symbol = Symbol();

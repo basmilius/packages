@@ -23,7 +23,9 @@
     ],
     "files": [
         "dist",
-        "src"
+        "src",
+        "CODEOWNERS",
+        "LICENSE"
     ],
     "publishConfig": {
         "access": "public",

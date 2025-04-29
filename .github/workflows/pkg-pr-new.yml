@@ -28,6 +28,7 @@ jobs:
                     bun --cwd packages/tools build
                     bun --cwd packages/utils build
                     bun --cwd packages/vite-preset build
+                    bun --cwd packages/http-client build
 
             -   name: 🚀 Publish
                 run: bunx pkg-pr-new publish --compact './packages/*'
