@@ -4,9 +4,9 @@
 
 ---
 
-# `@basmilius/vite-preset`
+# `@basmilius/utils`
 
-Contains presets for [Vite](https://vite.dev) and [Vue](https://vuejs.org).
+Various utilities that are commonly used throughout personal Vue-related projects.
 
 ## ⭐️ Prerequisites
 
@@ -16,4 +16,4 @@ Contains presets for [Vite](https://vite.dev) and [Vue](https://vuejs.org).
 ## 🚀 Getting started
 
 1. Run `bun install` in the root of the project.
-2. Run `bun --cwd packages/vite-preset build` to build the project.
+2. Run `bun --cwd packages/utils build` to build the project.
