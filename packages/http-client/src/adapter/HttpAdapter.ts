@@ -11,7 +11,7 @@ export class HttpAdapter {
             response['page'],
             response['page_size'],
             response['pages'],
-            response['total_items']
+            response['total']
         );
     }
 

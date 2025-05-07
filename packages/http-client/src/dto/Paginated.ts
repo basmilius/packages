@@ -18,21 +18,21 @@ export default class Paginated<T> {
         return this.#pages;
     }
 
-    get totalItems(): number {
-        return this.#totalItems;
+    get total(): number {
+        return this.#total;
     }
 
     readonly #items: T[];
     readonly #page: number;
     readonly #pageSize: number;
     readonly #pages: number;
-    readonly #totalItems: number;
+    readonly #total: number;
 
-    constructor(items: T[], page: number, pageSize: number, pages: number, totalItems: number) {
+    constructor(items: T[], page: number, pageSize: number, pages: number, total: number) {
         this.#items = items;
         this.#page = page;
         this.#pageSize = pageSize;
         this.#pages = pages;
-        this.#totalItems = totalItems;
+        this.#total = total;
     }
 }
