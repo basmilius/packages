@@ -48,7 +48,7 @@
         "@laynezh/vite-plugin-lib-assets": "^1.1.0",
         "change-case": "^5.4.4",
         "css-class-generator": "^2.0.0",
-        "lightningcss": "^1.30.0",
+        "lightningcss": "^1.30.1",
         "vite-css-modules": "^1.8.6",
         "vite-plugin-dts": "^4.5.3"
     },
