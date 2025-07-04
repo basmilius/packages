@@ -26,8 +26,10 @@ jobs:
 
             -   name: ✏️ Tag v${{ env.RELEASE_VERSION }}
                 run: |
-                    sed -i 's/0.0.0/${{ env.RELEASE_VERSION }}/g' packages/*/package.json
-                    sed -i 's/workspace:\*/${{ env.RELEASE_VERSION }}/g' packages/*/package.json
+                    bun pm version --cwd packages/tools ${{ env.RELEASE_VERSION }}
+                    bun pm version --cwd packages/utils ${{ env.RELEASE_VERSION }}
+                    bun pm version --cwd packages/vite-preset ${{ env.RELEASE_VERSION }}
+                    bun pm version --cwd packages/http-client ${{ env.RELEASE_VERSION }}
 
             -   name: 🔨 Build
                 run: |
