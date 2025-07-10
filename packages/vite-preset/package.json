@@ -54,6 +54,6 @@
     },
     "devDependencies": {
         "@basmilius/tools": "workspace:*",
-        "vite": "^7.0.3"
+        "vite": "^7.0.4"
     }
 }
