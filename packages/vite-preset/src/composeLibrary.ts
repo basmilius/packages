@@ -13,6 +13,7 @@ type Options = {
     readonly tsAliasPathGenerator?: PathGenerator;
 };
 
+const TSCONFIG_FILES = ['tsconfig.app.json', 'tsconfig.json'] as const;
 const WORKING_DIR = process.cwd();
 const WORKSPACE_ROOT = searchForWorkspaceRoot(WORKING_DIR);
 const WORKSPACE_NODE_MODULES = join(relative(WORKING_DIR, WORKSPACE_ROOT), 'node_modules');
@@ -47,9 +48,16 @@ export default (options: Options): ComposePlugin => {
         }),
 
         configResolved(config): void {
-            const tsconfigPath = join(config.root, 'tsconfig.json');
+            let tsconfigPath: string;
 
-            if (!existsSync(tsconfigPath)) {
+            for (const file of TSCONFIG_FILES) {
+                if (existsSync(join(config.root, file))) {
+                    tsconfigPath = join(config.root, file);
+                    break;
+                }
+            }
+
+            if (!tsconfigPath) {
                 config.logger.error(`[${options.name}] A tsconfig.json is required for this library. Please create one.`);
                 process.exit(1);
             }
