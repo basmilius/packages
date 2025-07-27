@@ -16,6 +16,7 @@ type Options = {
     };
     readonly fileNames?: 'hashes' | 'actual';
     readonly isLibrary?: boolean;
+    readonly tsconfigPath?: string;
 };
 
 const presets = (options: Options): Plugin => {
@@ -104,6 +105,7 @@ export default (options: Options = {}): Plugin[] => [
     }),
 
     options.isLibrary && libDts({
-        cleanVueFileName: false
+        cleanVueFileName: false,
+        tsconfigPath: options.tsconfigPath
     })
 ] satisfies Plugin[];
