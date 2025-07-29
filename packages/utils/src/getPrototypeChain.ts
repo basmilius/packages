@@ -1,4 +1,4 @@
-import type { Descriptors } from '@/index';
+import type { Descriptors } from './types';
 
 export default function (obj: Function): Descriptors {
     const entries: Descriptors = {};

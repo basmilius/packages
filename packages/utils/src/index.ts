@@ -1,5 +1,4 @@
-export type Constructor<T = {}> = new (...args: any[]) => T;
-export type Descriptors = Record<string | symbol, TypedPropertyDescriptor<unknown> | PropertyDescriptor>;
+export type * from './types';
 
 export { default as clampWithStepPrecision } from './clampWithStepPrecision';
 export { default as countDecimals } from './countDecimals';
