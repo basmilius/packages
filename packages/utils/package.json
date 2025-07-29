@@ -43,7 +43,8 @@
         ".": {
             "types": "./dist/index.d.ts",
             "default": "./dist/index.js"
-        }
+        },
+        "./*": "./*"
     },
     "dependencies": {
         "@types/luxon": "^3.7.0",
