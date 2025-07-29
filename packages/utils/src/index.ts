@@ -29,6 +29,7 @@ export { default as mulberry32, type Mulberry32 } from './mulberry32';
 export { default as openUrl } from './openUrl';
 export { default as persistentRef } from './persistentRef';
 export { default as persistentStringRef } from './persistentStringRef';
+export { default as printHtml } from './printHtml';
 export { default as rgbToHEX } from './rgbToHEX';
 export { default as rgbToHSL } from './rgbToHSL';
 export { default as rgbToHSV } from './rgbToHSV';
