@@ -47,7 +47,7 @@
         "./*": "./*"
     },
     "dependencies": {
-        "@types/luxon": "^3.7.0",
+        "@types/luxon": "^3.7.1",
         "luxon": "^3.7.1",
         "pinia": "^3.0.3",
         "vue": "^3.5.18"
