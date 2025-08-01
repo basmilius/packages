@@ -7,23 +7,22 @@ type ComposePlugin = () => Plugin;
 type PathGenerator = (name: string) => string;
 
 type Options = {
-    readonly name: string;
     readonly alias: string;
+    readonly isolated?: boolean;
+    readonly name: string;
     readonly sourcesPathGenerator?: PathGenerator;
     readonly tsAliasPathGenerator?: PathGenerator;
 };
 
 const TSCONFIG_FILES = ['tsconfig.app.json', 'tsconfig.json'] as const;
 const WORKING_DIR = process.cwd();
-const WORKSPACE_ROOT = searchForWorkspaceRoot(WORKING_DIR);
-const WORKSPACE_NODE_MODULES = join(relative(WORKING_DIR, WORKSPACE_ROOT), 'node_modules');
-
-const defaultSourcesPathGenerator: PathGenerator = name => resolve(WORKING_DIR, `${WORKSPACE_NODE_MODULES}/${name}/src`);
-const defaultTsAliasPathGenerator: PathGenerator = name => `${WORKSPACE_NODE_MODULES}/${name}/src/*`;
 
 export default (options: Options): ComposePlugin => {
-    const sourcesPathGenerator = options.sourcesPathGenerator ?? defaultSourcesPathGenerator;
-    const tsAliasPathGenerator = options.tsAliasPathGenerator ?? defaultTsAliasPathGenerator;
+    const WORKSPACE_ROOT = searchForWorkspaceRoot(WORKING_DIR);
+    const WORKSPACE_NODE_MODULES = join(options.isolated ? WORKING_DIR : relative(WORKING_DIR, WORKSPACE_ROOT), 'node_modules');
+
+    const sourcesPathGenerator = options.sourcesPathGenerator ?? (name => resolve(WORKING_DIR, `${WORKSPACE_NODE_MODULES}/${name}/src`));
+    const tsAliasPathGenerator = options.tsAliasPathGenerator ?? (name => `${WORKSPACE_NODE_MODULES}/${name}/src/*`);
 
     const src = sourcesPathGenerator(options.name);
 

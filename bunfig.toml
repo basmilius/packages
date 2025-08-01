@@ -1,2 +1,2 @@
 [install]
-linked = "isolated"
+linker = "isolated"
