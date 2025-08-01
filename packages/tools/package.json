@@ -46,7 +46,7 @@
         }
     },
     "dependencies": {
-        "oxc-transform": "^0.79.0"
+        "oxc-transform": "^0.79.1"
     },
     "devDependencies": {
         "@types/bun": "^1.2.19"
