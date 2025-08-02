@@ -2,6 +2,7 @@ export type * from './types';
 
 export { default as clampWithStepPrecision } from './clampWithStepPrecision';
 export { default as countDecimals } from './countDecimals';
+export { default as debounce } from './debounce';
 export { default as defineStore } from './defineStore';
 export { default as downloadBlob } from './downloadBlob';
 export { default as downloadString } from './downloadString';

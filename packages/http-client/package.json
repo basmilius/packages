@@ -45,15 +45,13 @@
         "provenance": true
     },
     "sideEffects": false,
-    "devDependencies": {
+    "dependencies": {
         "@basmilius/utils": "workspace:*",
-        "@types/luxon": "^3.7.0",
         "luxon": "^3.7.1",
         "vue": "^3.5.18"
     },
-    "peerDependencies": {
-        "@basmilius/utils": "workspace:*",
-        "luxon": "^3.6.1",
-        "vue": "^3.5.13"
+    "devDependencies": {
+        "@basmilius/tools": "workspace:*",
+        "@types/luxon": "^3.7.1"
     }
 }
