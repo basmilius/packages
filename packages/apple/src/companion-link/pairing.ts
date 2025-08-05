@@ -1,38 +1,33 @@
 import { SRP, SrpClient } from 'fast-srp-hap';
-import type { BaseHttpClient } from '@/base';
 import { AIRPLAY_TRANSIENT_PIN } from '@/const';
-import { bailTlv, decodeTlv, decryptChacha20, encodeOPack, encodeTlv, encryptChacha20, hkdf, TlvFlags, TlvMethod, TlvState, TlvValue } from '@/support';
+import { bailTlv, decodeTlv, decryptChacha20, encodeOPack, encodeTlv, encryptChacha20, hkdf, TlvMethod, TlvState, TlvValue } from '@/support';
+import { FrameType } from './protocol';
 import tweetnacl from 'tweetnacl';
-import type AirPlayDevice from './device';
+import type CompanionLinkDevice from './device';
+import type CompanionLinkSocket from './socket';
 
-export default class AirPlayPairing {
-    readonly #client: BaseHttpClient;
-    readonly #device: AirPlayDevice;
+export default class CompanionLinkPairing {
+    readonly #device: CompanionLinkDevice;
+    readonly #socket: CompanionLinkSocket;
     readonly #pairingId: Buffer;
     #deviceName: string = 'AirPlay Client';
     #privateKey: Buffer;
     #publicKey: Buffer;
     #srp?: SrpClient;
 
-    constructor(device: AirPlayDevice, client: BaseHttpClient) {
+    constructor(device: CompanionLinkDevice, socket: CompanionLinkSocket) {
         this.#device = device;
-        this.#client = client;
+        this.#socket = socket;
 
         this.#pairingId = this.#device.mac
             ? Buffer.from(this.#device.mac, 'utf8')
-            : Buffer.from(`${device.id}@airplay.local`, 'utf8');
+            : Buffer.from(`${device.id}@companionlink.local`, 'utf8');
     }
 
-    async start(deviceName: string): Promise<void> {
-        this.#deviceName = deviceName;
-
+    async start(): Promise<void> {
         const keyPair = tweetnacl.sign.keyPair();
         this.#privateKey = Buffer.from(keyPair.secretKey);
         this.#publicKey = Buffer.from(keyPair.publicKey);
-
-        await this.#client.write('POST', '/pair-pin-start', null, {
-            'X-Apple-HKP': '3'
-        });
     }
 
     async pin(askPin: () => Promise<string>): Promise<M6> {
@@ -51,7 +46,7 @@ export default class AirPlayPairing {
     }
 
     async transient(): Promise<M6> {
-        const m1 = await this.#m1([[TlvValue.Flags, TlvFlags.TransientPairing]]);
+        const m1 = await this.#m1();
         const m2 = await this.#m2(m1.publicKey, m1.salt);
         const m3 = await this.#m3(m2.publicKey, m2.proof);
         const m4 = await this.#m4(m3.serverProof);
@@ -65,23 +60,16 @@ export default class AirPlayPairing {
         return m6;
     }
 
-    async #m1(additionalTlv: [number, number | Buffer][] = []): Promise<M1> {
-        const response = await this.#client.write('POST', '/pair-setup', encodeTlv([
-            [TlvValue.Method, TlvMethod.PairSetup],
-            [TlvValue.State, TlvState.M1],
-            ...additionalTlv
-        ]), {
-            'Content-Type': 'application/pairing+tlv8',
-            'X-Apple-HKP': '3'
+    async #m1(): Promise<M1> {
+        const [, response] = await this.#socket.send(FrameType.PS_Start, {
+            _pd: encodeTlv([
+                [TlvValue.Method, TlvMethod.PairSetup],
+                [TlvValue.State, TlvState.M1]
+            ]),
+            _pwTy: 1
         });
 
-        const tlv = await response.arrayBuffer();
-        const data = decodeTlv(Buffer.from(tlv));
-
-        if (data.has(TlvValue.Error)) {
-            bailTlv(data);
-        }
-
+        const data = this.#decode(response);
         const publicKey = data.get(TlvValue.PublicKey);
         const salt = data.get(TlvValue.Salt);
 
@@ -101,22 +89,16 @@ export default class AirPlayPairing {
     }
 
     async #m3(publicKey: Buffer, proof: Buffer): Promise<M3> {
-        const response = await this.#client.write('POST', '/pair-setup', encodeTlv([
-            [TlvValue.State, TlvState.M3],
-            [TlvValue.PublicKey, publicKey],
-            [TlvValue.Proof, proof]
-        ]), {
-            'Content-Type': 'application/pairing+tlv8',
-            'X-Apple-HKP': '3'
+        const [, response] = await this.#socket.send(FrameType.PS_Next, {
+            _pd: encodeTlv([
+                [TlvValue.State, TlvState.M3],
+                [TlvValue.PublicKey, publicKey],
+                [TlvValue.Proof, proof]
+            ]),
+            _pwTy: 1
         });
 
-        const tlv = await response.arrayBuffer();
-        const data = decodeTlv(Buffer.from(tlv));
-
-        if (data.has(TlvValue.Error)) {
-            bailTlv(data);
-        }
-
+        const data = this.#decode(response);
         const serverProof = data.get(TlvValue.Proof);
 
         return {serverProof};
@@ -175,21 +157,15 @@ export default class AirPlayPairing {
         const {authTag, ciphertext} = encryptChacha20(sessionKey, Buffer.from('PS-Msg05'), null, innerTLV);
         const encrypted = Buffer.concat([ciphertext, authTag]);
 
-        const response = await this.#client.write('POST', '/pair-setup', encodeTlv([
-            [TlvValue.State, TlvState.M5],
-            [TlvValue.EncryptedData, Buffer.from(encrypted)]
-        ]), {
-            'Content-Type': 'application/pairing+tlv8',
-            'X-Apple-HKP': '3'
+        const [, response] = await this.#socket.send(FrameType.PS_Next, {
+            _pd: encodeTlv([
+                [TlvValue.State, TlvState.M5],
+                [TlvValue.EncryptedData, Buffer.from(encrypted)]
+            ]),
+            _pwTy: 1
         });
 
-        const tlv = await response.arrayBuffer();
-        const data = decodeTlv(Buffer.from(tlv));
-
-        if (data.has(TlvValue.Error)) {
-            bailTlv(data);
-        }
-
+        const data = this.#decode(response);
         const encryptedDataRaw = data.get(TlvValue.EncryptedData);
         const encryptedData = encryptedDataRaw.subarray(0, -16);
         const encryptedTag = encryptedDataRaw.subarray(-16);
@@ -234,6 +210,22 @@ export default class AirPlayPairing {
             privateKey: this.#privateKey,
             publicKey: this.#publicKey
         };
+    }
+
+    #decode(response: unknown): Map<number, Buffer> {
+        if (typeof response !== 'object' || response === null) {
+            throw new Error('Invalid response.');
+        }
+
+        const data = decodeTlv(response['_pd']);
+
+        if (data.has(TlvValue.Error)) {
+            bailTlv(data);
+        }
+
+        console.log('Decoded TLV8', data);
+
+        return data;
     }
 }
 

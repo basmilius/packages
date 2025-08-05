@@ -1,63 +1,43 @@
-import { v4 as uuidv4 } from 'uuid';
 import * as plist from '@plist/binary.parse';
+import { BaseDevice } from '@/base';
 import AirPlayHttpClient from './http';
 import AirPlayPairing from './pairing';
+import AirPlayRTSP from './rtsp';
+import AirPlayVerify from './verify';
 
-export default class AirPlayDevice {
-    get id(): string {
-        return this.#id;
-    }
-
-    get fqdn(): string {
-        return this.#fqdn;
-    }
-
-    get host(): string {
-        return this.#host;
-    }
-
-    get port(): number {
-        return this.#port;
-    }
-
-    get mac(): string | undefined {
-        return this.#mac;
+export default class AirPlayDevice extends BaseDevice {
+    get client(): AirPlayHttpClient {
+        return this.#client;
     }
 
     get pairing(): AirPlayPairing {
         return this.#pairing;
     }
 
-    readonly #id: string;
-    readonly #fqdn: string;
-    readonly #host: string;
-    readonly #port: number;
-    readonly #mac?: string;
+    get rtsp(): AirPlayRTSP {
+        return this.#rtsp;
+    }
+
+    get verify(): AirPlayVerify {
+        return this.#verify;
+    }
+
     readonly #client: AirPlayHttpClient;
     readonly #pairing: AirPlayPairing;
+    readonly #rtsp: AirPlayRTSP;
+    readonly #verify: AirPlayVerify;
 
     constructor(fqdn: string, host: string, port: number, mac?: string) {
-        this.#id = uuidv4().substring(0, 8);
-        this.#fqdn = fqdn;
-        this.#host = host;
-        this.#port = port;
-        this.#mac = mac;
+        super(fqdn, host, port, mac);
+
         this.#client = new AirPlayHttpClient(this);
         this.#pairing = new AirPlayPairing(this, this.#client);
+        this.#rtsp = new AirPlayRTSP(this, this.#client);
+        this.#verify = new AirPlayVerify(this, this.#client);
     }
 
     async connect(): Promise<void> {
         await this.#client.connect();
-    }
-
-    async pair(): Promise<void> {
-        await this.#pairing.start('Bun Client');
-
-        const m1 = await this.#pairing.m1();
-        const m2 = await this.#pairing.m2(m1.publicKey, m1.salt);
-        const m3 = await this.#pairing.m3(m2.publicKey, m2.proof);
-        const m4 = await this.#pairing.m4(m3.serverProof);
-        await this.#pairing.m5(m4.sharedSecret);
     }
 
     async info(): Promise<Record<string, unknown>> {

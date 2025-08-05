@@ -33,7 +33,8 @@
         "provenance": true
     },
     "scripts": {
-        "build": "bun -b build.ts"
+        "build": "bun -b build.ts",
+        "watch": "bun build ./src/index.ts --root src --outdir dist --sourcemap=linked --format esm --target node --watch -e @plist/binary.parse -e @plist/binary.serialize -e fast-srp-hap -e futoin-hkdf -e node-dns-sd -e tweetnacl -e uuid"
     },
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
@@ -46,9 +47,8 @@
         }
     },
     "dependencies": {
-        "@noble/ciphers": "^1.3.0",
-        "@noble/ed25519": "^2.3.0",
         "@plist/binary.parse": "^1.1.0",
+        "@plist/binary.serialize": "^1.1.0",
         "fast-srp-hap": "^2.0.4",
         "futoin-hkdf": "^1.5.3",
         "node-dns-sd": "^1.0.1",
