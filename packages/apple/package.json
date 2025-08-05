@@ -52,7 +52,7 @@
         "fast-srp-hap": "^2.0.4",
         "futoin-hkdf": "^1.5.3",
         "node-dns-sd": "^1.0.1",
-        "oxc-transform": "^0.78.0",
+        "oxc-transform": "^0.80.0",
         "tweetnacl": "^1.0.3",
         "uuid": "^11.1.0"
     },
