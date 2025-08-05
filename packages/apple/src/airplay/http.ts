@@ -1,197 +1,107 @@
-import { Socket } from 'node:net';
-import type AirPlayDevice from './device';
+import { BaseHttpClient } from '@/base';
+import { decryptChacha20, encryptChacha20, writeUInt64LE } from '@/support';
+import AirPlayDevice from './device';
 
-type HeadersInit = Record<string, string>;
+export default class AirPlayHttpClient extends BaseHttpClient {
+    get isEncrypted(): boolean {
+        return !!this.#readKey && !!this.#writeKey;
+    }
 
-export default class AirPlayHttpClient {
-    readonly #device: AirPlayDevice;
-    #connected = false;
-    #reject?: (reason?: any) => void;
-    #resolve?: (value: Response) => void;
-    #seq: number = 0;
-    #socket?: Socket;
-
-    #bufferedData = Buffer.alloc(0);
-    #requestInFlight = false;
+    #readCount: number = 0;
+    #readKey: Buffer;
+    #writeCount: number = 0;
+    #writeKey: Buffer;
+    #incompleteFrame?: Buffer;
 
     constructor(device: AirPlayDevice) {
-        this.#device = device;
+        super(device);
     }
 
-    async connect(): Promise<void> {
-        this.#socket = new Socket();
-
-        this.#socket.on('close', this.#onClose.bind(this));
-        this.#socket.on('data', this.#onData.bind(this));
-        this.#socket.on('error', this.#onError.bind(this));
-
-        return new Promise((resolve, reject) => {
-            this.#reject = reject;
-
-            this.#socket!.connect(this.#device.port, this.#device.host, () => {
-                this.#connected = true;
-                resolve();
-            });
-        });
+    enableEncryption(readKey: Buffer, writeKey: Buffer): void {
+        this.#readKey = readKey;
+        this.#writeKey = writeKey;
     }
 
-    async write(
-        method: 'GET' | 'POST',
-        path: string,
-        body: Uint8Array | string | null = null,
-        headers: HeadersInit = {}
-    ): Promise<Response> {
-        if (!this.#connected || !this.#socket) {
-            throw new Error('Not connected!');
+    async readRaw(data: Buffer): Promise<Buffer> {
+        // console.debug('incoming data', this.isEncrypted, data);
+
+        if (!this.isEncrypted) {
+            return await super.readRaw(data);
         }
 
-        if (this.#requestInFlight) {
-            throw new Error('Another request is already in flight');
-        }
-        this.#requestInFlight = true;
-
-        // Calculate Content-Length if body exists
-        if (body) {
-            if (typeof body === 'string') {
-                headers['Content-Length'] = Buffer.byteLength(body).toString();
-            } else if (body instanceof Uint8Array) {
-                headers['Content-Length'] = body.length.toString();
-            } else {
-                throw new Error('Body must be string or Uint8Array or null');
-            }
-        } else {
-            headers['Content-Length'] = '0';
+        if (this.#incompleteFrame) {
+            data = Buffer.concat([this.#incompleteFrame, data]);
+            this.#incompleteFrame = undefined;
         }
 
-        await this.writeHeaders(method, path, headers);
+        let result = Buffer.alloc(0);
+        let offset = 0;
 
-        return new Promise((resolve, reject) => {
-            this.#reject = (reason) => {
-                this.#requestInFlight = false;
-                reject(reason);
-            };
-            this.#resolve = (response) => {
-                this.#requestInFlight = false;
-                resolve(response);
-            };
+        while (offset + 2 <= data.length) {
+            const length = data.readUInt16LE(offset); // 2-byte LE length
 
-            if (body) {
-                this.#socket!.write(body);
-            }
-        });
-    }
+            // Total chunk = 2 (length prefix) + ciphertext length + 16 (auth tag)
+            const totalChunkLength = 2 + length + 16;
 
-    async writeHeaders(method: 'GET' | 'POST', path: string, headers: HeadersInit): Promise<void> {
-        if (!this.#connected || !this.#socket) {
-            throw new Error('Not connected!');
-        }
-
-        const lines = [];
-        lines.push(`${method} ${path} HTTP/1.1`);
-        lines.push(`Host: ${this.#device.host}:${this.#device.port}`);
-        lines.push('Connection: keep-alive');
-        lines.push(`CSeq: ${this.#seq++}`);
-        lines.push('User-Agent: AirPlay/409.16')
-        lines.push('X-Apple-HKP: 3');
-
-        for (const [key, value] of Object.entries(headers)) {
-            lines.push(`${key}: ${value}`);
-        }
-
-        lines.push('');
-        lines.push('');
-
-        this.#socket.write(lines.join('\r\n'));
-    }
-
-    #onClose(): void {
-        this.#connected = false;
-
-        this.#reject?.(new Error('Connection closed'));
-        this.#reject = undefined;
-        this.#resolve = undefined;
-
-        console.debug('Connection closed');
-    }
-
-    #onData(data: Buffer): void {
-        this.#bufferedData = Buffer.concat([this.#bufferedData, data]);
-
-        while (true) {
-            const headerEndIndex = this.#bufferedData.indexOf('\r\n\r\n');
-            if (headerEndIndex === -1) {
-                // Not enough data to parse headers yet
-                return;
-            }
-
-            const headerPart = this.#bufferedData.slice(0, headerEndIndex).toString('utf8');
-            const lines = headerPart.split('\r\n');
-            const statusLine = lines[0];
-            const statusMatch = statusLine.match(/(HTTP|RTSP)\/[\d.]+\s+(\d+)\s+(.+)/);
-            if (!statusMatch) {
-                this.#reject?.(new Error('Invalid HTTP status line'));
-                this.#reject = undefined;
-                this.#resolve = undefined;
-                return;
-            }
-
-            const status = parseInt(statusMatch[2]);
-            const statusText = statusMatch[3];
-
-            const headers: Record<string, string> = {};
-            for (let i = 1; i < lines.length; i++) {
-                const colonIndex = lines[i].indexOf(':');
-                if (colonIndex > 0) {
-                    const key = lines[i].substring(0, colonIndex).trim();
-                    headers[key] = lines[i].substring(colonIndex + 1).trim();
-                }
-            }
-
-            // Get content length or default to 0
-            let contentLength = 0;
-            if (headers['Content-Length']) {
-                contentLength = parseInt(headers['Content-Length'], 10);
-                if (isNaN(contentLength)) contentLength = 0;
-            }
-
-            const totalResponseLength = headerEndIndex + 4 + contentLength;
-
-            if (this.#bufferedData.length < totalResponseLength) {
-                // Wait for more data
-                return;
-            }
-
-            const bodyBuffer = this.#bufferedData.slice(headerEndIndex + 4, totalResponseLength);
-
-            // Remove parsed response from buffer
-            this.#bufferedData = this.#bufferedData.slice(totalResponseLength);
-
-            // Create Response instance with body buffer and headers
-            const response = new Response(bodyBuffer, {
-                status,
-                statusText,
-                headers: new Headers(headers)
-            });
-
-            console.debug(response.status, response.statusText);
-
-            this.#resolve?.(response);
-
-            this.#reject = undefined;
-            this.#resolve = undefined;
-
-            // If more data in buffer, continue parsing next response (unlikely but safe)
-            if (this.#bufferedData.length === 0) {
+            if (offset + totalChunkLength > data.length) {
+                // Incomplete frame, wait for more data
+                this.#incompleteFrame = data.subarray(offset);
                 break;
             }
+
+            const aad = data.subarray(offset, offset + 2); // the 2-byte LE length
+            const ciphertext = data.subarray(offset + 2, offset + 2 + length);
+            const authTag = data.subarray(offset + 2 + length, offset + 2 + length + 16);
+
+            const nonce = Buffer.alloc(12);
+            nonce.writeBigUInt64LE(BigInt(this.#readCount++), 4); // write at offset 4
+
+            const plaintext = decryptChacha20(
+                this.#readKey,
+                nonce,
+                aad,
+                ciphertext,
+                authTag
+            );
+
+            result = Buffer.concat([result, plaintext]);
+            offset += totalChunkLength;
         }
+
+        // console.debug('read', result);
+
+        return result;
     }
 
-    #onError(err: Error): void {
-        this.#reject?.(err);
-        this.#reject = undefined;
-        this.#resolve = undefined;
+    async writeRaw(data: Buffer): Promise<Response> {
+        if (!this.isEncrypted) {
+            return super.writeRaw(data);
+        }
 
-        console.error(err);
+        const total = data.length;
+        let result = Buffer.alloc(0);
+
+        for (let offset = 0; offset < total;) {
+            const length = Math.min(total - offset, 0x400);
+            const leLength = Buffer.alloc(2);
+            leLength.writeUInt16LE(length, 0);
+
+            const nonce = Buffer.alloc(12); // 12 bytes total
+            nonce.writeBigUInt64LE(BigInt(this.#writeCount++), 4); // write counter at offset 4
+
+            const encrypted = encryptChacha20(
+                this.#writeKey,
+                nonce,
+                leLength, // AAD
+                data.subarray(offset, offset + length)
+            );
+
+            offset += length;
+            result = Buffer.concat([result, leLength, encrypted.ciphertext, encrypted.authTag]);
+        }
+
+        // console.debug('write', result.toString('hex'));
+
+        return super.writeRaw(result);
     }
 }
