@@ -72,7 +72,7 @@ export default class BaseHttpClient {
             data = Buffer.from(await this.#encodeHeaders(method, path, headers));
         }
 
-        console.log(method, path, data.toString('hex'));
+        console.debug(method, path, data.toString('hex'));
 
         return await this.writeRaw(data);
     }
@@ -105,11 +105,11 @@ export default class BaseHttpClient {
         }
 
         const lines = [];
-        lines.push(`${method} ${path} RTSP/1.0`);
-        lines.push(`Host: ${this.#device.host}:${this.#device.port}`);
+        lines.push(`${method} ${path} HTTP/1.1`);
+        // lines.push(`Host: ${this.#device.host}:${this.#device.port}`);
         lines.push('Connection: keep-alive');
-        lines.push(`CSeq: ${this.#seq++}`);
-        lines.push('User-Agent: AirPlay/540.31');
+        // lines.push(`CSeq: ${this.#seq++}`);
+        lines.push('User-Agent: AirPlay/320.20');
 
         for (const [key, value] of Object.entries(headers)) {
             lines.push(`${key}: ${value}`);

@@ -1,26 +1,14 @@
-import { CompanionLinkDevice } from '@/companion-link';
-import { Discover, prompt, uuid } from '@/support';
 import * as process from 'node:process';
+import { ACCESSORY } from '@/brain';
+import { CompanionLinkDevice } from '@/companion-link';
 import { FrameType, MessageType } from '@/companion-link/protocol';
-
-const PAIRED_ACCESSORIES = {
-    WOONKAMER_TV: {
-        fqdn: 'Woonkamer TV._companion-link._tcp.local',
-        identifier: '7EEEA518-06CC-486C-A8B8-4A07CDBE6267',
-        longTermPublicKey: 'cfb3fb0e0eb494d9058d5051c94400b35251e3faad66542b9551a1496570628d',
-        pairingId: 'E0:7B:87:7B:58:BE',
-        privateKey: '7951fe85b09052fb548a997f2a92a8fe62ecb34c159977d0e7fa348adf4f94879b6daea3476130668c15a6289cb642102848a74a2c452b256339e301e21772bc',
-        publicKey: '9b6daea3476130668c15a6289cb642102848a74a2c452b256339e301e21772bc'
-    }
-};
-
-const ACCESSORY = PAIRED_ACCESSORIES.WOONKAMER_TV;
+import { Discover, prompt, uuid } from '@/support';
 
 export async function run(mode: 'pair' | 'verify'): Promise<void> {
     console.debug('Discovering devices...');
 
     const discover = Discover.companionLink();
-    const device = await discover.findUntil(ACCESSORY.fqdn);
+    const device = await discover.findUntil(ACCESSORY.fqdn.companionLink);
 
     console.debug('Connecting to device: ', device.fqdn, '...');
 

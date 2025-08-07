@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 export default class BaseDevice {
     get id(): string {
@@ -28,7 +28,7 @@ export default class BaseDevice {
     readonly #mac?: string;
 
     constructor(fqdn: string, host: string, port: number, mac?: string) {
-        this.#id = uuidv4().substring(0, 8);
+        this.#id = uuid();
         this.#fqdn = fqdn;
         this.#host = host;
         this.#port = port;
