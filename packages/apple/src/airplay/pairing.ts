@@ -18,9 +18,7 @@ export default class AirPlayPairing {
         this.#device = device;
         this.#client = client;
 
-        this.#pairingId = this.#device.mac
-            ? Buffer.from(this.#device.mac, 'utf8')
-            : Buffer.from(`${device.id}@airplay.local`, 'utf8');
+        this.#pairingId = Buffer.from(this.#device.id, 'utf8');
     }
 
     async start(deviceName: string): Promise<void> {
@@ -37,10 +35,10 @@ export default class AirPlayPairing {
 
     async pin(askPin: () => Promise<string>): Promise<M6> {
         const m1 = await this.#m1();
-        const m2 = await this.#m2(m1.publicKey, m1.salt, await askPin());
-        const m3 = await this.#m3(m2.publicKey, m2.proof);
-        const m4 = await this.#m4(m3.serverProof);
-        const m5 = await this.#m5(m4.sharedSecret);
+        const m2 = await this.#m2(m1, await askPin());
+        const m3 = await this.#m3(m2);
+        const m4 = await this.#m4(m3);
+        const m5 = await this.#m5(m4);
         const m6 = await this.#m6(m4, m5);
 
         if (!m6) {
@@ -52,10 +50,10 @@ export default class AirPlayPairing {
 
     async transient(): Promise<M6> {
         const m1 = await this.#m1([[TlvValue.Flags, TlvFlags.TransientPairing]]);
-        const m2 = await this.#m2(m1.publicKey, m1.salt);
-        const m3 = await this.#m3(m2.publicKey, m2.proof);
-        const m4 = await this.#m4(m3.serverProof);
-        const m5 = await this.#m5(m4.sharedSecret);
+        const m2 = await this.#m2(m1);
+        const m3 = await this.#m3(m2);
+        const m4 = await this.#m4(m3);
+        const m5 = await this.#m5(m4);
         const m6 = await this.#m6(m4, m5);
 
         if (!m6) {
@@ -71,7 +69,7 @@ export default class AirPlayPairing {
             [TlvValue.State, TlvState.M1],
             ...additionalTlv
         ]), {
-            'Content-Type': 'application/pairing+tlv8',
+            'Content-Type': 'application/octet-stream',
             'X-Apple-HKP': '3'
         });
 
@@ -88,11 +86,11 @@ export default class AirPlayPairing {
         return {publicKey, salt};
     }
 
-    async #m2(serverPublicKey: Buffer, salt: Buffer, pin: string = AIRPLAY_TRANSIENT_PIN): Promise<M2> {
+    async #m2(m1: M1, pin: string = AIRPLAY_TRANSIENT_PIN): Promise<M2> {
         const srpKey = await SRP.genKey(32);
 
-        this.#srp = new SrpClient(SRP.params.hap, salt, Buffer.from('Pair-Setup'), Buffer.from(pin), srpKey);
-        this.#srp.setB(serverPublicKey);
+        this.#srp = new SrpClient(SRP.params.hap, m1.salt, Buffer.from('Pair-Setup'), Buffer.from(pin), srpKey, true);
+        this.#srp.setB(m1.publicKey);
 
         const publicKey = this.#srp.computeA();
         const proof = this.#srp.computeM1();
@@ -100,13 +98,13 @@ export default class AirPlayPairing {
         return {publicKey, proof};
     }
 
-    async #m3(publicKey: Buffer, proof: Buffer): Promise<M3> {
+    async #m3(m2: M2): Promise<M3> {
         const response = await this.#client.write('POST', '/pair-setup', encodeTlv([
             [TlvValue.State, TlvState.M3],
-            [TlvValue.PublicKey, publicKey],
-            [TlvValue.Proof, proof]
+            [TlvValue.PublicKey, m2.publicKey],
+            [TlvValue.Proof, m2.proof]
         ]), {
-            'Content-Type': 'application/pairing+tlv8',
+            'Content-Type': 'application/octet-stream',
             'X-Apple-HKP': '3'
         });
 
@@ -122,8 +120,8 @@ export default class AirPlayPairing {
         return {serverProof};
     }
 
-    async #m4(serverProof: Buffer): Promise<M4> {
-        this.#srp.checkM2(serverProof);
+    async #m4(m3: M3): Promise<M4> {
+        this.#srp.checkM2(m3.serverProof);
 
         let sharedSecret = this.#srp.computeK();
 
@@ -138,21 +136,21 @@ export default class AirPlayPairing {
         return {sharedSecret};
     }
 
-    async #m5(sharedSecret: Buffer): Promise<M5> {
+    async #m5(m4: M4): Promise<M5> {
         const iosDeviceX = hkdf({
             hash: 'sha512',
-            key: sharedSecret,
+            key: m4.sharedSecret,
             length: 32,
-            salt: Buffer.from('Pair-Setup-Controller-Sign-Salt'),
-            info: Buffer.from('Pair-Setup-Controller-Sign-Info')
+            salt: Buffer.from('Pair-Setup-Controller-Sign-Salt', 'utf8'),
+            info: Buffer.from('Pair-Setup-Controller-Sign-Info', 'utf8')
         });
 
         const sessionKey = hkdf({
             hash: 'sha512',
-            key: sharedSecret,
+            key: m4.sharedSecret,
             length: 32,
-            salt: Buffer.from('Pair-Setup-Encrypt-Salt'),
-            info: Buffer.from('Pair-Setup-Encrypt-Info')
+            salt: Buffer.from('Pair-Setup-Encrypt-Salt', 'utf8'),
+            info: Buffer.from('Pair-Setup-Encrypt-Info', 'utf8')
         });
 
         const deviceInfo = Buffer.concat([
@@ -177,9 +175,9 @@ export default class AirPlayPairing {
 
         const response = await this.#client.write('POST', '/pair-setup', encodeTlv([
             [TlvValue.State, TlvState.M5],
-            [TlvValue.EncryptedData, Buffer.from(encrypted)]
+            [TlvValue.EncryptedData, encrypted]
         ]), {
-            'Content-Type': 'application/pairing+tlv8',
+            'Content-Type': 'application/octet-stream',
             'X-Apple-HKP': '3'
         });
 

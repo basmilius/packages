@@ -4,9 +4,9 @@
 
 ---
 
-# `@basmilius/tools`
+# `@basmilius/apple`
 
-Contains commonly used primitives used for building js / ts libraries.
+Implementation of various Apple protocols.
 
 ## ⭐️ Prerequisites
 
@@ -16,4 +16,11 @@ Contains commonly used primitives used for building js / ts libraries.
 ## 🚀 Getting started
 
 1. Run `bun install` in the root of the project.
-2. Run `bun --cwd packages/tools build` to build the project.
+2. Run `bun --cwd packages/apple build` to build the project.
+
+## Dev
+
+```shell
+bun --cwd packages/apple watch
+node packages/apple/dist/index.js
+```
