@@ -1,4 +1,9 @@
 import { RequestError, ValidationError } from '../dto';
+import RequestAbortedError from './RequestAbortedError';
+
+export function isRequestAborted(obj: unknown): obj is RequestAbortedError {
+    return obj instanceof RequestAbortedError;
+}
 
 export function isRequestError(obj: unknown): obj is RequestError {
     return obj instanceof RequestError;

@@ -5,6 +5,9 @@ import type { HttpMethod, HttpStatusCode } from '../type';
 import BaseResponse from './BaseResponse';
 import HttpClient from './HttpClient';
 import type QueryString from './QueryString';
+import RequestAbortedError from './RequestAbortedError';
+
+const abortControllers: Record<symbol, AbortController> = {};
 
 export default class RequestBuilder {
     get client(): HttpClient {
@@ -32,6 +35,7 @@ export default class RequestBuilder {
     }
 
     readonly #client: HttpClient;
+    #autoCancelIdentifier: symbol | null = null;
     #path: string;
     #options: RequestInit = {};
     #query: QueryString | null = null;
@@ -41,6 +45,12 @@ export default class RequestBuilder {
         this.#options.cache = 'no-cache';
         this.#options.method = 'GET';
         this.#path = path;
+    }
+
+    public autoCancel(identifier: symbol): RequestBuilder {
+        this.#autoCancelIdentifier = identifier;
+
+        return this;
     }
 
     public bearerToken(token?: string): RequestBuilder {
@@ -169,6 +179,17 @@ export default class RequestBuilder {
     }
 
     async #execute(): Promise<Response> {
+        if (this.#autoCancelIdentifier !== null) {
+            if (this.#autoCancelIdentifier in abortControllers) {
+                abortControllers[this.#autoCancelIdentifier].abort(new RequestAbortedError());
+            }
+
+            const controller = new AbortController();
+            abortControllers[this.#autoCancelIdentifier] = controller;
+
+            this.signal(controller.signal);
+        }
+
         let path = this.path;
 
         if (this.query !== null) {

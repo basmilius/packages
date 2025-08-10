@@ -49,11 +49,11 @@
         "change-case": "^5.4.4",
         "css-class-generator": "^2.0.0",
         "lightningcss": "^1.30.1",
-        "vite-css-modules": "^1.9.2",
+        "vite-css-modules": "^1.10.0",
         "vite-plugin-dts": "^4.5.4"
     },
     "devDependencies": {
         "@basmilius/tools": "workspace:*",
-        "vite": "^7.0.6"
+        "vite": "^7.1.1"
     }
 }
