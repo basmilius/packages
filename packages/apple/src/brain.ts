@@ -5,9 +5,9 @@ const PAIRED_ACCESSORIES = {
         },
         identifier: 'C4:38:75:ED:54:78',
         longTermPublicKey: '8425791eb25637ed57e10173e9eeab12a74f8cc7fafac288f71d067c152ec540',
-        pairingId: 'cc27762d-ad61-464e-99fb-b9eb066f25b7',
-        privateKey: 'fb704d51bcb1d7d643aaa04b65b370a66c67385b9f25ab55ec389449b692259f60a2fdddb048ca6725055356579aeb7b0955bfaf56cc4a24a37d244a08476e81',
-        publicKey: '60a2fdddb048ca6725055356579aeb7b0955bfaf56cc4a24a37d244a08476e81'
+        pairingId: '1c4e6eca-0025-4cc4-b34c-175752b5b97c',
+        privateKey: '1c29def99d440c7082b5079f6d51366fef54fba44adb20f6c64393d86e4a6780ecd0fe857f34cef6c816132ee6bd62dd2a41d198c291fb1ebb3d76d51046f7e2',
+        publicKey: 'ecd0fe857f34cef6c816132ee6bd62dd2a41d198c291fb1ebb3d76d51046f7e2'
     },
 
     SLAAPKAMER: {
@@ -47,4 +47,4 @@ const PAIRED_ACCESSORIES = {
     }
 } as const;
 
-export const ACCESSORY = PAIRED_ACCESSORIES.WOONKAMER;
+export const ACCESSORY = PAIRED_ACCESSORIES.SLAAPKAMER;

@@ -34,21 +34,31 @@ export async function run(mode: 'pair' | 'verify'): Promise<void> {
 }
 
 async function pair(device: AirPlayDevice): Promise<void> {
-    const transientPairing = false;
+    const transientPairing = true;
 
-    await device.pairing.start('Bas Client');
+    if (transientPairing) {
+        const credentials = await device.pairing.startTransientPairing();
 
-    const credentials = transientPairing
-        ? await device.pairing.transient()
-        : await device.pairing.pin(async () => await prompt('Enter PIN'));
+        device.client.enableEncryption(
+            credentials.accessoryToControllerKey,
+            credentials.controllerToAccessoryKey
+        );
 
-    console.log({
-        identifier: credentials.accessoryIdentifier,
-        longTermPublicKey: credentials.accessoryLongTermPublicKey.toString('hex'),
-        pairingId: credentials.pairingId.toString(),
-        privateKey: credentials.privateKey.toString('hex'),
-        publicKey: credentials.publicKey.toString('hex')
-    });
+        await device.rtsp.setup(credentials.pairingId.toString());
+        await device.rtsp.feedback();
+        await device.rtsp.getVolume();
+        // await device.rtsp.setVolume(10);
+    } else {
+        const credentials = await device.pairing.startPinPairing(async () => await prompt('Enter PIN'));
+
+        console.log({
+            identifier: credentials.accessoryIdentifier,
+            longTermPublicKey: credentials.accessoryLongTermPublicKey.toString('hex'),
+            pairingId: credentials.pairingId.toString(),
+            privateKey: credentials.privateKey.toString('hex'),
+            publicKey: credentials.publicKey.toString('hex')
+        });
+    }
 }
 
 async function verify(device: AirPlayDevice): Promise<void> {

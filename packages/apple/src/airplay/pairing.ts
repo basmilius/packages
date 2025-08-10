@@ -9,7 +9,7 @@ export default class AirPlayPairing {
     readonly #client: BaseHttpClient;
     readonly #device: AirPlayDevice;
     readonly #pairingId: Buffer;
-    #deviceName: string = 'AirPlay Client';
+    readonly #deviceName: string;
     #privateKey: Buffer;
     #publicKey: Buffer;
     #srp?: SrpClient;
@@ -18,25 +18,20 @@ export default class AirPlayPairing {
         this.#device = device;
         this.#client = client;
 
+        this.#deviceName = 'Bas AirPlay Client';
         this.#pairingId = Buffer.from(this.#device.id, 'utf8');
     }
 
-    async start(deviceName: string): Promise<void> {
-        this.#deviceName = deviceName;
-
-        const keyPair = tweetnacl.sign.keyPair();
-        this.#privateKey = Buffer.from(keyPair.secretKey);
-        this.#publicKey = Buffer.from(keyPair.publicKey);
+    async startPinPairing(askPin: () => Promise<string>): Promise<M6> {
+        this.#start();
 
         await this.#client.write('POST', '/pair-pin-start', null, {
             'X-Apple-HKP': '3'
         });
-    }
 
-    async pin(askPin: () => Promise<string>): Promise<M6> {
-        const m1 = await this.#m1();
+        const m1 = await this.#m1(3);
         const m2 = await this.#m2(m1, await askPin());
-        const m3 = await this.#m3(m2);
+        const m3 = await this.#m3(3, m2);
         const m4 = await this.#m4(m3);
         const m5 = await this.#m5(m4);
         const m6 = await this.#m6(m4, m5);
@@ -48,29 +43,57 @@ export default class AirPlayPairing {
         return m6;
     }
 
-    async transient(): Promise<M6> {
-        const m1 = await this.#m1([[TlvValue.Flags, TlvFlags.TransientPairing]]);
+    async startTransientPairing(): Promise<TransientPairingCredentials> {
+        this.#start();
+
+        await this.#client.write('POST', '/pair-pin-start', null, {
+            'X-Apple-HKP': '4'
+        });
+
+        const m1 = await this.#m1(4, [[TlvValue.Flags, TlvFlags.TransientPairing]]);
         const m2 = await this.#m2(m1);
-        const m3 = await this.#m3(m2);
+        const m3 = await this.#m3(4, m2);
         const m4 = await this.#m4(m3);
-        const m5 = await this.#m5(m4);
-        const m6 = await this.#m6(m4, m5);
 
-        if (!m6) {
-            throw new Error('Pairing failed, could not get accessory keys.');
-        }
+        const salt = Buffer.from('Control-Salt');
 
-        return m6;
+        const accessoryToControllerKey = hkdf({
+            hash: 'sha512',
+            key: m4.sharedSecret,
+            length: 32,
+            salt,
+            info: Buffer.from('Control-Read-Encryption-Key')
+        });
+
+        const controllerToAccessoryKey = hkdf({
+            hash: 'sha512',
+            key: m4.sharedSecret,
+            length: 32,
+            salt,
+            info: Buffer.from('Control-Write-Encryption-Key')
+        });
+
+        return {
+            pairingId: this.#pairingId,
+            accessoryToControllerKey,
+            controllerToAccessoryKey
+        };
     }
 
-    async #m1(additionalTlv: [number, number | Buffer][] = []): Promise<M1> {
+    #start(): void {
+        const keyPair = tweetnacl.sign.keyPair();
+        this.#privateKey = Buffer.from(keyPair.secretKey);
+        this.#publicKey = Buffer.from(keyPair.publicKey);
+    }
+
+    async #m1(hkp: 3 | 4, additionalTlv: [number, number | Buffer][] = []): Promise<M1> {
         const response = await this.#client.write('POST', '/pair-setup', encodeTlv([
             [TlvValue.Method, TlvMethod.PairSetup],
             [TlvValue.State, TlvState.M1],
             ...additionalTlv
         ]), {
             'Content-Type': 'application/octet-stream',
-            'X-Apple-HKP': '3'
+            'X-Apple-HKP': hkp.toString()
         });
 
         const tlv = await response.arrayBuffer();
@@ -98,14 +121,14 @@ export default class AirPlayPairing {
         return {publicKey, proof};
     }
 
-    async #m3(m2: M2): Promise<M3> {
+    async #m3(hkp: 3 | 4, m2: M2): Promise<M3> {
         const response = await this.#client.write('POST', '/pair-setup', encodeTlv([
             [TlvValue.State, TlvState.M3],
             [TlvValue.PublicKey, m2.publicKey],
             [TlvValue.Proof, m2.proof]
         ]), {
             'Content-Type': 'application/octet-stream',
-            'X-Apple-HKP': '3'
+            'X-Apple-HKP': hkp.toString()
         });
 
         const tlv = await response.arrayBuffer();
@@ -265,4 +288,10 @@ type M6 = {
     readonly pairingId: Buffer;
     readonly privateKey: Buffer;
     readonly publicKey: Buffer;
+};
+
+type TransientPairingCredentials = {
+    readonly pairingId: Buffer;
+    readonly accessoryToControllerKey: Buffer;
+    readonly controllerToAccessoryKey: Buffer;
 };
