@@ -1,5 +1,7 @@
 import * as plist from '@plist/binary.parse';
 import { BaseDevice } from '@/base';
+import AirPlayDataStream from './data-stream';
+import AirPlayEventStream from './event-stream';
 import AirPlayHttpClient from './http';
 import AirPlayPairing from './pairing';
 import AirPlayRTSP from './rtsp';
@@ -8,6 +10,14 @@ import AirPlayVerify from './verify';
 export default class AirPlayDevice extends BaseDevice {
     get client(): AirPlayHttpClient {
         return this.#client;
+    }
+
+    get dataStream(): AirPlayDataStream {
+        return this.#dataStream;
+    }
+
+    get eventStream(): AirPlayEventStream {
+        return this.#eventStream;
     }
 
     get pairing(): AirPlayPairing {
@@ -23,6 +33,8 @@ export default class AirPlayDevice extends BaseDevice {
     }
 
     readonly #client: AirPlayHttpClient;
+    readonly #dataStream: AirPlayDataStream;
+    readonly #eventStream: AirPlayEventStream;
     readonly #pairing: AirPlayPairing;
     readonly #rtsp: AirPlayRTSP;
     readonly #verify: AirPlayVerify;
@@ -31,13 +43,15 @@ export default class AirPlayDevice extends BaseDevice {
         super(fqdn, host, port, mac);
 
         this.#client = new AirPlayHttpClient(this);
+        this.#dataStream = new AirPlayDataStream(this);
+        this.#eventStream = new AirPlayEventStream(this);
         this.#pairing = new AirPlayPairing(this, this.#client);
         this.#rtsp = new AirPlayRTSP(this, this.#client);
         this.#verify = new AirPlayVerify(this, this.#client);
     }
 
     async connect(): Promise<void> {
-        await this.#client.connect();
+        await this.#client.connect(this.port, this.host);
     }
 
     async info(): Promise<Record<string, unknown>> {

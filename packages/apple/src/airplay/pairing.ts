@@ -55,13 +55,11 @@ export default class AirPlayPairing {
         const m3 = await this.#m3(4, m2);
         const m4 = await this.#m4(m3);
 
-        const salt = Buffer.from('Control-Salt');
-
         const accessoryToControllerKey = hkdf({
             hash: 'sha512',
             key: m4.sharedSecret,
             length: 32,
-            salt,
+            salt: Buffer.from('Control-Salt'),
             info: Buffer.from('Control-Read-Encryption-Key')
         });
 
@@ -69,12 +67,13 @@ export default class AirPlayPairing {
             hash: 'sha512',
             key: m4.sharedSecret,
             length: 32,
-            salt,
+            salt: Buffer.from('Control-Salt'),
             info: Buffer.from('Control-Write-Encryption-Key')
         });
 
         return {
             pairingId: this.#pairingId,
+            sharedSecret: m4.sharedSecret,
             accessoryToControllerKey,
             controllerToAccessoryKey
         };
@@ -292,6 +291,7 @@ type M6 = {
 
 type TransientPairingCredentials = {
     readonly pairingId: Buffer;
+    readonly sharedSecret: Buffer;
     readonly accessoryToControllerKey: Buffer;
     readonly controllerToAccessoryKey: Buffer;
 };

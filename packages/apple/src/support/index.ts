@@ -30,6 +30,7 @@ export {
 } from './discover';
 
 export {
+    getLocalIPAddress,
     getMacAddress
 } from './net';
 

@@ -1,4 +1,6 @@
 import { Socket } from 'node:net';
+import { styleText } from 'node:util';
+import { HTTP_TIMEOUT } from '@/const';
 import type BaseDevice from './device';
 
 type HeadersInit = Record<string, string>;
@@ -19,7 +21,7 @@ export default class BaseHttpClient {
         this.#device = device;
     }
 
-    async connect(): Promise<void> {
+    async connect(port: number, host: string): Promise<void> {
         this.#socket = new Socket();
 
         this.#socket.on('close', this.#onClose.bind(this));
@@ -29,11 +31,119 @@ export default class BaseHttpClient {
         return new Promise((resolve, reject) => {
             this.#reject = reject;
 
-            this.#socket!.connect(this.#device.port, this.#device.host, () => {
+            this.#socket!.connect(port, host, () => {
+                console.debug('Connected to', host, port);
                 this.#connected = true;
                 resolve();
             });
         });
+    }
+
+    async handleData(headerEndIndex: number): Promise<void> {
+        const headerPart = this.#bufferedData.subarray(0, headerEndIndex).toString('utf8');
+        const lines = headerPart.split('\r\n');
+
+        if (lines[0].startsWith('RTSP') || lines[0].startsWith('HTTP')) {
+            await this.handleAsClient(headerEndIndex, lines);
+        } else {
+            await this.handleAsServer(headerEndIndex, lines);
+        }
+    }
+
+    async handleAsClient(headerEndIndex: number, rawHeaders: string[]): Promise<void> {
+        const statusLine = rawHeaders[0];
+        const statusMatch = statusLine.match(/(HTTP|RTSP)\/[\d.]+\s+(\d+)\s+(.+)/);
+
+        const status = parseInt(statusMatch[2]);
+        const statusText = statusMatch[3];
+
+        const headers: Record<string, string> = {};
+        for (let i = 1; i < rawHeaders.length; i++) {
+            const colonIndex = rawHeaders[i].indexOf(':');
+
+            if (colonIndex > 0) {
+                const key = rawHeaders[i].substring(0, colonIndex).trim();
+                headers[key] = rawHeaders[i].substring(colonIndex + 1).trim();
+            }
+        }
+
+        let contentLength = 0;
+        if (headers['Content-Length']) {
+            contentLength = parseInt(headers['Content-Length'], 10);
+
+            if (isNaN(contentLength)) {
+                contentLength = 0;
+            }
+        }
+
+        const totalResponseLength = headerEndIndex + 4 + contentLength;
+
+        if (this.#bufferedData.length < totalResponseLength) {
+            return;
+        }
+
+        const bodyBuffer = this.#bufferedData.subarray(headerEndIndex + 4, totalResponseLength);
+
+        this.#bufferedData = this.#bufferedData.subarray(totalResponseLength);
+
+        const response = new Response(bodyBuffer, {
+            status,
+            statusText,
+            headers: new Headers(headers)
+        });
+
+        console.debug(styleText('cyan', '⬅'), response.status, response.statusText);
+
+        this.#resolve?.(response);
+
+        this.#reject = undefined;
+        this.#resolve = undefined;
+    }
+
+    async handleAsServer(headerEndIndex: number, rawHeaders: string[]): Promise<Request> {
+        const requestLine = rawHeaders[0];
+        const requestMatch = requestLine.match(/^(\S+)\s+(\S+)\s+RTSP\/1\.0$/);
+
+        const method = requestMatch[1] as Method;
+        const path = requestMatch[2];
+
+        const headers: Record<string, string> = {};
+        for (let i = 1; i < rawHeaders.length; i++) {
+            const colonIndex = rawHeaders[i].indexOf(':');
+
+            if (colonIndex > 0) {
+                const key = rawHeaders[i].substring(0, colonIndex).trim();
+                headers[key] = rawHeaders[i].substring(colonIndex + 1).trim();
+            }
+        }
+
+        let contentLength = 0;
+        if (headers['Content-Length']) {
+            contentLength = parseInt(headers['Content-Length'], 10);
+
+            if (isNaN(contentLength)) {
+                contentLength = 0;
+            }
+        }
+
+        const totalResponseLength = headerEndIndex + 4 + contentLength;
+
+        if (this.#bufferedData.length < totalResponseLength) {
+            return;
+        }
+
+        const bodyBuffer = this.#bufferedData.subarray(headerEndIndex + 4, totalResponseLength);
+
+        this.#bufferedData = this.#bufferedData.subarray(totalResponseLength);
+
+        console.debug(styleText('cyan', '⬅'), method, path);
+
+        return {
+            body: bodyBuffer,
+            headers,
+            method,
+            path
+        };
     }
 
     async readRaw(data: Buffer): Promise<Buffer> {
@@ -72,7 +182,7 @@ export default class BaseHttpClient {
             data = Buffer.from(await this.#encodeHeaders(method, path, headers));
         }
 
-        console.debug(method, path, data.toString('hex'));
+        console.debug(styleText('cyanBright', '⮕'), method, path /*data.toString('hex')*/);
 
         return await this.writeRaw(data);
     }
@@ -93,7 +203,7 @@ export default class BaseHttpClient {
                 clearTimeout(timer);
             };
 
-            timer = setTimeout(() => reject(new Error('Request timed out')), 3000);
+            timer = setTimeout(() => reject(new Error('Request timed out')), HTTP_TIMEOUT);
 
             this.#socket.write(data);
         });
@@ -108,7 +218,7 @@ export default class BaseHttpClient {
         lines.push(`${method} ${path} HTTP/1.1`);
         // lines.push(`Host: ${this.#device.host}:${this.#device.port}`);
         lines.push('Connection: keep-alive');
-        // lines.push(`CSeq: ${this.#seq++}`);
+        lines.push(`CSeq: ${this.#seq++}`);
         lines.push('User-Agent: AirPlay/320.20');
 
         for (const [key, value] of Object.entries(headers)) {
@@ -143,61 +253,7 @@ export default class BaseHttpClient {
                 return;
             }
 
-            const headerPart = this.#bufferedData.subarray(0, headerEndIndex).toString('utf8');
-            const lines = headerPart.split('\r\n');
-            const statusLine = lines[0];
-            const statusMatch = statusLine.match(/(HTTP|RTSP)\/[\d.]+\s+(\d+)\s+(.+)/);
-            if (!statusMatch) {
-                this.#reject?.(new Error('Invalid HTTP status line'));
-                this.#reject = undefined;
-                this.#resolve = undefined;
-                return;
-            }
-
-            const status = parseInt(statusMatch[2]);
-            const statusText = statusMatch[3];
-
-            const headers: Record<string, string> = {};
-            for (let i = 1; i < lines.length; i++) {
-                const colonIndex = lines[i].indexOf(':');
-
-                if (colonIndex > 0) {
-                    const key = lines[i].substring(0, colonIndex).trim();
-                    headers[key] = lines[i].substring(colonIndex + 1).trim();
-                }
-            }
-
-            let contentLength = 0;
-            if (headers['Content-Length']) {
-                contentLength = parseInt(headers['Content-Length'], 10);
-
-                if (isNaN(contentLength)) {
-                    contentLength = 0;
-                }
-            }
-
-            const totalResponseLength = headerEndIndex + 4 + contentLength;
-
-            if (this.#bufferedData.length < totalResponseLength) {
-                return;
-            }
-
-            const bodyBuffer = this.#bufferedData.subarray(headerEndIndex + 4, totalResponseLength);
-
-            this.#bufferedData = this.#bufferedData.subarray(totalResponseLength);
-
-            const response = new Response(bodyBuffer, {
-                status,
-                statusText,
-                headers: new Headers(headers)
-            });
-
-            console.debug(response.status, response.statusText);
-
-            this.#resolve?.(response);
-
-            this.#reject = undefined;
-            this.#resolve = undefined;
+            await this.handleData(headerEndIndex);
 
             if (this.#bufferedData.length === 0) {
                 break;
@@ -213,3 +269,10 @@ export default class BaseHttpClient {
         console.error(err);
     }
 }
+
+export type Request = {
+    body: Buffer;
+    headers: HeadersInit;
+    method: Method;
+    path: string;
+};

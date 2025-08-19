@@ -1,5 +1,5 @@
 import { BaseHttpClient } from '@/base';
-import { decryptChacha20, encryptChacha20, writeUInt64LE } from '@/support';
+import { decryptChacha20, encryptChacha20 } from '@/support';
 import AirPlayDevice from './device';
 
 export default class AirPlayHttpClient extends BaseHttpClient {

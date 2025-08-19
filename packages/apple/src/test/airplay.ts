@@ -1,4 +1,3 @@
-import process from 'node:process';
 import { AirPlayDevice } from '@/airplay';
 import { ACCESSORY } from '@/brain';
 import { Discover, prompt } from '@/support';
@@ -29,8 +28,6 @@ export async function run(mode: 'pair' | 'verify'): Promise<void> {
             await verify(airtunesdevice);
             break;
     }
-
-    process.exit(0);
 }
 
 async function pair(device: AirPlayDevice): Promise<void> {
@@ -44,10 +41,18 @@ async function pair(device: AirPlayDevice): Promise<void> {
             credentials.controllerToAccessoryKey
         );
 
-        await device.rtsp.setup(credentials.pairingId.toString());
-        await device.rtsp.feedback();
-        await device.rtsp.getVolume();
-        // await device.rtsp.setVolume(10);
+        await device.rtsp.setupEventStream(credentials.pairingId, credentials.sharedSecret);
+        await device.rtsp.record();
+        await device.rtsp.setupDataStream(credentials.sharedSecret);
+
+        setInterval(async () => {
+            await device.rtsp.feedback();
+        }, 2000);
+
+        // await device.rtsp.setVolume(25);
+        // await device.rtsp.getVolume();
+
+        console.log('Done.');
     } else {
         const credentials = await device.pairing.startPinPairing(async () => await prompt('Enter PIN'));
 
@@ -71,13 +76,13 @@ async function verify(device: AirPlayDevice): Promise<void> {
 
     console.log(await device.info());
 
-    await device.rtsp.setup(ACCESSORY.pairingId);
+    // await device.rtsp.setup(ACCESSORY.pairingId);
     // await device.rtsp.feedback();
     // await device.rtsp.record();
 
-    await device.rtsp.command('setProperty?name=client-expect-remote-control&value=1');
-    console.log(await device.playbackInfo());
-    await device.rtsp.command('pause');
+    // await device.rtsp.command('setProperty?name=client-expect-remote-control&value=1');
+    // console.log(await device.playbackInfo());
+    // await device.rtsp.command('pause');
 
     // console.log(await device.rtsp.getVolume());
     // await device.rtsp.setVolume(5);

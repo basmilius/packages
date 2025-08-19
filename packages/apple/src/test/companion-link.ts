@@ -30,8 +30,6 @@ export async function run(mode: 'pair' | 'verify'): Promise<void> {
             await verify(companionLinkDevice);
             break;
     }
-
-    process.exit(0);
 }
 
 async function pair(device: CompanionLinkDevice): Promise<void> {
