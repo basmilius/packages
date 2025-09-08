@@ -45,7 +45,7 @@
         }
     },
     "dependencies": {
-        "@laynezh/vite-plugin-lib-assets": "^2.1.0",
+        "@laynezh/vite-plugin-lib-assets": "^2.1.3",
         "change-case": "^5.4.4",
         "css-class-generator": "^2.0.0",
         "lightningcss": "^1.30.1",
@@ -54,6 +54,6 @@
     },
     "devDependencies": {
         "@basmilius/tools": "workspace:*",
-        "vite": "^7.1.4"
+        "vite": "^7.1.5"
     }
 }
