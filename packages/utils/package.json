@@ -50,7 +50,7 @@
         "@types/luxon": "^3.7.1",
         "luxon": "^3.7.2",
         "pinia": "^3.0.3",
-        "vue": "^3.5.21"
+        "vue": "^3.5.22"
     },
     "devDependencies": {
         "@basmilius/tools": "workspace:*"
