@@ -4,6 +4,6 @@ export default function (dateTime: DateTime): string {
     return dateTime.toLocaleString({
         year: 'numeric',
         month: 'long',
-        day: 'numeric',
+        day: 'numeric'
     });
 }
