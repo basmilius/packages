@@ -1,7 +1,6 @@
-import { dbFromPercentage, generateActiveRemote, generateDacpId, getMacAddress, parseBinaryPlist, serializeBinaryPlist, uuid } from '@/support';
+import { dbFromPercentage, debug, generateActiveRemote, generateDacpId, getMacAddress, parseBinaryPlist, serializeBinaryPlist, uuid } from '@/support';
 import type AirPlayDevice from './device';
 import type AirPlayHttpClient from './http';
-import { Socket } from 'node:net';
 
 export default class AirPlayRTSP {
     readonly #client: AirPlayHttpClient;
@@ -73,6 +72,7 @@ export default class AirPlayRTSP {
 
         const response = await this.setup(Buffer.from(request));
         const eventPort = response.eventPort & 0xFFFF;
+        debug('Should listen on port', eventPort);
 
         await this.#device.eventStream.setup(sharedSecret);
         await this.#device.eventStream.connect(eventPort, this.#device.host);
@@ -84,7 +84,7 @@ export default class AirPlayRTSP {
             'Client-Instance': this.#dacpId,
             'Active-Remote': this.#activeRemote
         });
-        // console.log('feedback', feedback, await feedback.text());
+        debug('feedback', feedback, await feedback.text());
     }
 
     async record(): Promise<void> {

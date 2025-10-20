@@ -26,7 +26,8 @@ export default class AirPlayPairing {
         this.#start();
 
         await this.#client.write('POST', '/pair-pin-start', null, {
-            'X-Apple-HKP': '3'
+            'X-Apple-HKP': '3',
+            'X-Apple-Client-Name': this.#deviceName
         });
 
         const m1 = await this.#m1(3);
@@ -47,7 +48,8 @@ export default class AirPlayPairing {
         this.#start();
 
         await this.#client.write('POST', '/pair-pin-start', null, {
-            'X-Apple-HKP': '4'
+            'X-Apple-HKP': '4',
+            'X-Apple-Client-Name': this.#deviceName
         });
 
         const m1 = await this.#m1(4, [[TlvValue.Flags, TlvFlags.TransientPairing]]);

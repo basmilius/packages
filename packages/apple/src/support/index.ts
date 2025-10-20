@@ -1,3 +1,5 @@
+import { styleText } from 'node:util';
+
 export {
     v4 as uuid
 } from 'uuid';
@@ -57,3 +59,14 @@ export {
     State as TlvState,
     Value as TlvValue
 } from './tlv8';
+
+export function debug(...data: any[]): void {
+    console.debug(styleText('cyan', '[debug]'), ...data);
+}
+
+export function logArrayBuffer(buffer: ArrayBuffer): void {
+    const decoder = new TextDecoder();
+    const decoded = decoder.decode(buffer);
+
+    console.log('decoded array buffer', decoded);
+}

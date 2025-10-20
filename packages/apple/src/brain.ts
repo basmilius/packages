@@ -12,8 +12,8 @@ const PAIRED_ACCESSORIES = {
 
     SLAAPKAMER: {
         fqdn: {
-            airplay: 'Slaapkamer._airplay._tcp.local',
-            companionLink: 'Slaapkamer._companion-link._tcp.local'
+            airplay: 'Slaapkamer (2)._airplay._tcp.local',
+            companionLink: 'Slaapkamer (2)._companion-link._tcp.local'
         },
         identifier: '4681BDFE-937D-48BF-97BF-E7F06D486238',
         longTermPublicKey: '8425791eb25637ed57e10173e9eeab12a74f8cc7fafac288f71d067c152ec540',
@@ -24,8 +24,8 @@ const PAIRED_ACCESSORIES = {
 
     WOONKAMER: {
         fqdn: {
-            airplay: 'Woonkamer HomePod._airplay._tcp.local',
-            companionLink: 'Woonkamer HomePod._companion-link._tcp.local'
+            airplay: 'Woonkamer HomePod (3)._airplay._tcp.local',
+            companionLink: 'Woonkamer HomePod (3)._companion-link._tcp.local'
         },
         identifier: '0AE43785-AB47-4365-B750-63E71F943143',
         longTermPublicKey: '27a7748dbada78ac28f2415955994a24e07761a00bbd0c81d68fcb973636026e',
@@ -47,4 +47,4 @@ const PAIRED_ACCESSORIES = {
     }
 } as const;
 
-export const ACCESSORY = PAIRED_ACCESSORIES.SLAAPKAMER;
+export const ACCESSORY = PAIRED_ACCESSORIES.WOONKAMER;

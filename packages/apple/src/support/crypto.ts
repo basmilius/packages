@@ -1,5 +1,4 @@
-import { randomBytes, randomInt } from 'node:crypto';
-import { default as _hkdf } from 'futoin-hkdf';
+import { hkdfSync, randomBytes, randomInt } from 'node:crypto';
 import tweetnacl, { BoxKeyPair } from 'tweetnacl';
 
 export function generateCurve25519KeyPair(): BoxKeyPair {
@@ -19,11 +18,7 @@ export function generateDacpId(): string {
 }
 
 export function hkdf(options: HKDFOptions): Buffer {
-    return _hkdf(options.key, options.length, {
-        hash: options.hash,
-        salt: options.salt,
-        info: options.info
-    });
+    return Buffer.from(hkdfSync(options.hash, options.key, options.salt, options.info, options.length));
 }
 
 
