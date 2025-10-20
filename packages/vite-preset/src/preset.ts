@@ -19,7 +19,7 @@ type Options = {
     readonly tsconfigPath?: string;
 };
 
-const presets = (options: Options): Plugin => {
+const preset = (options: Options): Plugin => {
     function generateScopedName(name: string): string {
         if (name.startsWith('i__const_')) {
             name = name.substring(9);
@@ -95,8 +95,8 @@ const presets = (options: Options): Plugin => {
 };
 
 export default (options: Options = {}): Plugin[] => [
-    patchCssModules(),
-    presets(options),
+    patchCssModules() as unknown as Plugin,
+    preset(options),
 
     options.isLibrary && libAssets({
         limit: 0,
