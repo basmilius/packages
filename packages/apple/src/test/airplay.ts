@@ -36,6 +36,13 @@ async function pair(device: AirPlayDevice): Promise<void> {
     if (transientPairing) {
         const credentials = await device.pairing.startTransientPairing();
 
+        // console.log({
+        //     pairingId: credentials.pairingId.toString(),
+        //     sharedSecret: credentials.sharedSecret.toString('hex'),
+        //     accessoryToControllerKey: credentials.accessoryToControllerKey.toString('hex'),
+        //     controllerToAccessoryKey: credentials.controllerToAccessoryKey.toString('hex')
+        // });
+
         device.client.enableEncryption(
             credentials.accessoryToControllerKey,
             credentials.controllerToAccessoryKey
@@ -52,7 +59,7 @@ async function pair(device: AirPlayDevice): Promise<void> {
         // await device.rtsp.setVolume(25);
         // await device.rtsp.getVolume();
 
-        console.log('Done.');
+        console.log('Bye.');
     } else {
         const credentials = await device.pairing.startPinPairing(async () => await prompt('Enter PIN'));
 

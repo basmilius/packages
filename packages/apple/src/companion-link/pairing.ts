@@ -1,6 +1,6 @@
 import { SRP, SrpClient } from 'fast-srp-hap';
 import { AIRPLAY_TRANSIENT_PIN } from '@/const';
-import { bailTlv, decodeTlv, decryptChacha20, encodeOPack, encodeTlv, encryptChacha20, hkdf, TlvMethod, TlvState, TlvValue } from '@/support';
+import { bailTlv, decodeTlv, decryptChacha20, encodeOPack, encodeTlv, encryptChacha20, hkdf, TlvFlags, TlvMethod, TlvState, TlvValue } from '@/support';
 import { FrameType } from './protocol';
 import tweetnacl from 'tweetnacl';
 import type CompanionLinkDevice from './device';
@@ -46,7 +46,7 @@ export default class CompanionLinkPairing {
     }
 
     async transient(): Promise<M6> {
-        const m1 = await this.#m1();
+        const m1 = await this.#m1([[TlvValue.Flags, TlvFlags.TransientPairing]]);
         const m2 = await this.#m2(m1.publicKey, m1.salt);
         const m3 = await this.#m3(m2.publicKey, m2.proof);
         const m4 = await this.#m4(m3.serverProof);
@@ -60,11 +60,12 @@ export default class CompanionLinkPairing {
         return m6;
     }
 
-    async #m1(): Promise<M1> {
+    async #m1(additionalTlv: [number, number | Buffer][] = []): Promise<M1> {
         const [, response] = await this.#socket.send(FrameType.PS_Start, {
             _pd: encodeTlv([
                 [TlvValue.Method, TlvMethod.PairSetup],
-                [TlvValue.State, TlvState.M1]
+                [TlvValue.State, TlvState.M1],
+                ...additionalTlv
             ]),
             _pwTy: 1
         });

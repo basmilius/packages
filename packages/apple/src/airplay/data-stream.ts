@@ -12,7 +12,7 @@ export default class AirPlayDataStream extends AirPlayHttpClient {
             hash: 'sha512',
             key: Buffer.concat([sharedSecret, Buffer.from(seed.toString())]),
             length: 32,
-            salt: Buffer.from('DataStream-Salt'),
+            salt: Buffer.from(`DataStream-Salt${seed}`),
             info: Buffer.from('DataStream-Read-Encryption-Key')
         });
 
@@ -20,7 +20,7 @@ export default class AirPlayDataStream extends AirPlayHttpClient {
             hash: 'sha512',
             key: Buffer.concat([sharedSecret, Buffer.from(seed.toString())]),
             length: 32,
-            salt: Buffer.from('DataStream-Salt'),
+            salt: Buffer.from(`DataStream-Salt${seed}`),
             info: Buffer.from('DataStream-Write-Encryption-Key')
         });
 

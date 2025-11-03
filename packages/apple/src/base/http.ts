@@ -184,7 +184,13 @@ export default class BaseHttpClient {
 
         console.debug(styleText('cyanBright', '⮕'), method, path /*data.toString('hex')*/);
 
-        return await this.writeRaw(data);
+        return await this.writeRaw(data)
+            .catch(err => {
+                console.log({method, path, body, headers});
+                console.error(err);
+
+                throw err;
+            });
     }
 
     async writeRaw(data: Buffer): Promise<Response> {

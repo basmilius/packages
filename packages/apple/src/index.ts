@@ -10,7 +10,7 @@ async function run(): Promise<void> {
             break;
 
         case 'companion-link':
-            await runCompanionLink('pair');
+            await runCompanionLink('verify');
             break;
     }
 }

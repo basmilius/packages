@@ -16,7 +16,7 @@ export default class AirPlayRTSP {
 
         this.#activeRemote = generateActiveRemote().toString();
         this.#dacpId = generateDacpId();
-        this.#sessionId = generateActiveRemote().toString();
+        this.#sessionId = '14511846595692938970'; // generateActiveRemote().toString();
         this.#sessionUUID = uuid();
     }
 
@@ -63,7 +63,7 @@ export default class AirPlayRTSP {
             timingProtocol: 'None',
             model: 'iPhone10,6',
             deviceID: pairingId.toString(),
-            osVersion: '18.4.0',
+            osVersion: '14.7.1',
             osBuildVersion: '18G82',
             macAddress: getMacAddress(),
             sessionUUID: this.#sessionUUID,
@@ -84,7 +84,7 @@ export default class AirPlayRTSP {
             'Client-Instance': this.#dacpId,
             'Active-Remote': this.#activeRemote
         });
-        debug('feedback', feedback, await feedback.text());
+        // debug('feedback', feedback, await feedback.text());
     }
 
     async record(): Promise<void> {

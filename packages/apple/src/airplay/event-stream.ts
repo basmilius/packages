@@ -2,6 +2,7 @@ import type { Request } from '@/base/http';
 import { hkdf, parseBinaryPlist } from '@/support';
 import type AirPlayDevice from './device';
 import AirPlayHttpClient from './http';
+import * as buffer from 'node:buffer';
 
 export default class AirPlayEventStream extends AirPlayHttpClient {
     constructor(device: AirPlayDevice) {
@@ -40,11 +41,11 @@ export default class AirPlayEventStream extends AirPlayHttpClient {
 
         switch (id) {
             case 'POST /command':
-                // const buf = Buffer.from(request.body.toString());
-                //
-                // console.log(parseBinaryPlist(
-                //     buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength)
-                // ));
+                const buf = new Uint8Array(request.body);
+
+                console.log(parseBinaryPlist(
+                    buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength)
+                ));
 
                 const lines = [];
                 lines.push(`RTSP/1.0 200 OK`);

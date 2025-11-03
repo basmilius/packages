@@ -34,7 +34,8 @@ export async function run(mode: 'pair' | 'verify'): Promise<void> {
 
 async function pair(device: CompanionLinkDevice): Promise<void> {
     await device.pairing.start();
-    const credentials = await device.pairing.pin(async () => await prompt('Enter PIN'));
+    // const credentials = await device.pairing.pin(async () => await prompt('Enter PIN'));
+    const credentials = await device.pairing.transient();
 
     console.log({
         identifier: credentials.accessoryIdentifier,

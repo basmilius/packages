@@ -29,7 +29,7 @@ const PAIRED_ACCESSORIES = {
         },
         identifier: '0AE43785-AB47-4365-B750-63E71F943143',
         longTermPublicKey: '27a7748dbada78ac28f2415955994a24e07761a00bbd0c81d68fcb973636026e',
-        pairingId: '38:42:0B:EC:B3:67',
+        pairingId: '7E:EE:A5:18:06:AA',
         privateKey: '97e4538a39839eaa38352e735d291beba64ee7ce474277a37a5c3d10c800a868df927401f2703a3b48b33be427ee59f647b71e84c4a6b0316391c87313356f6d',
         publicKey: 'df927401f2703a3b48b33be427ee59f647b71e84c4a6b0316391c87313356f6d'
     },
