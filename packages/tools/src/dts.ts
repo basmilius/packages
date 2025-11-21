@@ -25,7 +25,7 @@ export default function (): BunPlugin {
                 if (args.path.startsWith(rootPath) && !visited.has(args.path)) {
                     visited.add(args.path);
 
-                    const {code} = isolatedDeclaration(
+                    const {code} = await isolatedDeclaration(
                         args.path,
                         await file(args.path).text()
                     );
