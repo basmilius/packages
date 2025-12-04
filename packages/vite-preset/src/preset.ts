@@ -14,6 +14,7 @@ type Options = {
         readonly classNames?: 'mangled' | 'camel' | 'kebab';
         readonly generateScopedName?: (name: string, filename: string, css: string) => string;
     };
+    readonly assetFileNames?: string;
     readonly fileNames?: 'hashes' | 'actual';
     readonly isLibrary?: boolean;
     readonly tsconfigPath?: string;
@@ -100,7 +101,7 @@ export default (options: Options = {}): Plugin[] => [
 
     options.isLibrary && libAssets({
         limit: 0,
-        name: '[contenthash:8].[ext]'
+        name: options.assetFileNames ?? '[contenthash:8].[ext]'
     }),
 
     options.isLibrary && libDts({
