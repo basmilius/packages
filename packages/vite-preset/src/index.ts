@@ -5,6 +5,8 @@ import composeLibrary from './composeLibrary';
 import preset from './preset';
 
 export {
+    advancedAppChunk,
+    advancedLibraryChunk,
     closeBundle,
     composeLibrary,
     preset
