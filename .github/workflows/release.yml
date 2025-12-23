@@ -33,6 +33,7 @@ jobs:
                     # bun pm version --cwd packages/utils ${{ env.RELEASE_VERSION }} --no-git-tag-version
                     # bun pm version --cwd packages/vite-preset ${{ env.RELEASE_VERSION }} --no-git-tag-version
                     # bun pm version --cwd packages/http-client ${{ env.RELEASE_VERSION }} --no-git-tag-version
+                    # bun pm version --cwd packages/worker ${{ env.RELEASE_VERSION }} --no-git-tag-version
 
             -   name: 📦️ Install dependencies
                 run: bun install --frozen-lockfile
@@ -43,6 +44,7 @@ jobs:
                     bun --cwd packages/utils build
                     bun --cwd packages/vite-preset build
                     bun --cwd packages/http-client build
+                    bun --cwd packages/worker build
 
             -   name: 🚀 Publish v${{ env.RELEASE_VERSION }}
                 run: |
@@ -50,5 +52,6 @@ jobs:
                     bun publish --cwd packages/utils --access public
                     bun publish --cwd packages/vite-preset --access public
                     bun publish --cwd packages/http-client --access public
+                    bun publish --cwd packages/worker --access public
                 env:
                     NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
