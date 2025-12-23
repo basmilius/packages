@@ -3,10 +3,6 @@ import type { Routes, Worker } from './types';
 import { error } from './response';
 
 export {
-    cloudflare
-} from '@cloudflare/vite-plugin';
-
-export {
     InvalidValueError,
     MissingParameterError,
     NotFoundError

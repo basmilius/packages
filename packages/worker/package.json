@@ -49,7 +49,6 @@
     },
     "devDependencies": {
         "@basmilius/tools": "workspace:*",
-        "@cloudflare/vite-plugin": "^1.19.0",
         "@types/bun": "^1.3.5",
         "@types/cloudflare": "^3.0.0",
         "@types/luxon": "^3.7.1"
