@@ -4,16 +4,16 @@
 
 ---
 
-# `@basmilius/utils`
+# `@basmilius/worker`
 
-Various utilities that are commonly used throughout personal Vue-related projects.
+Various utilities that are commonly used throughout personal Cloudflare Worker-related projects.
 
 ## ⭐️ Prerequisites
 
-- Bun >= 1.2.11
+- Bun >= 1.3.0
 - Node >= 23
 
 ## 🚀 Getting started
 
 1. Run `bun install` in the root of the project.
-2. Run `bun --cwd packages/utils build` to build the project.
+2. Run `bun --cwd packages/worker build` to build the project.
