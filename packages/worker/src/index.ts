@@ -19,8 +19,8 @@ export {
     json
 } from './response';
 
-export const createWorker = (routes: Routes): Worker => ({
-    async fetch(req: Request): Promise<Response> {
+export const createWorker = <TBindings = unknown>(routes: Routes<TBindings>): Worker<TBindings> => ({
+    async fetch(req: Request, bindings: TBindings): Promise<Response> {
         const {pathname} = new URL(req.url);
 
         if (!routes[pathname]) {
@@ -29,7 +29,7 @@ export const createWorker = (routes: Routes): Worker => ({
 
         const route = routes[pathname];
 
-        return route(req).catch(err => {
+        return route(req, bindings).catch(err => {
             if (err instanceof InvalidValueError) {
                 return error(406, 'invalid_value', err.message, 406);
             }

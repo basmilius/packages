@@ -1,9 +1,9 @@
-export type Worker = {
-    fetch(req: Request): Promise<Response>;
+export type Worker<TBindings = unknown> = {
+    fetch(req: Request, bindings: TBindings): Promise<Response>;
 };
 
-export type Route = (req: Request) => Promise<Response>;
-export type Routes = Record<string, Route>;
+export type Route<TBindings = unknown> = (req: Request, bindings?: TBindings) => Promise<Response>;
+export type Routes<TBindings = unknown> = Record<string, Route<TBindings>>;
 
 export type Coords = {
     readonly latitude: number;
