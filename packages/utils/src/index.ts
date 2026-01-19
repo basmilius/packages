@@ -54,3 +54,9 @@ export const CROSS = '✘' as const;
 export const MDASH = '—' as const;
 export const NDASH = '–' as const;
 export const NOOP: Function = () => void 0;
+
+export {
+    createPinia,
+    getActivePinia,
+    setActivePinia
+} from 'pinia';
