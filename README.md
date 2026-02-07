@@ -14,11 +14,11 @@ This repository contains the source code for various node / bun packages that I 
 - Utils is available under `@basmilius/utils`.
 - Vite preset is available under `@basmilius/vite-preset`.
 - HTTP client is available under `@basmilius/http-client`.
+- Cloudflare worker primitives is available under `@basmilius/worker`.
 
 ## ⭐️ Prerequisites
 
-- Node.js >= 23
-- Bun >= 1.2.11
+- Bun >= 1.3.8
 
 ## 🚀 Getting started
 
