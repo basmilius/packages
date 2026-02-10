@@ -2,12 +2,13 @@ name: 🚀 Release packages
 
 on:
     release:
-        types: [ released ]
+        types: [ prereleased, released ]
 
 env:
     RELEASE_VERSION: ${{ github.event.release.tag_name }}
 
 permissions:
+    contents: read
     id-token: write
 
 jobs:
@@ -20,6 +21,11 @@ jobs:
 
             -   name: 🍞 Setup Bun
                 uses: oven-sh/setup-bun@v2
+
+            -   uses: actions/setup-node@v4
+                with:
+                    node-version: '25'
+                    registry-url: 'https://registry.npmjs.org'
 
             -   name: ✏️ Tag v${{ env.RELEASE_VERSION }}
                 run: |
@@ -46,12 +52,20 @@ jobs:
                     bun --cwd packages/http-client build
                     bun --cwd packages/worker build
 
-            -   name: 🚀 Publish v${{ env.RELEASE_VERSION }}
+            -   name: 🚀 Publish v${{ env.RELEASE_VERSION }} (Pre-release)
+                if: github.event.release.prerelease
                 run: |
-                    bun publish --cwd packages/tools --access public
-                    bun publish --cwd packages/utils --access public
-                    bun publish --cwd packages/vite-preset --access public
-                    bun publish --cwd packages/http-client --access public
-                    bun publish --cwd packages/worker --access public
-                env:
-                    NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
+                    (cd packages/tools && npm publish --access public)
+                    (cd packages/utils && npm publish --access public)
+                    (cd packages/vite-preset && npm publish --access public)
+                    (cd packages/http-client && npm publish --access public)
+                    (cd packages/worker && npm publish --access public)
+
+            -   name: 🚀 Publish v${{ env.RELEASE_VERSION }}
+                if: github.event.release.prerelease
+                run: |
+                    (cd packages/tools && npm publish --access public --tag next)
+                    (cd packages/utils && npm publish --access public --tag next)
+                    (cd packages/vite-preset && npm publish --access public --tag next)
+                    (cd packages/http-client && npm publish --access public --tag next)
+                    (cd packages/worker && npm publish --access public --tag next)
