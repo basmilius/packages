@@ -46,7 +46,8 @@ export default class QueryString {
     }
 
     #add(fn: ((name: string, value: string) => void), name: string, value: QueryStringValue): QueryString {
-        if (!value && value !== false) {
+        // Skip null and undefined values, but allow false and 0
+        if (value === null || value === undefined) {
             return this;
         }
 

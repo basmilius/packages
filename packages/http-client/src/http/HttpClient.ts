@@ -20,6 +20,14 @@ export default class HttpClient {
     readonly #dataField: boolean;
 
     constructor(authToken: string | null, baseUrl: string, dataField: boolean = false) {
+        // Validate baseUrl
+        if (!baseUrl || typeof baseUrl !== 'string') {
+            throw new Error('HttpClient: baseUrl must be a non-empty string');
+        }
+
+        // Ensure baseUrl doesn't end with a slash for consistency
+        baseUrl = baseUrl.replace(/\/$/, '');
+
         this.#authToken = authToken;
         this.#baseUrl = baseUrl;
         this.#dataField = dataField;

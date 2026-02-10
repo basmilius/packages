@@ -196,7 +196,32 @@ export default class RequestBuilder {
             path += `?${this.query.build()}`;
         }
 
-        return await fetch(this.client.baseUrl + path, this.options);
+        try {
+            const response = await fetch(this.client.baseUrl + path, this.options);
+
+            // Clean up abort controller after successful request
+            if (this.#autoCancelIdentifier !== null && this.#autoCancelIdentifier in abortControllers) {
+                delete abortControllers[this.#autoCancelIdentifier];
+            }
+
+            return response;
+        } catch (error) {
+            // Clean up abort controller on error
+            if (this.#autoCancelIdentifier !== null && this.#autoCancelIdentifier in abortControllers) {
+                delete abortControllers[this.#autoCancelIdentifier];
+            }
+
+            // Wrap network errors (timeout, DNS failure, etc.) in RequestError
+            if (error instanceof RequestAbortedError) {
+                throw error;
+            }
+            throw new RequestError(
+                -1,
+                'network_error',
+                error instanceof Error ? error.message : 'Network request failed',
+                0 as HttpStatusCode
+            );
+        }
     }
 
     async #executeSafe<TResult>(): Promise<BaseResponse<TResult>> {
@@ -210,7 +235,8 @@ export default class RequestBuilder {
             return new BaseResponse(null, response);
         }
 
-        if (response.headers.has('content-type') && response.headers.get('content-type').startsWith('application/json')) {
+        const contentType = response.headers.get('content-type');
+        if (contentType?.startsWith('application/json')) {
             const data = await response.json();
 
             if ('code' in data && 'error' in data && 'error_description' in data) {

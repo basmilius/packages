@@ -6,12 +6,29 @@ import type { HttpStatusCode } from '../type';
 @adapter
 export class HttpAdapter {
     public static parsePaginatedAdapter<T>(response: object, adapterMethod: (item: object) => T): Paginated<T> {
+        // Type guard checks
+        if (!('items' in response) || !Array.isArray(response.items)) {
+            throw new Error('Invalid paginated response: missing or invalid items array');
+        }
+        if (!('page' in response) || typeof response.page !== 'number') {
+            throw new Error('Invalid paginated response: missing or invalid page number');
+        }
+        if (!('page_size' in response) || typeof response.page_size !== 'number') {
+            throw new Error('Invalid paginated response: missing or invalid page_size');
+        }
+        if (!('pages' in response) || typeof response.pages !== 'number') {
+            throw new Error('Invalid paginated response: missing or invalid pages count');
+        }
+        if (!('total' in response) || typeof response.total !== 'number') {
+            throw new Error('Invalid paginated response: missing or invalid total count');
+        }
+
         return new Paginated<T>(
-            response['items'].map(adapterMethod),
-            response['page'],
-            response['page_size'],
-            response['pages'],
-            response['total']
+            response.items.map(adapterMethod),
+            response.page,
+            response.page_size,
+            response.pages,
+            response.total
         );
     }
 
@@ -37,31 +54,55 @@ export class HttpAdapter {
     }
 
     public static parseRequestError(response: object, statusCode: HttpStatusCode): RequestError {
+        // Type guard checks
+        if (!('code' in response) || typeof response.code !== 'number') {
+            throw new Error('Invalid error response: missing or invalid code');
+        }
+        if (!('error' in response) || typeof response.error !== 'string') {
+            throw new Error('Invalid error response: missing or invalid error');
+        }
+        if (!('error_description' in response) || typeof response.error_description !== 'string') {
+            throw new Error('Invalid error response: missing or invalid error_description');
+        }
+
         return new RequestError(
-            response['code'],
-            response['error'],
-            response['error_description'],
+            response.code,
+            response.error,
+            response.error_description,
             statusCode
         );
     }
 
     public static parseValidationError(response: object): ValidationError {
-        let errors: Record<string, ValidationError>;
+        // Type guard checks
+        if (!('code' in response) || typeof response.code !== 'number') {
+            throw new Error('Invalid validation error response: missing or invalid code');
+        }
+        if (!('error' in response) || typeof response.error !== 'string') {
+            throw new Error('Invalid validation error response: missing or invalid error');
+        }
+        if (!('error_description' in response) || typeof response.error_description !== 'string') {
+            throw new Error('Invalid validation error response: missing or invalid error_description');
+        }
 
-        if (response['errors']) {
+        let errors: Record<string, ValidationError> | undefined;
+
+        if ('errors' in response && response.errors) {
             errors = {};
 
-            Object.entries(response['errors']).forEach(([key, value]) => {
-                errors[key] = HttpAdapter.parseValidationError(value as object);
+            Object.entries(response.errors).forEach(([key, value]) => {
+                errors![key] = HttpAdapter.parseValidationError(value as object);
             });
         }
 
+        const params = ('params' in response) ? response.params : undefined;
+
         return new ValidationError(
-            response['code'],
-            response['error'],
-            response['error_description'],
+            response.code,
+            response.error,
+            response.error_description,
             errors,
-            response['params']
+            params as string[] | undefined
         );
     }
 }
