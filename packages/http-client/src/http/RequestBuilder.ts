@@ -47,12 +47,37 @@ export default class RequestBuilder {
         this.#path = path;
     }
 
+    /**
+     * Enables automatic cancellation of previous requests with the same identifier.
+     * When a new request is made with the same identifier, the previous one is aborted.
+     * 
+     * @param identifier - A unique symbol to identify this request group.
+     * @returns This RequestBuilder for method chaining.
+     * 
+     * @example
+     * ```typescript
+     * const searchSymbol = Symbol('search');
+     * builder.autoCancel(searchSymbol).run();
+     * ```
+     */
     public autoCancel(identifier: symbol): RequestBuilder {
         this.#autoCancelIdentifier = identifier;
 
         return this;
     }
 
+    /**
+     * Sets the Bearer token for authentication.
+     * If no token is provided, uses the token from the HttpClient instance.
+     * 
+     * @param token - Optional Bearer token. If null/undefined, removes the Authorization header.
+     * @returns This RequestBuilder for method chaining.
+     * 
+     * @example
+     * ```typescript
+     * builder.bearerToken('my-access-token').run();
+     * ```
+     */
     public bearerToken(token?: string | null): RequestBuilder {
         const actualToken = token ?? this.#client.authToken;
 
@@ -67,6 +92,25 @@ export default class RequestBuilder {
         return this;
     }
 
+    /**
+     * Sets the request body. Automatically handles JSON serialization and FormData.
+     * 
+     * @param body - The request body. Can be BodyInit, FormData, or a plain object/array.
+     * @param contentType - The Content-Type header. Default is 'application/octet-stream'.
+     *                      Set to null to let the browser set it (useful for FormData).
+     * @returns This RequestBuilder for method chaining.
+     * 
+     * @example
+     * ```typescript
+     * // JSON body
+     * builder.body({ name: 'John' }).run();
+     * 
+     * // FormData
+     * const formData = new FormData();
+     * formData.append('file', file);
+     * builder.body(formData).run();
+     * ```
+     */
     public body(body: BodyInit | FormData | object | null, contentType: string | null = 'application/octet-stream'): RequestBuilder {
         if (body instanceof FormData) {
             // note: this allows browsers to set formdata with their custom boundary.
@@ -85,6 +129,18 @@ export default class RequestBuilder {
         return this;
     }
 
+    /**
+     * Sets a request header.
+     * 
+     * @param name - The header name (e.g., 'Content-Type', 'Authorization').
+     * @param value - The header value.
+     * @returns This RequestBuilder for method chaining.
+     * 
+     * @example
+     * ```typescript
+     * builder.header('X-Custom-Header', 'value').run();
+     * ```
+     */
     public header(name: string, value: string): RequestBuilder {
         this.#options.headers = this.#options.headers || {};
         (this.#options.headers as Record<string, string>)[name] = value;
@@ -92,18 +148,56 @@ export default class RequestBuilder {
         return this;
     }
 
+    /**
+     * Sets the HTTP method.
+     * 
+     * @param method - The HTTP method (GET, POST, PUT, DELETE, etc.).
+     * @returns This RequestBuilder for method chaining.
+     * 
+     * @example
+     * ```typescript
+     * builder.method('POST').body({ data: 'test' }).run();
+     * ```
+     */
     public method(method: HttpMethod): RequestBuilder {
         this.#options.method = method.toUpperCase();
 
         return this;
     }
 
+    /**
+     * Sets the query string parameters.
+     * 
+     * @param queryString - A QueryString instance with the query parameters.
+     * @returns This RequestBuilder for method chaining.
+     * 
+     * @example
+     * ```typescript
+     * const qs = QueryString.builder()
+     *   .append('page', 1)
+     *   .append('limit', 10);
+     * builder.queryString(qs).run();
+     * ```
+     */
     public queryString(queryString: QueryString): RequestBuilder {
         this.#query = queryString;
 
         return this;
     }
 
+    /**
+     * Sets an abort signal for the request.
+     * 
+     * @param signal - An AbortSignal to cancel the request, or null to remove.
+     * @returns This RequestBuilder for method chaining.
+     * 
+     * @example
+     * ```typescript
+     * const controller = new AbortController();
+     * builder.signal(controller.signal).run();
+     * // Later: controller.abort();
+     * ```
+     */
     public signal(signal: AbortSignal | null = null): RequestBuilder {
         this.#options.signal = signal;
 
