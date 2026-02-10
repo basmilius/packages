@@ -53,7 +53,7 @@ jobs:
                     bun --cwd packages/worker build
 
             -   name: 🚀 Publish v${{ env.RELEASE_VERSION }} (Pre-release)
-                if: github.event.release.prerelease
+                if: ${{ github.event.release.prerelease }}
                 run: |
                     (cd packages/tools && npm publish --access public)
                     (cd packages/utils && npm publish --access public)
@@ -62,7 +62,7 @@ jobs:
                     (cd packages/worker && npm publish --access public)
 
             -   name: 🚀 Publish v${{ env.RELEASE_VERSION }}
-                if: github.event.release.prerelease
+                if: ${{ !github.event.release.prerelease }}
                 run: |
                     (cd packages/tools && npm publish --access public --tag next)
                     (cd packages/utils && npm publish --access public --tag next)
