@@ -55,17 +55,17 @@ jobs:
             -   name: 🚀 Publish v${{ env.RELEASE_VERSION }} (Pre-release)
                 if: ${{ github.event.release.prerelease }}
                 run: |
-                    (cd packages/tools && npm publish --access public)
-                    (cd packages/utils && npm publish --access public)
-                    (cd packages/vite-preset && npm publish --access public)
-                    (cd packages/http-client && npm publish --access public)
-                    (cd packages/worker && npm publish --access public)
-
-            -   name: 🚀 Publish v${{ env.RELEASE_VERSION }}
-                if: ${{ !github.event.release.prerelease }}
-                run: |
                     (cd packages/tools && npm publish --access public --tag next)
                     (cd packages/utils && npm publish --access public --tag next)
                     (cd packages/vite-preset && npm publish --access public --tag next)
                     (cd packages/http-client && npm publish --access public --tag next)
                     (cd packages/worker && npm publish --access public --tag next)
+
+            -   name: 🚀 Publish v${{ env.RELEASE_VERSION }}
+                if: ${{ !github.event.release.prerelease }}
+                run: |
+                    (cd packages/tools && npm publish --access public)
+                    (cd packages/utils && npm publish --access public)
+                    (cd packages/vite-preset && npm publish --access public)
+                    (cd packages/http-client && npm publish --access public)
+                    (cd packages/worker && npm publish --access public)
