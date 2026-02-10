@@ -2,6 +2,11 @@ import { ENABLE_CIRCULAR_LOGGING } from '../constant';
 import type DtoInstance from '../instance';
 
 type CircularMap = WeakMap<DtoInstance<unknown>, (string | symbol)[]>;
+
+/**
+ * Symbol used as a property key on protected functions to store their circular reference tracking maps.
+ * Each function decorated with circularProtect gets its own WeakMap stored at this symbol key.
+ */
 const CIRCULAR_MAP = Symbol('circularProtectMap');
 
 /**

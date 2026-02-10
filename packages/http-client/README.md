@@ -134,6 +134,184 @@ const response = await new RequestBuilder('/users/123')
 console.log(response.data.name); // Fully typed User instance
 ```
 
+### Advanced @dto Decorator Features
+
+The `@dto` decorator provides powerful features for Vue 3 applications:
+
+#### Automatic Reactivity
+
+DTOs decorated with `@dto` automatically become reactive in Vue 3 components:
+
+```typescript
+import { dto } from '@basmilius/http-client';
+
+@dto
+class TodoItem {
+  id: number;
+  title: string;
+  completed: boolean;
+
+  constructor(id: number, title: string, completed: boolean = false) {
+    this.id = id;
+    this.title = title;
+    this.completed = completed;
+  }
+}
+
+// In a Vue component
+const todo = new TodoItem(1, 'Buy milk');
+
+// Changes are automatically tracked - Vue will re-render
+todo.completed = true;  // Triggers reactivity
+```
+
+#### Dirty Tracking
+
+DTOs track whether they've been modified, useful for optimizing API calls:
+
+```typescript
+import { isDtoDirty, markDtoClean } from '@basmilius/http-client';
+
+const user = new User(1, 'John', 'john@example.com', new Date());
+
+console.log(isDtoDirty(user)); // false (newly created)
+
+user.name = 'Jane';
+console.log(isDtoDirty(user)); // true (modified)
+
+// After saving to server
+await saveUser(user);
+markDtoClean(user); // Mark as clean again
+```
+
+#### Cloning and Filling
+
+DTOs support deep cloning and data filling:
+
+```typescript
+@dto
+class User {
+  // ... properties and constructor
+}
+
+const user1 = new User(1, 'John', 'john@example.com', new Date());
+
+// Deep clone
+const user2 = User.clone(user1);
+user2.name = 'Jane'; // Doesn't affect user1
+
+// Fill with new data
+User.fill(user1, { name: 'Bob', email: 'bob@example.com' });
+console.log(user1.name); // 'Bob'
+```
+
+#### Serialization with DateTime Support
+
+DTOs handle Luxon DateTime objects automatically:
+
+```typescript
+import { DateTime } from 'luxon';
+import { dto } from '@basmilius/http-client';
+
+@dto
+class Event {
+  id: number;
+  name: string;
+  startTime: DateTime;
+
+  constructor(id: number, name: string, startTime: DateTime) {
+    this.id = id;
+    this.name = name;
+    this.startTime = startTime;
+  }
+}
+
+const event = new Event(1, 'Meeting', DateTime.now());
+
+// Serialize to JSON (DateTime converted to ISO string)
+const json = event.toJSON();
+
+// Deserialize back (ISO string converted to DateTime)
+const restored = Event.fill(new Event(0, '', DateTime.now()), json);
+```
+
+#### Nested DTO Relationships
+
+DTOs automatically track parent-child relationships:
+
+```typescript
+@dto
+class Address {
+  street: string;
+  city: string;
+
+  constructor(street: string, city: string) {
+    this.street = street;
+    this.city = city;
+  }
+}
+
+@dto
+class User {
+  id: number;
+  name: string;
+  address: Address;
+
+  constructor(id: number, name: string, address: Address) {
+    this.id = id;
+    this.name = name;
+    this.address = address;
+  }
+}
+
+const user = new User(
+  1,
+  'John',
+  new Address('123 Main St', 'Springfield')
+);
+
+// Modifying nested DTO marks parent as dirty
+user.address.city = 'Shelbyville';
+console.log(isDtoDirty(user)); // true
+```
+
+#### Performance Characteristics
+
+The `@dto` decorator has been optimized for performance:
+
+- **Shallow comparison**: Property equality uses efficient shallow comparison instead of full JSON serialization
+- **Memory management**: Circular reference protection properly cleans up tracking data
+- **Single-pass iteration**: Array operations iterate once instead of multiple times
+- **Reference equality**: Fast path for identical object references
+
+#### Best Practices
+
+1. **Use DTOs for domain models**: Apply `@dto` to classes representing your business entities
+2. **Avoid deep nesting**: While supported, deeply nested DTOs can impact performance
+3. **Clone when needed**: Use `clone()` to create independent copies
+4. **Mark clean after save**: Call `markDtoClean()` after successfully saving to the server
+5. **Don't extend DTOs**: The decorator doesn't support inheritance - composition is preferred
+
+```typescript
+// ❌ Don't do this - inheritance not supported
+@dto
+class BaseEntity {
+  id: number;
+}
+
+@dto
+class User extends BaseEntity {  // Error!
+  name: string;
+}
+
+// ✅ Do this - use composition
+@dto
+class User {
+  id: number;
+  name: string;
+}
+```
+
 ### Paginated Responses
 
 ```typescript
