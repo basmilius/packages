@@ -5,18 +5,26 @@ import relateDtoTo from './relateDtoTo';
 
 /**
  * Creates relationships between the given value and dto.
+ * Optimized to use single-pass iteration for arrays instead of filtering twice.
  */
 export default function (dto: DtoInstance<unknown>, key: string, value: unknown): void {
     if (isDto(value)) {
         relateDtoTo(value, dto, key);
     } else if (Array.isArray(value)) {
-        if (value.some(isDto)) {
-            value
-                .filter(isDto)
-                .forEach(val => relateDtoTo(val, dto, key));
+        // Single-pass iteration: check and relate DTOs in one loop
+        // More efficient than .some() + .filter() which iterates twice
+        let hasDtos = false;
+        for (const item of value) {
+            if (isDto(item)) {
+                relateDtoTo(item, dto, key);
+                hasDtos = true;
+            }
         }
 
-        value[PARENT] = dto;
-        value[PARENT_KEY] = key;
+        // Only set parent if array contains DTOs
+        if (hasDtos) {
+            value[PARENT] = dto;
+            value[PARENT_KEY] = key;
+        }
     }
 }
