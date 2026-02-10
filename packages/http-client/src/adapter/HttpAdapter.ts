@@ -46,7 +46,8 @@ export class HttpAdapter {
             return defaultFilename;
         }
 
-        return matches[1]
+        // TypeScript strict mode: matches is guaranteed to be non-null here
+        return matches![1]
             .replaceAll('\'', '')
             .replaceAll('\"', '')
             .replaceAll('\/', '-')
@@ -95,14 +96,17 @@ export class HttpAdapter {
             });
         }
 
-        const params = ('params' in response) ? response.params : undefined;
+        let params: Record<string, string | number | boolean> | undefined;
+        if ('params' in response && response.params && typeof response.params === 'object') {
+            params = response.params as Record<string, string | number | boolean>;
+        }
 
         return new ValidationError(
             response.code,
             response.error,
             response.error_description,
             errors,
-            params as string[] | undefined
+            params
         );
     }
 }

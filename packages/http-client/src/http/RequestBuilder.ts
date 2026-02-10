@@ -53,15 +53,15 @@ export default class RequestBuilder {
         return this;
     }
 
-    public bearerToken(token?: string): RequestBuilder {
-        token = token ?? this.#client.authToken;
+    public bearerToken(token?: string | null): RequestBuilder {
+        const actualToken = token ?? this.#client.authToken;
 
-        if (token) {
-            return this.header('Authorization', `Bearer ${token}`);
+        if (actualToken) {
+            return this.header('Authorization', `Bearer ${actualToken}`);
         }
 
         if (this.#options.headers && 'Authorization' in this.#options.headers) {
-            delete this.#options.headers['Authorization'];
+            delete (this.#options.headers as Record<string, string>)['Authorization'];
         }
 
         return this;
@@ -87,7 +87,7 @@ export default class RequestBuilder {
 
     public header(name: string, value: string): RequestBuilder {
         this.#options.headers = this.#options.headers || {};
-        this.#options.headers[name] = value;
+        (this.#options.headers as Record<string, string>)[name] = value;
 
         return this;
     }
@@ -128,8 +128,9 @@ export default class RequestBuilder {
             throw new RequestError(-1, 'failed_without_info', 'Request failed without any information from the backend.', response.status as HttpStatusCode);
         }
 
-        let filename = response.headers.has('content-disposition')
-            ? HttpAdapter.parseFileNameFromContentDispositionHeader(response.headers.get('content-disposition'))
+        const contentDisposition = response.headers.get('content-disposition');
+        let filename = contentDisposition
+            ? HttpAdapter.parseFileNameFromContentDispositionHeader(contentDisposition)
             : `download-${DateTime.now().toFormat('yyyy-MM-dd HH-mm-ss')}`;
 
         return new BlobResponse(
@@ -141,33 +142,53 @@ export default class RequestBuilder {
     public async run<TResult extends {}>(): Promise<BaseResponse<TResult>> {
         const {data, response} = await this.#executeSafe<TResult>();
 
+        // In run(), we expect non-null data; throw if null
+        if (data === null) {
+            throw new RequestError(-1, 'no_data', 'Expected data in response but received null', response.status as HttpStatusCode);
+        }
+
         return new BaseResponse(data, response);
     }
 
     public async runAdapter<TResult extends {}>(adapterMethod: (item: object) => TResult): Promise<BaseResponse<TResult>> {
-        const {data, response} = await this.#executeSafe<TResult>();
+        const {data, response} = await this.#executeSafe<object>();
+
+        // In runAdapter(), we expect non-null data; throw if null
+        if (data === null) {
+            throw new RequestError(-1, 'no_data', 'Expected data in response but received null', response.status as HttpStatusCode);
+        }
 
         return new BaseResponse(adapterMethod(data), response);
     }
 
     public async runArrayAdapter<TResult extends {}>(adapterMethod: (item: object) => TResult): Promise<BaseResponse<TResult[]>> {
-        return this.runAdapter<TResult[]>((data: []) => data.map(adapterMethod));
+        return this.runAdapter<TResult[]>((data: object) => {
+            if (!Array.isArray(data)) {
+                throw new Error('Expected array data for runArrayAdapter');
+            }
+            return data.map(adapterMethod);
+        });
     }
 
-    public async runEmpty(): Promise<BaseResponse<never>> {
-        return await this.#executeSafe<never>();
+    public async runEmpty(): Promise<BaseResponse<null>> {
+        return await this.#executeSafe<null>();
     }
 
     public async runPaginatedAdapter<TResult extends {}>(adapterMethod: (item: object) => TResult): Promise<BaseResponse<Paginated<TResult>>> {
         return this.runAdapter<Paginated<TResult>>(response => HttpAdapter.parsePaginatedAdapter(response, adapterMethod));
     }
 
-    public async runData<TResult>(): Promise<BaseResponse<TResult>> {
+    public async runData<TResult>(): Promise<BaseResponse<TResult | null>> {
         return await this.#executeSafe<TResult>();
     }
 
     public async runDataKey<TResult extends object, TKey extends keyof TResult = keyof TResult>(key: TKey): Promise<BaseResponse<TResult[TKey]>> {
         const {data, response} = await this.#executeSafe<TResult>();
+
+        // In runDataKey(), we expect non-null data; throw if null
+        if (data === null) {
+            throw new RequestError(-1, 'no_data', 'Expected data in response but received null', response.status as HttpStatusCode);
+        }
 
         return new BaseResponse(data[key] as TResult[TKey], response);
     }
@@ -224,7 +245,7 @@ export default class RequestBuilder {
         }
     }
 
-    async #executeSafe<TResult>(): Promise<BaseResponse<TResult>> {
+    async #executeSafe<TResult>(): Promise<BaseResponse<TResult | null>> {
         return await this
             .#execute()
             .then(response => RequestBuilder.#handleResponse<TResult>(response, this.client.dataField));
