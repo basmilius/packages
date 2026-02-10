@@ -77,14 +77,18 @@ export class HttpAdapter {
 
         // TypeScript strict mode: matches is guaranteed to be non-null here
         // Sanitize filename: remove quotes, replace path separators and colons
-        const filename = matches![1]
+        let filename = matches![1]
             .replaceAll('\'', '')
             .replaceAll('\"', '')
-            .replaceAll('\/', '-')
-            .replaceAll('\\', '-')  // Also handle backslashes for Windows paths
-            .replaceAll('\:', '-')
-            .replaceAll('..', '-')  // Prevent directory traversal
+            .replaceAll('/', '-')        // Forward slash
+            .replaceAll('\\\\', '-')     // Backslash (properly escaped)
+            .replaceAll(':', '-')        // Colon (no need to escape)
             .trim();
+
+        // Recursively remove all '..' patterns to prevent directory traversal
+        while (filename.includes('..')) {
+            filename = filename.replaceAll('..', '-');
+        }
 
         // Additional security: ensure filename is not empty after sanitization
         return filename.length > 0 ? filename : defaultFilename;

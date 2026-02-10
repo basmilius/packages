@@ -70,12 +70,22 @@ export default class RequestBuilder {
      * Sets the Bearer token for authentication.
      * If no token is provided, uses the token from the HttpClient instance.
      * 
-     * @param token - Optional Bearer token. If null/undefined, removes the Authorization header.
+     * @param token - Optional Bearer token. Accepts both undefined and null for flexibility:
+     *                - undefined: Uses the HttpClient's authToken (default behavior)
+     *                - null: Explicitly removes the Authorization header
+     *                - string: Sets the provided token
      * @returns This RequestBuilder for method chaining.
      * 
      * @example
      * ```typescript
+     * // Use HttpClient's token
+     * builder.bearerToken().run();
+     * 
+     * // Use custom token
      * builder.bearerToken('my-access-token').run();
+     * 
+     * // Explicitly remove authorization
+     * builder.bearerToken(null).run();
      * ```
      */
     public bearerToken(token?: string | null): RequestBuilder {
