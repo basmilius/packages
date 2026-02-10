@@ -155,17 +155,15 @@ export class HttpAdapter {
             throw new Error('Invalid validation error response: missing or invalid error_description');
         }
 
-        let errors: Record<string, ValidationError> | undefined;
+        let errors: Record<string, ValidationError> = {};
 
         if ('errors' in response && response.errors) {
-            errors = {};
-
             Object.entries(response.errors).forEach(([key, value]) => {
-                errors![key] = HttpAdapter.parseValidationError(value as object);
+                errors[key] = HttpAdapter.parseValidationError(value as object);
             });
         }
 
-        let params: Record<string, string | number | boolean> | undefined;
+        let params: Record<string, string | number | boolean> = {};
         if ('params' in response && response.params && typeof response.params === 'object') {
             params = response.params as Record<string, string | number | boolean>;
         }

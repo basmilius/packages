@@ -274,16 +274,19 @@ export default class RequestBuilder {
         });
     }
 
-    public async runEmpty(): Promise<BaseResponse<null>> {
-        return await this.#executeSafe<null>();
+    public async runEmpty(): Promise<BaseResponse<never>> {
+        return await this.#executeSafe<never>() as Promise<BaseResponse<never>>;
     }
 
     public async runPaginatedAdapter<TResult extends {}>(adapterMethod: (item: object) => TResult): Promise<BaseResponse<Paginated<TResult>>> {
         return this.runAdapter<Paginated<TResult>>(response => HttpAdapter.parsePaginatedAdapter(response, adapterMethod));
     }
 
-    public async runData<TResult>(): Promise<BaseResponse<TResult | null>> {
-        return await this.#executeSafe<TResult>();
+    public async runData<TResult>(): Promise<BaseResponse<TResult>> {
+        const result = await this.#executeSafe<TResult>();
+
+        // If data is null, cast to TResult (caller's responsibility to handle null in TResult type)
+        return result as BaseResponse<TResult>;
     }
 
     public async runDataKey<TResult extends object, TKey extends keyof TResult = keyof TResult>(key: TKey): Promise<BaseResponse<TResult[TKey]>> {
@@ -340,6 +343,7 @@ export default class RequestBuilder {
             if (error instanceof RequestAbortedError) {
                 throw error;
             }
+
             throw new RequestError(
                 -1,
                 'network_error',
