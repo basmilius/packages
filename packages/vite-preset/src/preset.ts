@@ -5,7 +5,7 @@ import type { Plugin } from 'vite';
 import { searchForWorkspaceRoot } from 'vite';
 import className from 'css-class-generator';
 import libAssets from '@laynezh/vite-plugin-lib-assets';
-import libDts from 'vite-plugin-dts';
+import libDts from 'unplugin-dts/vite';
 
 const VISITED_CLASSES: string[] = [];
 
