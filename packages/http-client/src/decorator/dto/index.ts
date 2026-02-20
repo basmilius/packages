@@ -42,11 +42,21 @@ function proxy<T extends Constructor>(clazz: T): T {
     return proxied;
 }
 
+/**
+ * Validates that the decorated class is not extending another @dto decorated class.
+ * This is not supported as it would cause issues with the proxy chain.
+ * 
+ * @throws {Error} If the class extends another @dto decorated class
+ */
 function validate(clazz: Function): void {
     const parent = Object.getPrototypeOf(clazz.prototype);
 
     if (NAME in parent) {
-        throw new Error(`⛔️ @dto ${clazz.name} cannot extend parent class which is also decorated with @dto ${parent[NAME]}.`);
+        throw new Error(
+            `@dto decorator error: Class "${clazz.name}" cannot extend "${parent[NAME]}" ` +
+            `because the parent class is also decorated with @dto. ` +
+            `DTO inheritance is not supported due to proxy chain conflicts.`
+        );
     }
 }
 

@@ -47,26 +47,80 @@ export default class RequestBuilder {
         this.#path = path;
     }
 
+    /**
+     * Enables automatic cancellation of previous requests with the same identifier.
+     * When a new request is made with the same identifier, the previous one is aborted.
+     * 
+     * @param identifier - A unique symbol to identify this request group.
+     * @returns This RequestBuilder for method chaining.
+     * 
+     * @example
+     * ```typescript
+     * const searchSymbol = Symbol('search');
+     * builder.autoCancel(searchSymbol).run();
+     * ```
+     */
     public autoCancel(identifier: symbol): RequestBuilder {
         this.#autoCancelIdentifier = identifier;
 
         return this;
     }
 
-    public bearerToken(token?: string): RequestBuilder {
-        token = token ?? this.#client.authToken;
+    /**
+     * Sets the Bearer token for authentication.
+     * If no token is provided, uses the token from the HttpClient instance.
+     * 
+     * @param token - Optional Bearer token. Accepts both undefined and null for flexibility:
+     *                - undefined: Uses the HttpClient's authToken (default behavior)
+     *                - null: Explicitly removes the Authorization header
+     *                - string: Sets the provided token
+     * @returns This RequestBuilder for method chaining.
+     * 
+     * @example
+     * ```typescript
+     * // Use HttpClient's token
+     * builder.bearerToken().run();
+     * 
+     * // Use custom token
+     * builder.bearerToken('my-access-token').run();
+     * 
+     * // Explicitly remove authorization
+     * builder.bearerToken(null).run();
+     * ```
+     */
+    public bearerToken(token?: string | null): RequestBuilder {
+        const actualToken = token ?? this.#client.authToken;
 
-        if (token) {
-            return this.header('Authorization', `Bearer ${token}`);
+        if (actualToken) {
+            return this.header('Authorization', `Bearer ${actualToken}`);
         }
 
         if (this.#options.headers && 'Authorization' in this.#options.headers) {
-            delete this.#options.headers['Authorization'];
+            delete (this.#options.headers as Record<string, string>)['Authorization'];
         }
 
         return this;
     }
 
+    /**
+     * Sets the request body. Automatically handles JSON serialization and FormData.
+     * 
+     * @param body - The request body. Can be BodyInit, FormData, or a plain object/array.
+     * @param contentType - The Content-Type header. Default is 'application/octet-stream'.
+     *                      Set to null to let the browser set it (useful for FormData).
+     * @returns This RequestBuilder for method chaining.
+     * 
+     * @example
+     * ```typescript
+     * // JSON body
+     * builder.body({ name: 'John' }).run();
+     * 
+     * // FormData
+     * const formData = new FormData();
+     * formData.append('file', file);
+     * builder.body(formData).run();
+     * ```
+     */
     public body(body: BodyInit | FormData | object | null, contentType: string | null = 'application/octet-stream'): RequestBuilder {
         if (body instanceof FormData) {
             // note: this allows browsers to set formdata with their custom boundary.
@@ -85,25 +139,75 @@ export default class RequestBuilder {
         return this;
     }
 
+    /**
+     * Sets a request header.
+     * 
+     * @param name - The header name (e.g., 'Content-Type', 'Authorization').
+     * @param value - The header value.
+     * @returns This RequestBuilder for method chaining.
+     * 
+     * @example
+     * ```typescript
+     * builder.header('X-Custom-Header', 'value').run();
+     * ```
+     */
     public header(name: string, value: string): RequestBuilder {
         this.#options.headers = this.#options.headers || {};
-        this.#options.headers[name] = value;
+        (this.#options.headers as Record<string, string>)[name] = value;
 
         return this;
     }
 
+    /**
+     * Sets the HTTP method.
+     * 
+     * @param method - The HTTP method (GET, POST, PUT, DELETE, etc.).
+     * @returns This RequestBuilder for method chaining.
+     * 
+     * @example
+     * ```typescript
+     * builder.method('POST').body({ data: 'test' }).run();
+     * ```
+     */
     public method(method: HttpMethod): RequestBuilder {
         this.#options.method = method.toUpperCase();
 
         return this;
     }
 
+    /**
+     * Sets the query string parameters.
+     * 
+     * @param queryString - A QueryString instance with the query parameters.
+     * @returns This RequestBuilder for method chaining.
+     * 
+     * @example
+     * ```typescript
+     * const qs = QueryString.builder()
+     *   .append('page', 1)
+     *   .append('limit', 10);
+     * builder.queryString(qs).run();
+     * ```
+     */
     public queryString(queryString: QueryString): RequestBuilder {
         this.#query = queryString;
 
         return this;
     }
 
+    /**
+     * Sets an abort signal for the request.
+     * 
+     * @param signal - An AbortSignal to cancel the request, or null to remove.
+     * @returns This RequestBuilder for method chaining.
+     * 
+     * @example
+     * ```typescript
+     * const controller = new AbortController();
+     * builder.signal(controller.signal).run();
+     * // Later: controller.abort();
+     * ```
+     */
     public signal(signal: AbortSignal | null = null): RequestBuilder {
         this.#options.signal = signal;
 
@@ -128,8 +232,9 @@ export default class RequestBuilder {
             throw new RequestError(-1, 'failed_without_info', 'Request failed without any information from the backend.', response.status as HttpStatusCode);
         }
 
-        let filename = response.headers.has('content-disposition')
-            ? HttpAdapter.parseFileNameFromContentDispositionHeader(response.headers.get('content-disposition'))
+        const contentDisposition = response.headers.get('content-disposition');
+        let filename = contentDisposition
+            ? HttpAdapter.parseFileNameFromContentDispositionHeader(contentDisposition)
             : `download-${DateTime.now().toFormat('yyyy-MM-dd HH-mm-ss')}`;
 
         return new BlobResponse(
@@ -141,21 +246,36 @@ export default class RequestBuilder {
     public async run<TResult extends {}>(): Promise<BaseResponse<TResult>> {
         const {data, response} = await this.#executeSafe<TResult>();
 
+        // In run(), we expect non-null data; throw if null
+        if (data === null) {
+            throw new RequestError(-1, 'no_data', 'Expected data in response but received null', response.status as HttpStatusCode);
+        }
+
         return new BaseResponse(data, response);
     }
 
     public async runAdapter<TResult extends {}>(adapterMethod: (item: object) => TResult): Promise<BaseResponse<TResult>> {
-        const {data, response} = await this.#executeSafe<TResult>();
+        const {data, response} = await this.#executeSafe<object>();
+
+        // In runAdapter(), we expect non-null data; throw if null
+        if (data === null) {
+            throw new RequestError(-1, 'no_data', 'Expected data in response but received null', response.status as HttpStatusCode);
+        }
 
         return new BaseResponse(adapterMethod(data), response);
     }
 
     public async runArrayAdapter<TResult extends {}>(adapterMethod: (item: object) => TResult): Promise<BaseResponse<TResult[]>> {
-        return this.runAdapter<TResult[]>((data: []) => data.map(adapterMethod));
+        return this.runAdapter<TResult[]>((data: object) => {
+            if (!Array.isArray(data)) {
+                throw new Error('Expected array data for runArrayAdapter');
+            }
+            return data.map(adapterMethod);
+        });
     }
 
     public async runEmpty(): Promise<BaseResponse<never>> {
-        return await this.#executeSafe<never>();
+        return await this.#executeSafe<never>() as Promise<BaseResponse<never>>;
     }
 
     public async runPaginatedAdapter<TResult extends {}>(adapterMethod: (item: object) => TResult): Promise<BaseResponse<Paginated<TResult>>> {
@@ -163,11 +283,19 @@ export default class RequestBuilder {
     }
 
     public async runData<TResult>(): Promise<BaseResponse<TResult>> {
-        return await this.#executeSafe<TResult>();
+        const result = await this.#executeSafe<TResult>();
+
+        // If data is null, cast to TResult (caller's responsibility to handle null in TResult type)
+        return result as BaseResponse<TResult>;
     }
 
     public async runDataKey<TResult extends object, TKey extends keyof TResult = keyof TResult>(key: TKey): Promise<BaseResponse<TResult[TKey]>> {
         const {data, response} = await this.#executeSafe<TResult>();
+
+        // In runDataKey(), we expect non-null data; throw if null
+        if (data === null) {
+            throw new RequestError(-1, 'no_data', 'Expected data in response but received null', response.status as HttpStatusCode);
+        }
 
         return new BaseResponse(data[key] as TResult[TKey], response);
     }
@@ -196,10 +324,36 @@ export default class RequestBuilder {
             path += `?${this.query.build()}`;
         }
 
-        return await fetch(this.client.baseUrl + path, this.options);
+        try {
+            const response = await fetch(this.client.baseUrl + path, this.options);
+
+            // Clean up abort controller after successful request
+            if (this.#autoCancelIdentifier !== null && this.#autoCancelIdentifier in abortControllers) {
+                delete abortControllers[this.#autoCancelIdentifier];
+            }
+
+            return response;
+        } catch (error) {
+            // Clean up abort controller on error
+            if (this.#autoCancelIdentifier !== null && this.#autoCancelIdentifier in abortControllers) {
+                delete abortControllers[this.#autoCancelIdentifier];
+            }
+
+            // Wrap network errors (timeout, DNS failure, etc.) in RequestError
+            if (error instanceof RequestAbortedError) {
+                throw error;
+            }
+
+            throw new RequestError(
+                -1,
+                'network_error',
+                error instanceof Error ? error.message : 'Network request failed',
+                0 as HttpStatusCode
+            );
+        }
     }
 
-    async #executeSafe<TResult>(): Promise<BaseResponse<TResult>> {
+    async #executeSafe<TResult>(): Promise<BaseResponse<TResult | null>> {
         return await this
             .#execute()
             .then(response => RequestBuilder.#handleResponse<TResult>(response, this.client.dataField));
@@ -210,7 +364,8 @@ export default class RequestBuilder {
             return new BaseResponse(null, response);
         }
 
-        if (response.headers.has('content-type') && response.headers.get('content-type').startsWith('application/json')) {
+        const contentType = response.headers.get('content-type');
+        if (contentType?.startsWith('application/json')) {
             const data = await response.json();
 
             if ('code' in data && 'error' in data && 'error_description' in data) {
