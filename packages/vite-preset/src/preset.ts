@@ -5,7 +5,7 @@ import type { Plugin } from 'vite';
 import { searchForWorkspaceRoot } from 'vite';
 import className from 'css-class-generator';
 import libAssets from '@laynezh/vite-plugin-lib-assets';
-import libDts from 'unplugin-dts/vite';
+import libDts from 'vite-plugin-dts';
 
 const VISITED_CLASSES: string[] = [];
 
@@ -105,8 +105,8 @@ export default (options: Options = {}): Plugin[] => [
     }),
 
     options.isLibrary && libDts({
-        cleanVueFileName: true,
-        processor: 'vue',
+        cleanVueFileName: false,
+        copyDtsFiles: true,
         staticImport: true,
         tsconfigPath: options.tsconfigPath
     }) as unknown as Plugin
