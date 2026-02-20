@@ -105,7 +105,9 @@ export default (options: Options = {}): Plugin[] => [
     }),
 
     options.isLibrary && libDts({
-        cleanVueFileName: false,
+        cleanVueFileName: true,
+        processor: 'vue',
+        staticImport: true,
         tsconfigPath: options.tsconfigPath
     }) as unknown as Plugin
 ] satisfies Plugin[];
