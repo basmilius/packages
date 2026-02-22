@@ -12,3 +12,8 @@ export const fluxDashboard: LibraryPlugin = composeLibrary({
     name: '@flux-ui/dashboard',
     alias: '$fluxDashboard'
 });
+
+export const fluxStatistics: LibraryPlugin = composeLibrary({
+    name: '@flux-ui/statistics',
+    alias: '$fluxStatistics'
+});
