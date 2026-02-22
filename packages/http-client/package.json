@@ -19,7 +19,7 @@
         "vue 3"
     ],
     "scripts": {
-        "build": "bun -b build.ts"
+        "build": "tsgo --noEmit && bun -b build.ts"
     },
     "engines": {
         "node": ">=23"

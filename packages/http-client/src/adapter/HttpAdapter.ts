@@ -1,17 +1,17 @@
 import { DateTime } from 'luxon';
 import { adapter } from '../decorator';
 import { Paginated, RequestError, ValidationError } from '../dto';
-import type { HttpStatusCode } from '../type';
+import type { ForeignData, HttpStatusCode } from '../type';
 
 @adapter
 export class HttpAdapter {
-    public static parsePaginatedAdapter<T>(response: object, adapterMethod: (item: object) => T): Paginated<T> {
+    public static parsePaginatedAdapter<T>(response: ForeignData, adapterMethod: (item: object) => T): Paginated<T> {
         return new Paginated<T>(
-            response['items'].map(adapterMethod),
-            response['page'],
-            response['page_size'],
-            response['pages'],
-            response['total']
+            response.items.map(adapterMethod),
+            response.page,
+            response.page_size,
+            response.pages,
+            response.total
         );
     }
 
@@ -36,32 +36,32 @@ export class HttpAdapter {
             .replaceAll('\:', '-');
     }
 
-    public static parseRequestError(response: object, statusCode: HttpStatusCode): RequestError {
+    public static parseRequestError(response: ForeignData, statusCode: HttpStatusCode): RequestError {
         return new RequestError(
-            response['code'],
-            response['error'],
-            response['error_description'],
+            response.code,
+            response.error,
+            response.error_description,
             statusCode
         );
     }
 
-    public static parseValidationError(response: object): ValidationError {
+    public static parseValidationError(response: ForeignData): ValidationError {
         let errors: Record<string, ValidationError>;
 
-        if (response['errors']) {
+        if (response.errors) {
             errors = {};
 
-            Object.entries(response['errors']).forEach(([key, value]) => {
+            Object.entries(response.errors).forEach(([key, value]) => {
                 errors[key] = HttpAdapter.parseValidationError(value as object);
             });
         }
 
         return new ValidationError(
-            response['code'],
-            response['error'],
-            response['error_description'],
+            response.code,
+            response.error,
+            response.error_description,
             errors,
-            response['params']
+            response.params
         );
     }
 }

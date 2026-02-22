@@ -4,6 +4,9 @@
     "workspaces": [
         "packages/*"
     ],
+    "devDependencies": {
+        "@typescript/native-preview": "^7.0.0-dev.20260222.1"
+    },
     "overrides": {
         "@microsoft/api-extractor": "7.57.1"
     }

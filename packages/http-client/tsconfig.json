@@ -4,19 +4,18 @@
         "lib": [
             "dom",
             "dom.iterable",
-            "es2022"
+            "esnext"
         ],
         "allowJs": true,
         "skipLibCheck": true,
         "strict": false,
         "forceConsistentCasingInFileNames": true,
         "esModuleInterop": true,
-        "module": "es2022",
+        "module": "esnext",
         "moduleResolution": "bundler",
         "resolveJsonModule": false,
         "isolatedModules": true,
         "jsx": "react-jsx",
-        "baseUrl": ".",
         "rootDir": "src",
         "outDir": "dist",
         "declaration": true,

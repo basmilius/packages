@@ -72,3 +72,5 @@ export type HttpStatusCode =
     | 510 // not extended
     | 511 // network authentication required
     ;
+
+export type ForeignData = Record<string, any>;
