@@ -1,4 +1,4 @@
-import { build, clean, dts } from '@basmilius/tools';
+import { build, clean, copy, dts } from '@basmilius/tools';
 
 await build({
     entrypoints: ['src/index.ts'],
@@ -6,6 +6,7 @@ await build({
     packages: 'external',
     plugins: [
         clean('dist'),
+        copy('src/types.ts', 'dist/types.d.ts'),
         dts()
     ]
 });
