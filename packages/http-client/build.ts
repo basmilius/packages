@@ -6,7 +6,7 @@ await build({
     packages: 'external',
     plugins: [
         clean('dist'),
-        copy('src/types.ts', 'dist/types.d.ts'),
+        copy('src/type/index.ts', 'dist/type.d.ts'),
         dts()
     ]
 });
