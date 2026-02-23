@@ -33,11 +33,11 @@ const POSITION: Record<Shade, number> = {
     950: 0.98
 };
 
-function clamp(v: number, min = 0, max = 1) {
+function clamp(v: number, min = 0, max = 1): number {
     return Math.min(max, Math.max(min, v));
 }
 
-export default function (baseHex: string, prefix = 'color') {
+export default function (baseHex: string, prefix = 'color'): Record<string, string> {
     const base = toOklch(baseHex);
 
     if (!base || base.mode !== 'oklch') {
