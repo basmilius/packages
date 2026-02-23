@@ -2,6 +2,7 @@ export { default as useCopy } from './useCopy';
 export { default as useDebounced } from './useDebounced';
 export { default as useDtoForm } from './useDtoForm';
 export { default as useInterval } from './useInterval';
+export { default as useIsView } from './useIsView';
 export { default as useLoaded } from './useLoaded';
 export { default as useLoadedAction } from './useLoadedAction';
 export { default as useLocalFile } from './useLocalFile';
