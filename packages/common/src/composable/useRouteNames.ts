@@ -1,7 +1,7 @@
-import { computed } from 'vue';
+import { computed, type ComputedRef } from 'vue';
 import { useRoute } from 'vue-router';
 
-export default function () {
+export default function (): ComputedRef<string[]> {
     const route = useRoute();
 
     return computed(() => {

@@ -1,4 +1,4 @@
-import { computed, type Ref, unref } from 'vue';
+import { computed, type ComputedRef, type Ref, unref } from 'vue';
 
 type PasswordRuleType =
     | 'lowercase'
@@ -44,7 +44,7 @@ const rules: PasswordRule[] = [
     {regex: new RegExp('[!"#\$%&\'\(\)\*\+,-\./:;<=>\?@\[\\\\\\]\^_`\{|\}~]'), type: 'symbol'}
 ];
 
-export default function (passwordRef: Ref<string>) {
+export default function (passwordRef: Ref<string>): ComputedRef<Result | null> {
     return computed<Result | null>(() => {
         const password = unref(passwordRef);
 

@@ -1,10 +1,11 @@
 import { type NavigationFailure, type RouteLocationRaw, useRouter } from 'vue-router';
 
+type Result = NavigationFailure | void | undefined;
 type To = Omit<RouteLocationRaw, 'replace'>;
-type Navigate = (to: To, replace?: boolean) => Promise<NavigationFailure | void | undefined>;
+type Navigate = (to: To, replace?: boolean) => Promise<Result>;
 type Wrap = (fn: Navigate) => Navigate;
 
-export default function (...wrap: Wrap[]) {
+export default function (...wrap: Wrap[]): UseNavigate {
     const router = useRouter();
 
     let navigate = async (to: To, replace: boolean = false) => {
@@ -26,3 +27,9 @@ export default function (...wrap: Wrap[]) {
         replace: (to: To) => navigate(to, true)
     };
 }
+
+type UseNavigate = {
+    navigate(to: To, replace?: boolean): Promise<Result>;
+    push(to: To): Promise<Result>;
+    replace(to: To): Promise<Result>;
+};

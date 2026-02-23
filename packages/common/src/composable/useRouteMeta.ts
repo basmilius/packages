@@ -2,7 +2,7 @@ import { merge } from 'lodash-es';
 import { computed, type Ref } from 'vue';
 import { useRoute } from 'vue-router';
 
-type RouteMeta = {
+type RouteMeta = Record<string, unknown> & {
     readonly name?: string;
 };
 

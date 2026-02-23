@@ -1,7 +1,7 @@
-import { computed, provide, type Ref, unref } from 'vue';
-import { useRoute, viewDepthKey } from 'vue-router';
+import { computed, type ComputedRef, provide, type Ref, unref } from 'vue';
+import { type RouteLocationNormalizedLoadedGeneric, useRoute, viewDepthKey } from 'vue-router';
 
-export default function (nameRef: Ref<string> | string) {
+export default function (nameRef: Ref<string> | string): UseNamedRoute {
     const route = useRoute();
 
     const depth = computed(() => route.matched.findIndex(m => !!m.components && unref(nameRef) in m.components));
@@ -15,3 +15,8 @@ export default function (nameRef: Ref<string> | string) {
         viewKey
     };
 }
+
+type UseNamedRoute = {
+    readonly route: RouteLocationNormalizedLoadedGeneric;
+    readonly viewKey: ComputedRef<string | undefined>;
+};

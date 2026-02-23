@@ -1,6 +1,6 @@
-import { ref, watch } from 'vue';
+import { type Ref, ref, watch } from 'vue';
 
-export default function () {
+export default function (): UseLocalFile {
     const file = ref<File | null>(null);
     const url = ref<string | null>(null);
 
@@ -38,3 +38,11 @@ export default function () {
         upload: uploadFile
     };
 }
+
+type UseLocalFile = {
+    readonly file: Ref<File | null>;
+    readonly url: Ref<string | null>;
+
+    delete: () => void;
+    upload: (uploadedFile: File) => void;
+};
