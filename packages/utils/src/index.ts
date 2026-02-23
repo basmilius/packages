@@ -11,6 +11,7 @@ export { default as formatDate } from './formatDate';
 export { default as formatDateFull } from './formatDateFull';
 export { default as formatDateTime } from './formatDateTime';
 export { default as formatMonth } from './formatMonth';
+export { default as formatMonthYear } from './formatMonthYear';
 export { default as formatNumber } from './formatNumber';
 export { default as formatPercentage } from './formatPercentage';
 export { default as formatTime } from './formatTime';
