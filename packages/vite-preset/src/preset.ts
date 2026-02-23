@@ -99,15 +99,15 @@ export default (options: Options = {}): Plugin[] => [
     patchCssModules() as unknown as Plugin,
     preset(options),
 
-    options.isLibrary && libAssets({
+    (options.isLibrary && libAssets({
         limit: 0,
         name: options.assetFileNames ?? '[contenthash:8].[ext]'
-    }),
+    })) as unknown as Plugin,
 
-    options.isLibrary && libDts({
+    (options.isLibrary && libDts({
         cleanVueFileName: false,
         copyDtsFiles: true,
         staticImport: true,
         tsconfigPath: options.tsconfigPath
-    }) as unknown as Plugin
+    })) as unknown as Plugin
 ] satisfies Plugin[];

@@ -47,11 +47,13 @@ export default (options: Options): ComposePlugin => {
         }),
 
         configResolved(config): void {
-            let tsconfigPath: string;
+            let tsconfigPath: string | undefined;
 
             for (const file of TSCONFIG_FILES) {
-                if (existsSync(join(config.root, file))) {
-                    tsconfigPath = join(config.root, file);
+                const path = join(config.root, file);
+
+                if (existsSync(path)) {
+                    tsconfigPath = path;
                     break;
                 }
             }

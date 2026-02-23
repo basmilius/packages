@@ -4,7 +4,6 @@ export type Descriptors = Record<string | symbol, TypedPropertyDescriptor<unknow
 export { default as clampWithStepPrecision } from './clampWithStepPrecision';
 export { default as countDecimals } from './countDecimals';
 export { default as debounce } from './debounce';
-export { default as defineStore } from './defineStore';
 export { default as downloadBlob } from './downloadBlob';
 export { default as downloadString } from './downloadString';
 export { default as downloadUrl } from './downloadUrl';
@@ -37,8 +36,6 @@ export { default as isPointInPolygon } from './isPointInPolygon';
 export { default as isToday } from './isToday';
 export { default as mulberry32, type Mulberry32 } from './mulberry32';
 export { default as openUrl } from './openUrl';
-export { default as persistentRef } from './persistentRef';
-export { default as persistentStringRef } from './persistentStringRef';
 export { default as printHtml } from './printHtml';
 export { default as rgbToHEX } from './rgbToHEX';
 export { default as rgbToHSL } from './rgbToHSL';
@@ -54,9 +51,3 @@ export const CROSS = '✘' as const;
 export const MDASH = '—' as const;
 export const NDASH = '–' as const;
 export const NOOP: Function = () => void 0;
-
-export {
-    createPinia,
-    getActivePinia,
-    setActivePinia
-} from 'pinia';

@@ -1,10 +1,10 @@
-import { defineStore, StoreGeneric, storeToRefs } from 'pinia';
+import { defineStore, type StoreGeneric, storeToRefs } from 'pinia';
 
 export default function <Id extends string, Setup extends (...args: any[]) => any, Context = ReturnType<Setup>>(id: Id, setup: Setup): UseStore<Context> {
     const storeFn = defineStore(id, setup);
 
     return () => {
-        const store = storeFn();
+        const store: StoreGeneric = storeFn();
         const keys = Object.getOwnPropertyNames(store);
         const refs = storeToRefs(store as StoreGeneric);
         const result: Record<string, unknown> = {};

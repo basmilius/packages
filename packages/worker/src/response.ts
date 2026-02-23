@@ -6,7 +6,7 @@ export function error(code: number, error: string, errorDescription: string, sta
     }, {}, status);
 }
 
-export function json(json: object, headers: HeadersInit = {}, status: number = 200): Response {
+export function json(json: object, headers: Record<string, string> = {}, status: number = 200): Response {
     const date = new Date();
     const expires = new Date(date.getFullYear(), date.getMonth() + 1, date.getDate());
 

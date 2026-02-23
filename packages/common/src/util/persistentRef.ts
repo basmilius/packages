@@ -1,5 +1,4 @@
-import type { Ref } from 'vue';
-import { ref, watch } from 'vue';
+import { ref, type Ref, watch } from 'vue';
 
 type Deserializer<T> = (value: string) => T;
 type Serializer<T> = (value: T) => string;
