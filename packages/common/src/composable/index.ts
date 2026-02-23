@@ -1,4 +1,5 @@
 export { default as useCopy } from './useCopy';
+export { default as useDataTable } from './useDataTable';
 export { default as useDebounced } from './useDebounced';
 export { default as useDtoForm } from './useDtoForm';
 export { default as useInterval } from './useInterval';
