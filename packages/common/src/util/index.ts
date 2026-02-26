@@ -7,3 +7,4 @@ export { default as persistentRef } from './persistentRef';
 export { default as persistentStringRef } from './persistentStringRef';
 export { default as runBefore } from './runBefore';
 export { default as unrefAll } from './unrefAll';
+export { default as unwrapElement } from './unwrapElement';
