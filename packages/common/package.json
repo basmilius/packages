@@ -34,15 +34,15 @@
         "provenance": true
     },
     "scripts": {
-        "build": "tsgo --noEmit && bun -b build.ts"
+        "build": "tsgo --noEmit && tsdown"
     },
-    "main": "./dist/index.js",
-    "types": "./dist/index.d.ts",
-    "typings": "./dist/index.d.ts",
+    "main": "./dist/index.mjs",
+    "types": "./dist/index.d.mts",
+    "typings": "./dist/index.d.mts",
     "exports": {
         ".": {
-            "types": "./dist/index.d.ts",
-            "default": "./dist/index.js"
+            "types": "./dist/index.d.mts",
+            "default": "./dist/index.mjs"
         },
         "./*": "./*"
     },
@@ -50,15 +50,15 @@
         "@basmilius/http-client": "workspace:*",
         "@basmilius/utils": "workspace:*",
         "@flux-ui/components": "^3.0.0-next.26",
+        "culori": "^4.0.2",
+        "lodash-es": "^4.17.23",
         "pinia": "^3.0.4",
         "vue": "^3.6.0-beta.6",
         "vue-router": "^5.0.3"
     },
     "devDependencies": {
-        "@basmilius/tools": "workspace:*",
         "@types/culori": "^4.0.1",
         "@types/lodash-es": "^4.17.12",
-        "culori": "^4.0.2",
-        "lodash-es": "^4.17.23"
+        "tsdown": "^0.21.0-beta.2"
     }
 }

@@ -32,15 +32,15 @@
         "provenance": true
     },
     "scripts": {
-        "build": "tsgo --noEmit && bun -b build.ts"
+        "build": "tsgo --noEmit && tsdown"
     },
-    "main": "./dist/index.js",
-    "types": "./dist/index.d.ts",
-    "typings": "./dist/index.d.ts",
+    "main": "./dist/index.mjs",
+    "types": "./dist/index.d.mts",
+    "typings": "./dist/index.d.mts",
     "exports": {
         ".": {
-            "types": "./dist/index.d.ts",
-            "default": "./dist/index.js"
+            "types": "./dist/index.d.mts",
+            "default": "./dist/index.mjs"
         }
     },
     "dependencies": {
@@ -48,11 +48,11 @@
         "change-case": "^5.4.4",
         "css-class-generator": "^2.0.0",
         "lightningcss": "^1.31.1",
+        "vite": "^8.0.0-beta.15",
         "vite-css-modules": "^1.13.0",
         "vite-plugin-dts": "^4.5.4"
     },
     "devDependencies": {
-        "@basmilius/tools": "workspace:*",
-        "vite": "^8.0.0-beta.15"
+        "tsdown": "^0.21.0-beta.2"
     }
 }

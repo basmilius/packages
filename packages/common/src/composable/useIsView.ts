@@ -1,7 +1,7 @@
-import { computed, unref } from 'vue';
+import { computed, type ComputedRef, unref } from 'vue';
 import useRouteNames from './useRouteNames';
 
-export default function (name: string, loose: boolean = false) {
+export default function (name: string, loose: boolean = false): ComputedRef<boolean> {
     const names = useRouteNames();
 
     if (loose) {
