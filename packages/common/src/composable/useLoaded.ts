@@ -1,5 +1,5 @@
-import { useDebouncedRef } from '@flux-ui/internals';
 import { computed, type ComputedRef, ref, unref, watch } from 'vue';
+import useDebouncedRef from './useDebouncedRef';
 
 export default function (debounce: number = 0, initial: boolean = false): UseLoaded {
     const first = ref(initial);

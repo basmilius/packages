@@ -50,7 +50,6 @@
         "@basmilius/http-client": "workspace:*",
         "@basmilius/utils": "workspace:*",
         "@flux-ui/components": "^3.0.0-next.26",
-        "@flux-ui/internals": "^3.0.0-next.26",
         "pinia": "^3.0.4",
         "vue": "^3.6.0-beta.6",
         "vue-router": "^5.0.3"

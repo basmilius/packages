@@ -7,7 +7,6 @@ await build({
         '@basmilius/http-client',
         '@basmilius/utils',
         '@flux-ui/components',
-        '@flux-ui/internals',
         'pinia',
         'vue',
         'vue-router'
