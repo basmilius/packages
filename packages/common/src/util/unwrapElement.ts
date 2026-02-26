@@ -10,5 +10,5 @@ export default function <TElement extends EligibleElement>(elementRef: MaybeRef<
         return element;
     }
 
-    return element.$el;
+    return element?.$el;
 }
