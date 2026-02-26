@@ -44,7 +44,6 @@
         "access": "public",
         "provenance": true
     },
-    "sideEffects": false,
     "dependencies": {
         "@basmilius/utils": "workspace:*",
         "luxon": "^3.7.2",

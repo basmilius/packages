@@ -38,7 +38,6 @@
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
     "typings": "./dist/index.d.ts",
-    "sideEffects": false,
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",
@@ -47,10 +46,11 @@
         "./*": "./*"
     },
     "dependencies": {
-        "@types/luxon": "^3.7.1",
         "luxon": "^3.7.2"
     },
     "devDependencies": {
-        "@basmilius/tools": "workspace:*"
+        "@basmilius/tools": "workspace:*",
+        "@types/luxon": "^3.7.1",
+        "@types/node": "^25.3.1"
     }
 }
