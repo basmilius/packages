@@ -49,11 +49,11 @@
     "dependencies": {
         "@basmilius/http-client": "workspace:*",
         "@basmilius/utils": "workspace:*",
-        "@flux-ui/components": "^3.0.0-next.26",
+        "@flux-ui/components": "^3.0.0-next.28",
         "culori": "^4.0.2",
         "lodash-es": "^4.17.23",
         "pinia": "^3.0.4",
-        "vue": "^3.6.0-beta.6",
+        "vue": "^3.6.0-beta.7",
         "vue-router": "^5.0.3"
     },
     "devDependencies": {

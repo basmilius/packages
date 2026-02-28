@@ -213,7 +213,7 @@ export default class RequestBuilder {
         if (response.headers.has('content-type') && response.headers.get('content-type').startsWith('application/json')) {
             const data = await response.json();
 
-            if ('code' in data && 'error' in data && 'error_description' in data) {
+            if (data && typeof data === 'object' && 'code' in data && 'error' in data && 'error_description' in data) {
                 if ('errors' in data) {
                     throw HttpAdapter.parseValidationError(data);
                 }

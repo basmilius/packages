@@ -47,7 +47,7 @@
     "dependencies": {
         "@basmilius/utils": "workspace:*",
         "luxon": "^3.7.2",
-        "vue": "^3.6.0-beta.6"
+        "vue": "^3.6.0-beta.7"
     },
     "devDependencies": {
         "@types/luxon": "^3.7.1",
