@@ -5,13 +5,13 @@ import type { ForeignData, HttpStatusCode } from '../type';
 
 @adapter
 export class HttpAdapter {
-    public static parsePaginatedAdapter<T>(response: ForeignData, adapterMethod: (item: object) => T): Paginated<T> {
+    public static parsePaginatedAdapter<T>(data: ForeignData, adapterMethod: (item: object) => T): Paginated<T> {
         return new Paginated<T>(
-            response.items.map(adapterMethod),
-            response.page,
-            response.page_size,
-            response.pages,
-            response.total
+            data.items.map(adapterMethod),
+            data.page,
+            data.page_size,
+            data.pages,
+            data.total
         );
     }
 
@@ -36,32 +36,32 @@ export class HttpAdapter {
             .replaceAll('\:', '-');
     }
 
-    public static parseRequestError(response: ForeignData, statusCode: HttpStatusCode): RequestError {
+    public static parseRequestError(data: ForeignData, statusCode: HttpStatusCode): RequestError {
         return new RequestError(
-            response.code,
-            response.error,
-            response.error_description,
+            data.code,
+            data.error,
+            data.error_description,
             statusCode
         );
     }
 
-    public static parseValidationError(response: ForeignData): ValidationError {
+    public static parseValidationError(data: ForeignData): ValidationError {
         let errors: Record<string, ValidationError>;
 
-        if (response.errors) {
+        if (data.errors) {
             errors = {};
 
-            Object.entries(response.errors).forEach(([key, value]) => {
+            Object.entries(data.errors).forEach(([key, value]) => {
                 errors[key] = HttpAdapter.parseValidationError(value as object);
             });
         }
 
         return new ValidationError(
-            response.code,
-            response.error,
-            response.error_description,
+            data.code,
+            data.error,
+            data.error_description,
             errors,
-            response.params
+            data.params
         );
     }
 }

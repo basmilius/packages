@@ -1,5 +1,5 @@
 import { type Constructor, getPrototypeChain, setObjectMethod, setObjectValue } from '@basmilius/utils';
-import { OVERRIDE_CONSOLE_LOG } from './constant';
+import { OVERRIDE_CONSOLE_LOG } from './const';
 import { instance, isDto } from './helper';
 import { DTO_CLASS_MAP } from './map';
 import { DESCRIPTORS, NAME, PROPERTIES } from './symbols';

@@ -1,4 +1,4 @@
-import { ENABLE_SERIALIZATION_LOGGING } from '../constant';
+import { ENABLE_SERIALIZATION_LOGGING } from '../const';
 import { DTO_CLASS_MAP } from '../map';
 import type { SerializedDto } from './types';
 import type DtoInstance from '../instance';

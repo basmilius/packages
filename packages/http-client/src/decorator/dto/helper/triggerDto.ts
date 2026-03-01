@@ -1,4 +1,4 @@
-import { ENABLE_REACTIVE_LOGGING } from '../constant';
+import { ENABLE_REACTIVE_LOGGING } from '../const';
 import { NAME, PARENT, PARENT_KEY, TRIGGER } from '../symbols';
 import type DtoInstance from '../instance';
 import circularProtect from './circularProtect';

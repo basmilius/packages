@@ -1,4 +1,4 @@
-import { ENABLE_GET_LOGGING, ENABLE_SET_LOGGING } from './constant';
+import { ENABLE_GET_LOGGING, ENABLE_SET_LOGGING } from './const';
 import { areEqual, markDtoDirty, relateValueTo, trackDto, triggerDto, unrelateValueFrom } from './helper';
 import { DESCRIPTORS, NAME, PROPERTIES, PROXY } from './symbols';
 import arrayProxy from './arrayProxy';

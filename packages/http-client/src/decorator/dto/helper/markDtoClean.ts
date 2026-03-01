@@ -1,4 +1,4 @@
-import { ENABLE_DIRTY_LOGGING } from '../constant';
+import { ENABLE_DIRTY_LOGGING } from '../const';
 import { CHILDREN, DIRTY, NAME } from '../symbols';
 import assertDto from './assertDto';
 import circularProtect from './circularProtect';

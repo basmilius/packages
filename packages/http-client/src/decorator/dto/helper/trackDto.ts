@@ -1,4 +1,4 @@
-import { ENABLE_REACTIVE_LOGGING } from '../constant';
+import { ENABLE_REACTIVE_LOGGING } from '../const';
 import { NAME, TRACK } from '../symbols';
 import type DtoInstance from '../instance';
 

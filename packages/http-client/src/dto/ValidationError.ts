@@ -28,7 +28,7 @@ export default class ValidationError {
     readonly #errors: Record<string, ValidationError>;
     readonly #params: Record<string, string | number | boolean>;
 
-    constructor(code: number, error: string, errorDescription: string, errors?: Record<string, ValidationError>, params?: Record<string, string | number | boolean>) {
+    constructor(code: number, error: string, errorDescription: string, errors: Record<string, ValidationError>, params: Record<string, string | number | boolean>) {
         this.#code = code;
         this.#error = error;
         this.#errorDescription = errorDescription;

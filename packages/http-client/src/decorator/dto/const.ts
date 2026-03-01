@@ -5,3 +5,6 @@ export const ENABLE_GET_LOGGING = false;
 export const ENABLE_SET_LOGGING = false;
 export const ENABLE_SERIALIZATION_LOGGING = false;
 export const OVERRIDE_CONSOLE_LOG = false;
+
+export const SERIALIZED_DATETIME = 0xBF2;
+export const SERIALIZED_DTO = 0xBF1;

@@ -19,7 +19,8 @@
         "vue 3"
     ],
     "scripts": {
-        "build": "tsgo --noEmit && tsdown"
+        "build": "tsgo --noEmit && tsdown",
+        "dev": "tsdown --watch"
     },
     "engines": {
         "node": ">=23"

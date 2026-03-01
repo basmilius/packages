@@ -10,10 +10,12 @@ export default function (dto: DtoInstance<unknown>, key: string, value: unknown)
     if (isDto(value)) {
         relateDtoTo(value, dto, key);
     } else if (Array.isArray(value)) {
-        if (value.some(isDto)) {
-            value
-                .filter(isDto)
-                .forEach(val => relateDtoTo(val, dto, key));
+        for (const item of value) {
+            if (!isDto(item)) {
+                continue;
+            }
+
+            relateDtoTo(item, dto, key);
         }
 
         value[PARENT] = dto;

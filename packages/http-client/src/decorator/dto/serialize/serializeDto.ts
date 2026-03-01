@@ -1,4 +1,5 @@
 import { toRaw } from 'vue';
+import { SERIALIZED_DTO } from '../const';
 import { ARGS, NAME } from '../symbols';
 import type { SerializedDto } from './types';
 import type DtoInstance from '../instance';
@@ -12,7 +13,7 @@ export default function (obj: DtoInstance<unknown>): SerializedDto {
     const json = obj.toJSON();
 
     return [
-        0xBF1,
+        SERIALIZED_DTO,
         uuid(),
         obj[NAME],
         serializeObject(json),
