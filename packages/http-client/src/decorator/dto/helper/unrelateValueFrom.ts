@@ -10,10 +10,10 @@ export default function (dto: DtoInstance<unknown>, value: unknown): void {
     if (isDto(value)) {
         unrelateDtoFrom(value, dto);
     } else if (Array.isArray(value)) {
-        if (value.some(isDto)) {
-            value
-                .filter(isDto)
-                .forEach(val => unrelateDtoFrom(val, dto));
+        for (const item of value) {
+            if (isDto(item)) {
+                unrelateDtoFrom(item, dto);
+            }
         }
 
         value[PARENT] = undefined;

@@ -1,20 +1,22 @@
 import { isDto } from './helper';
-import { PROPERTIES } from './symbols';
 import type DtoInstance from './instance';
+import { PROPERTIES } from './symbols';
 
 /**
  * Returns the json object representation of the dto.
  */
 export default function (this: DtoInstance<unknown>): Record<string, unknown> {
-    return Object.fromEntries(
-        this[PROPERTIES].map(property => {
-            let value: unknown = Reflect.get.call(this, this, property, this);
+    const result: Record<string, unknown> = {};
 
-            if (isDto(value)) {
-                value = value.toJSON();
-            }
+    for (const property of this[PROPERTIES]) {
+        let value: unknown = this[property];
 
-            return [property, value];
-        })
-    );
+        if (isDto(value)) {
+            value = value.toJSON();
+        }
+
+        result[property] = value;
+    }
+
+    return result;
 }

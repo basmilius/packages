@@ -13,12 +13,13 @@ export default function <T>(this: DtoInstance<T>): DtoInstance<T> {
     const clazz = DTO_CLASS_MAP[instance[NAME]];
     const clone = new clazz(...instance[ARGS]);
 
-    Object.entries(this[DESCRIPTORS])
-        .filter(([, descriptor]) => !!descriptor.set)
-        .map(([name]) => name)
-        .forEach(key => clone[key] = isDto(this[key])
-            ? this[key].clone()
-            : this[key]);
+    for (const [key, descriptor] of Object.entries(this[DESCRIPTORS])) {
+        if (!descriptor.set) {
+            continue;
+        }
+
+        clone[key] = isDto(this[key]) ? this[key].clone() : this[key];
+    }
 
     return clone as DtoInstance<T>;
 }
