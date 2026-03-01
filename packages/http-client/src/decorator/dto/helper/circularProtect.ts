@@ -6,7 +6,6 @@ const CIRCULAR_MAP = Symbol();
 
 export default function <T extends (...args: any[]) => unknown>(fn: T, arg1: number = 0, arg2?: number): T {
     return function (...args: any[]): unknown {
-        const hasMap = CIRCULAR_MAP in fn;
         const map: CircularMap = fn[CIRCULAR_MAP] ??= new WeakMap();
         const primary = args[arg1];
         const secondary = arg2 !== undefined ? args[arg2] : 'self';

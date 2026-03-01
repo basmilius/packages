@@ -7,7 +7,10 @@ import type DtoInstance from '../instance';
 export default function (dto: DtoInstance<unknown>, parent: DtoInstance<unknown>): void {
     if (CHILDREN in parent) {
         const index = parent[CHILDREN].indexOf(dto);
-        parent[CHILDREN].splice(index, 1);
+
+        if (index !== -1) {
+            parent[CHILDREN].splice(index, 1);
+        }
     }
 
     dto[PARENT] = undefined;
