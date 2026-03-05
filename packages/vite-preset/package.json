@@ -53,6 +53,6 @@
         "vite-plugin-dts": "^4.5.4"
     },
     "devDependencies": {
-        "tsdown": "^0.21.0-beta.2"
+        "tsdown": "^0.21.0"
     }
 }
