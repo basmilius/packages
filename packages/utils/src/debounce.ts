@@ -1,7 +1,7 @@
 export default function <F extends ((...args: any[]) => any)>(fn: F, interval: number, $this?: object): Function {
     let resolvers: Function[] = [],
         rejecters: Function[] = [],
-        timeout: NodeJS.Timeout;
+        timeout: number;
 
     return (...args: any[]) => {
         clearTimeout(timeout);
