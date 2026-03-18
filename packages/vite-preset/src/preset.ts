@@ -7,8 +7,6 @@ import className from 'css-class-generator';
 import libAssets from '@laynezh/vite-plugin-lib-assets';
 import libDts from 'vite-plugin-dts';
 
-const VISITED_CLASSES: string[] = [];
-
 type Options = {
     readonly cssModules?: {
         readonly classNames?: 'mangled' | 'camel' | 'kebab';
@@ -21,6 +19,8 @@ type Options = {
 };
 
 const preset = (options: Options): Plugin => {
+    const visitedClasses: string[] = [];
+
     function generateScopedName(name: string): string {
         if (name.startsWith('i__const_')) {
             name = name.substring(9);
@@ -35,11 +35,11 @@ const preset = (options: Options): Plugin => {
             return kebabCase(name);
         }
 
-        if (VISITED_CLASSES.includes(name)) {
-            return className(VISITED_CLASSES.indexOf(name));
+        if (visitedClasses.includes(name)) {
+            return className(visitedClasses.indexOf(name));
         }
 
-        return className(VISITED_CLASSES.push(name) - 1);
+        return className(visitedClasses.push(name) - 1);
     }
 
     return {
@@ -95,19 +95,25 @@ const preset = (options: Options): Plugin => {
     };
 };
 
-export default (options: Options = {}): Plugin[] => [
-    patchCssModules() as unknown as Plugin,
-    preset(options),
+export default (options: Options = {}): Plugin[] => {
+    const plugins: Plugin[] = [
+        patchCssModules() as unknown as Plugin,
+        preset(options)
+    ];
 
-    (options.isLibrary && libAssets({
-        limit: 0,
-        name: options.assetFileNames ?? '[contenthash:8].[ext]'
-    })) as unknown as Plugin,
+    if (options.isLibrary) {
+        plugins.push(libAssets({
+            limit: 0,
+            name: options.assetFileNames ?? '[contenthash:8].[ext]'
+        }) as unknown as Plugin);
 
-    (options.isLibrary && libDts({
-        cleanVueFileName: false,
-        copyDtsFiles: true,
-        staticImport: true,
-        tsconfigPath: options.tsconfigPath
-    })) as unknown as Plugin
-] satisfies Plugin[];
+        plugins.push(libDts({
+            cleanVueFileName: false,
+            copyDtsFiles: true,
+            staticImport: true,
+            tsconfigPath: options.tsconfigPath
+        }) as unknown as Plugin);
+    }
+
+    return plugins;
+};

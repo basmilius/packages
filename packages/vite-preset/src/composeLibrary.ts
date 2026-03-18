@@ -8,6 +8,7 @@ type PathGenerator = (name: string) => string;
 
 type Options = {
     readonly alias: string;
+    readonly autoConfigureTsconfig?: boolean;
     readonly isolated?: boolean;
     readonly name: string;
     readonly sourcesPathGenerator?: PathGenerator;
@@ -69,6 +70,11 @@ export default (options: Options): ComposePlugin => {
             tsconfig.compilerOptions.paths ??= {};
 
             if (key in tsconfig.compilerOptions.paths) {
+                return;
+            }
+
+            if (options.autoConfigureTsconfig === false) {
+                config.logger.warn(`[${options.name}] Path alias "${key}" is missing from tsconfig. Add it manually or set autoConfigureTsconfig: true.`);
                 return;
             }
 

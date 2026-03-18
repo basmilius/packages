@@ -6,9 +6,9 @@ export default function <F extends ((...args: any[]) => any)>(fn: F, interval: n
     return (...args: any[]) => {
         clearTimeout(timeout);
 
-        timeout = setTimeout(() => {
+        timeout = setTimeout(async () => {
             try {
-                let result = fn.apply($this, args);
+                const result = await fn.apply($this, args);
                 resolvers.forEach(resolve => resolve(result));
             } catch (err) {
                 rejecters.forEach(reject => reject(err));

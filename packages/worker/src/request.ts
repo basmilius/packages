@@ -25,9 +25,10 @@ export function queryInteger(req: Request, name: string): number {
         throw new MissingParameterError(name);
     }
 
-    const value = parseInt(searchParams.get(name)!);
+    const raw = searchParams.get(name)!;
+    const value = Number(raw);
 
-    if (isNaN(value)) {
+    if (!Number.isInteger(value) || isNaN(value)) {
         throw new InvalidValueError(name);
     }
 
@@ -46,6 +47,14 @@ export function queryPosition(req: Request): Coords {
 
     if (isNaN(latitude) || isNaN(longitude)) {
         throw new InvalidValueError('latitude or longitude');
+    }
+
+    if (latitude < -90 || latitude > 90) {
+        throw new InvalidValueError('latitude');
+    }
+
+    if (longitude < -180 || longitude > 180) {
+        throw new InvalidValueError('longitude');
     }
 
     return {

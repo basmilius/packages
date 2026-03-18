@@ -49,16 +49,16 @@
     "dependencies": {
         "@basmilius/http-client": "workspace:*",
         "@basmilius/utils": "workspace:*",
-        "@flux-ui/components": "^3.0.0-next.33",
+        "@flux-ui/components": "^3.0.0-next.34",
         "culori": "^4.0.2",
         "lodash-es": "^4.17.23",
         "pinia": "^3.0.4",
-        "vue": "^3.6.0-beta.7",
+        "vue": "^3.6.0-beta.8",
         "vue-router": "^5.0.3"
     },
     "devDependencies": {
         "@types/culori": "^4.0.1",
         "@types/lodash-es": "^4.17.12",
-        "tsdown": "^0.21.3"
+        "tsdown": "^0.21.4"
     }
 }

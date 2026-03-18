@@ -1,5 +1,6 @@
 import { BaseResponse, Paginated } from '@basmilius/http-client';
 import { type ComputedRef, type MultiWatchSources, ref, type Ref, unref, watch } from 'vue';
+import { UnresolvedDependencyException } from '../error';
 import useLoaded from './useLoaded';
 import usePagination from './usePagination';
 
@@ -47,8 +48,7 @@ export default function <T>(fetcher: (offset: number, limit: number) => Promise<
             items.value = response.data.items;
             setTotal(response.data.total);
         } catch (err) {
-            if (err instanceof Error && err.message === 'Dep is null or undefined.') {
-                // In this case, the error is expected and valid. Something is probably still loading.
+            if (err instanceof UnresolvedDependencyException) {
                 return;
             }
 

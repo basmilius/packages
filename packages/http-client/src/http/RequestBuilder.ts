@@ -129,7 +129,7 @@ export default class RequestBuilder {
         }
 
         let filename = response.headers.has('content-disposition')
-            ? HttpAdapter.parseFileNameFromContentDispositionHeader(response.headers.get('content-disposition'))
+            ? HttpAdapter.parseFileNameFromContentDispositionHeader(response.headers.get('content-disposition') ?? '')
             : `download-${DateTime.now().toFormat('yyyy-MM-dd HH-mm-ss')}`;
 
         return new BlobResponse(
@@ -196,7 +196,13 @@ export default class RequestBuilder {
             path += `?${this.query.build()}`;
         }
 
-        return await fetch(this.client.baseUrl + path, this.options);
+        const response = await fetch(this.client.baseUrl + path, this.options);
+
+        if (this.#autoCancelIdentifier !== null) {
+            delete abortControllers[this.#autoCancelIdentifier];
+        }
+
+        return response;
     }
 
     async #executeSafe<TResult>(): Promise<BaseResponse<TResult>> {
@@ -210,7 +216,7 @@ export default class RequestBuilder {
             return new BaseResponse(null, response);
         }
 
-        if (response.headers.has('content-type') && response.headers.get('content-type').startsWith('application/json')) {
+        if (response.headers.has('content-type') && response.headers.get('content-type')?.startsWith('application/json')) {
             const data = await response.json();
 
             if (data && typeof data === 'object' && 'code' in data && 'error' in data && 'error_description' in data) {
