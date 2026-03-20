@@ -5,7 +5,7 @@
         "packages/*"
     ],
     "devDependencies": {
-        "@typescript/native-preview": "^7.0.0-dev.20260317.1"
+        "@typescript/native-preview": "^7.0.0-dev.20260320.1"
     },
     "overrides": {
         "@microsoft/api-extractor": "7.57.1"
