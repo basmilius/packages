@@ -11,6 +11,7 @@ type Options = {
     readonly cssModules?: {
         readonly classNames?: 'mangled' | 'camel' | 'kebab';
         readonly generateScopedName?: (name: string, filename: string, css: string) => string;
+        readonly prefix?: string;
     };
     readonly assetFileNames?: string;
     readonly fileNames?: 'hashes' | 'actual';
@@ -27,19 +28,21 @@ const preset = (options: Options): Plugin => {
             name = name.substring(0, name.length - 2);
         }
 
+        const prefix = options.cssModules?.prefix ?? '';
+
         if (options.cssModules?.classNames === 'camel') {
-            return camelCase(name);
+            return prefix + camelCase(name);
         }
 
         if (options.cssModules?.classNames === 'kebab') {
-            return kebabCase(name);
+            return prefix + kebabCase(name);
         }
 
         if (visitedClasses.includes(name)) {
-            return className(visitedClasses.indexOf(name));
+            return prefix + className(visitedClasses.indexOf(name));
         }
-
-        return className(visitedClasses.push(name) - 1);
+    
+        return prefix + className(visitedClasses.push(name) - 1);
     }
 
     return {
