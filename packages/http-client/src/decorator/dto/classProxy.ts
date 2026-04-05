@@ -46,4 +46,4 @@ export default {
 
         return new Proxy(ref, refProxy) as unknown as DtoInstance<unknown>;
     }
-} satisfies ProxyHandler<Constructor>;
+} satisfies ProxyHandler<Constructor> as ProxyHandler<Constructor>;

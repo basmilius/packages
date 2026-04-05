@@ -86,4 +86,4 @@ export default {
 
         return true;
     }
-} satisfies ProxyHandler<DtoInstance<unknown>>;
+} satisfies ProxyHandler<DtoInstance<unknown>> as ProxyHandler<DtoInstance<unknown>>;

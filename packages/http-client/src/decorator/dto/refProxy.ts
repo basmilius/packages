@@ -58,4 +58,4 @@ export default {
 
         return Reflect.set(target.value, key, value);
     }
-} satisfies ProxyHandler<Ref<DtoInstance<unknown>>>;
+} satisfies ProxyHandler<Ref<DtoInstance<unknown>>> as ProxyHandler<Ref<DtoInstance<unknown>>>;

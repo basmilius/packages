@@ -55,7 +55,7 @@ export default {
 
         return Reflect.set(target, key, value);
     }
-} satisfies ProxyHandler<unknown[]>;
+} satisfies ProxyHandler<unknown[]> as ProxyHandler<unknown[]>;
 
 /**
  * Checks if the given key should be ignored by the proxy.
