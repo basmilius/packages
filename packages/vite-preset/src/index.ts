@@ -14,6 +14,7 @@ export {
 
 export {
     flux,
+    fluxApplication,
     fluxDashboard,
     fluxStatistics
 } from './libraries';

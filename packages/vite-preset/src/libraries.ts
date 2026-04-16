@@ -8,6 +8,11 @@ export const flux: LibraryPlugin = composeLibrary({
     alias: '$flux'
 });
 
+export const fluxApplication: LibraryPlugin = composeLibrary({
+    name: '@flux-ui/application',
+    alias: '$fluxApplication'
+});
+
 export const fluxDashboard: LibraryPlugin = composeLibrary({
     name: '@flux-ui/dashboard',
     alias: '$fluxDashboard'

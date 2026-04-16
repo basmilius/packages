@@ -9,7 +9,7 @@ type PathGenerator = (name: string) => string;
 type Options = {
     readonly alias: string;
     readonly autoConfigureTsconfig?: boolean;
-    readonly isolated?: boolean;
+    readonly isolated?: false;
     readonly name: string;
     readonly sourcesPathGenerator?: PathGenerator;
     readonly tsAliasPathGenerator?: PathGenerator;
@@ -20,7 +20,7 @@ const WORKING_DIR = process.cwd();
 
 export default (options: Options): ComposePlugin => {
     const WORKSPACE_ROOT = searchForWorkspaceRoot(WORKING_DIR);
-    const WORKSPACE_NODE_MODULES = join(options.isolated ? WORKING_DIR : relative(WORKING_DIR, WORKSPACE_ROOT), 'node_modules');
+    const WORKSPACE_NODE_MODULES = join(options.isolated === false ? relative(WORKING_DIR, WORKSPACE_ROOT) : WORKING_DIR, 'node_modules');
 
     const sourcesPathGenerator = options.sourcesPathGenerator ?? (name => resolve(WORKING_DIR, `${WORKSPACE_NODE_MODULES}/${name}/src`));
     const tsAliasPathGenerator = options.tsAliasPathGenerator ?? (name => `${WORKSPACE_NODE_MODULES}/${name}/src/*`);
