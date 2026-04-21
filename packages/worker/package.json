@@ -50,6 +50,6 @@
         "@types/bun": "^1.3.12",
         "@types/cloudflare": "^3.0.0",
         "@types/luxon": "^3.7.1",
-        "tsdown": "^0.21.8"
+        "tsdown": "^0.21.9"
     }
 }

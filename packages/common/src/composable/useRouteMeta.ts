@@ -1,10 +1,6 @@
 import { merge } from 'lodash-es';
 import { computed, type Ref } from 'vue';
-import { useRoute } from 'vue-router';
-
-type RouteMeta = Record<string, unknown> & {
-    readonly name?: string;
-};
+import { useRoute, type RouteMeta } from 'vue-router';
 
 export default function (): Ref<RouteMeta> {
     const route = useRoute();

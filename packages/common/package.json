@@ -59,6 +59,6 @@
     "devDependencies": {
         "@types/culori": "^4.0.1",
         "@types/lodash-es": "^4.17.12",
-        "tsdown": "^0.21.8"
+        "tsdown": "^0.21.9"
     }
 }
