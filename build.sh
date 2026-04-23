@@ -2,5 +2,6 @@ bun --cwd packages/tools build
 bun --cwd packages/utils build
 bun --cwd packages/vite-preset build
 bun --cwd packages/http-client build
+bun --cwd packages/routing build
 bun --cwd packages/common build
 bun --cwd packages/worker build

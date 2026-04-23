@@ -1,0 +1,38 @@
+{
+    "compilerOptions": {
+        "target": "esnext",
+        "lib": [
+            "dom",
+            "dom.iterable",
+            "esnext"
+        ],
+        "allowJs": false,
+        "skipLibCheck": true,
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "esModuleInterop": true,
+        "module": "esnext",
+        "moduleResolution": "bundler",
+        "resolveJsonModule": false,
+        "isolatedDeclarations": true,
+        "isolatedModules": true,
+        "jsx": "react-jsx",
+        "rootDir": "src",
+        "outDir": "dist",
+        "declaration": true,
+        "declarationDir": "dist",
+        "declarationMap": true,
+        "emitDeclarationOnly": true,
+        "experimentalDecorators": true,
+        "verbatimModuleSyntax": true
+    },
+    "include": [
+        "src/**/*.ts",
+        "src/**/*.vue",
+        "build.ts"
+    ],
+    "exclude": [
+        "dist",
+        "node_modules"
+    ]
+}

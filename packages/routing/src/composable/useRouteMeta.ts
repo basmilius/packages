@@ -1,15 +1,17 @@
 import { merge } from 'lodash-es';
-import { computed, type Ref } from 'vue';
-import { useRoute, type RouteMeta } from 'vue-router';
+import { computed, type ComputedRef, unref } from 'vue';
+import type { RouteMeta } from 'vue-router';
+import useRoute from './useRoute';
 
-export default function (): Ref<RouteMeta> {
+export default function (): ComputedRef<RouteMeta> {
     const route = useRoute();
 
     return computed(() => {
+        const matched = unref(route).matched;
         let meta: RouteMeta = {};
 
-        for (let i = route.matched.length - 1; i >= 0; --i) {
-            const record = route.matched[i];
+        for (let i = matched.length - 1; i >= 0; --i) {
+            const record = matched[i];
 
             if (!record || typeof record.meta !== 'object') {
                 continue;
@@ -18,7 +20,7 @@ export default function (): Ref<RouteMeta> {
             let matchMeta = {...record.meta};
 
             if ('navigation' in meta) {
-                const {navigation: _, ...matchMetaWithoutNavigation} = matchMeta;
+                const {navigation: _navigation, ...matchMetaWithoutNavigation} = matchMeta;
                 matchMeta = matchMetaWithoutNavigation;
             }
 

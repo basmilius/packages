@@ -8,7 +8,7 @@ type Wrap = (fn: Navigate) => Navigate;
 export default function (...wrap: Wrap[]): UseNavigate {
     const router = useRouter();
 
-    let navigate = async (to: To, replace: boolean = false) => {
+    let navigate: Navigate = async (to: To, replace: boolean = false) => {
         if (replace) {
             return await router.replace(to);
         }
@@ -16,7 +16,7 @@ export default function (...wrap: Wrap[]): UseNavigate {
         return await router.push(to);
     };
 
-    for (let wrapper of wrap) {
+    for (const wrapper of wrap) {
         navigate = wrapper(navigate);
     }
 

@@ -1,5 +1,6 @@
 import { computed, type ComputedRef, type Ref, unref } from 'vue';
-import { type RouteComponent, useRoute } from 'vue-router';
+import type { RouteComponent } from 'vue-router';
+import useRoute from './useRoute';
 
 export default function (nameRef: Ref<string> | string): ComputedRef<RouteComponent | null> {
     const route = useRoute();
@@ -7,7 +8,7 @@ export default function (nameRef: Ref<string> | string): ComputedRef<RouteCompon
     return computed(() => {
         const name = unref(nameRef);
 
-        for (const match of route.matched) {
+        for (const match of unref(route).matched) {
             if (!match.components) {
                 continue;
             }
