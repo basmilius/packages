@@ -3,7 +3,7 @@ import { unwrapElement } from '../util';
 
 type EligibleElement = HTMLElement | ComponentPublicInstance;
 
-export default function <TElement extends EligibleElement>(elementRef: Ref<TElement>, callback: MutationCallback, options?: MutationObserverInit): void {
+export default function <TElement extends EligibleElement>(elementRef: Ref<TElement | null>, callback: MutationCallback, options?: MutationObserverInit): void {
     options ??= {
         attributes: true
     };

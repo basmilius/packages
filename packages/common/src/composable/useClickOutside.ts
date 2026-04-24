@@ -2,9 +2,10 @@ import { type ComponentPublicInstance, onMounted, onUnmounted, type Ref, ref, un
 import { unwrapElement } from '../util';
 
 type EligibleElement = HTMLElement | ComponentPublicInstance;
+type NullableRef<T> = Ref<T | null>;
 type Handler = ((evt: PointerEvent) => void) | ((evt: PointerEvent) => Promise<void>);
 
-export default function <TElement extends EligibleElement>(elementRefs: Ref<TElement> | Ref<TElement>[], enabled: boolean | Ref<boolean>, onOutsideClick: Handler): void {
+export default function <TElement extends EligibleElement>(elementRefs: NullableRef<TElement> | NullableRef<TElement>[], enabled: boolean | Ref<boolean>, onOutsideClick: Handler): void {
     const elements = ref<HTMLElement[]>([]);
 
     onMounted(() => {

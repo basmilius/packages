@@ -3,12 +3,16 @@ import { isHtmlElement } from '@basmilius/utils';
 
 type EligibleElement = HTMLElement | ComponentPublicInstance;
 
-export default function <TElement extends EligibleElement>(elementRef: MaybeRef<TElement>): HTMLElement {
+export default function <TElement extends EligibleElement>(elementRef: MaybeRef<TElement | null | undefined>): HTMLElement | null {
     const element = unref(elementRef);
+
+    if (!element) {
+        return null;
+    }
 
     if (isHtmlElement(element)) {
         return element;
     }
 
-    return element?.$el;
+    return element.$el ?? null;
 }

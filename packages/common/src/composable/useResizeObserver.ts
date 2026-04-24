@@ -3,7 +3,7 @@ import { unwrapElement } from '../util';
 
 type EligibleElement = HTMLElement | ComponentPublicInstance;
 
-export default function <TElement extends EligibleElement>(elementRef: Ref<TElement>, callback: ResizeObserverCallback, options?: ResizeObserverOptions): void {
+export default function <TElement extends EligibleElement>(elementRef: Ref<TElement | null>, callback: ResizeObserverCallback, options?: ResizeObserverOptions): void {
     options ??= {};
 
     let observer: ResizeObserver | undefined;
