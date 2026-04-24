@@ -12,12 +12,14 @@ export * from 'vue-router';
 //  vue-router symbol (e.g. `createWebHistory`, `RouteLocationRaw`) flows
 //  through unchanged. Migration is a simple import-path swap.
 export { default as createRouter } from './createRouter';
-export type { ModalConfig, RouterOptions } from './types';
+export type { ModalConfig, ModalWrapperProps, RouterOptions } from './types';
 
+export { default as ModalRouterView } from './component/ModalRouterView';
 export { default as RouterLink } from './component/RouterLink';
 export { default as RouterView } from './component/RouterView';
 
 export { default as useIsView } from './composable/useIsView';
+export { default as useModalRoute } from './composable/useModalRoute';
 export { default as useNamedRoute } from './composable/useNamedRoute';
 export { default as useNavigate } from './composable/useNavigate';
 export { default as useRoute, type UseRoute } from './composable/useRoute';

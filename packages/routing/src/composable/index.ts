@@ -1,4 +1,5 @@
 export { default as useIsView } from './useIsView';
+export { default as useModalRoute } from './useModalRoute';
 export { default as useNamedRoute } from './useNamedRoute';
 export { default as useNavigate } from './useNavigate';
 export { default as useRoute } from './useRoute';
