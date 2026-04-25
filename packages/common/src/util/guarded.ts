@@ -1,12 +1,10 @@
 import { isRequestError, isUnsanctionedRequest } from '@basmilius/http-client';
-import { showSnackbar } from '@flux-ui/components';
 import { ForbiddenException, HandledException, UnauthorizedException } from '../error';
 
 const ORIGINAL = Symbol();
 
 export default function <T extends Function>(fn: T): T;
 export default function <T extends Function>(fn: T, onError: (err: Error) => void): T;
-export default function <T extends Function>(fn: T, snackbarTitle: string, snackbarMessage: string): T;
 
 /**
  * Adds basic global error checking on the provided function. Should
@@ -21,7 +19,7 @@ export default function <T extends Function>(fn: T, snackbarTitle: string, snack
  * const _getOrder = guarded(getOrder, 'Error snackbar title', 'Error snackbar message');
  * ```
  */
-export default function <T extends Function>(fn: T, onErrorOrSnackbarTitle?: ((err: Error) => void) | string, snackbarMessage?: string): T {
+export default function <T extends Function>(fn: T, onError?: (err: Error) => void): T {
     if (isGuarded(fn)) {
         // note(Bas): Always wrap the original function, so we don't get
         //  double error handling.
@@ -40,17 +38,8 @@ export default function <T extends Function>(fn: T, onErrorOrSnackbarTitle?: ((e
                 throw new UnauthorizedException();
             }
 
-            if (onErrorOrSnackbarTitle) {
-                if (typeof onErrorOrSnackbarTitle === 'function') {
-                    onErrorOrSnackbarTitle(err as Error);
-                } else {
-                    showSnackbar({
-                        color: 'danger',
-                        icon: 'circle-exclamation',
-                        message: snackbarMessage,
-                        title: onErrorOrSnackbarTitle
-                    });
-                }
+            if (onError && typeof onError === 'function') {
+                onError(err as Error);
 
                 throw new HandledException();
             }
