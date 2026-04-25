@@ -49,6 +49,7 @@
         "@basmilius/http-client": "workspace:*",
         "@basmilius/utils": "workspace:*",
         "culori": "^4.0.2",
+        "lodash-es": "^4.18.1",
         "pinia": "^3.0.4",
         "vue": "^3.6.0-beta.10",
         "vue-router": "^5.0.6"
