@@ -19,7 +19,4 @@ declare module 'vue-router' {
     }
 }
 
-// note: This module exists solely to register module augmentations against
-//  `vue-router`. An explicit export is needed so TypeScript treats this file
-//  as a module rather than a script (required for `declare module`).
 export {};

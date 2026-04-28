@@ -38,18 +38,19 @@ const RouterLink: Component = defineComponent({
     setup(props, {slots}) {
         const router = useRouter();
 
-        const linkProps = computed(() => ({
-            to: props.to,
-            replace: props.replace
-        }));
+        // note: Pass per-field computeds (not a resolved object) so vue-
+        //  router's `useLink` tracks `props.to` / `props.replace` through
+        //  its internal `unref()` calls. Resolving via `.value` would hand
+        //  it a snapshot and `href` / `isActive` would never update on
+        //  prop changes.
+        const link = useLink({
+            to: computed(() => props.to),
+            replace: computed(() => props.replace)
+        });
 
-        const link = useLink(linkProps.value);
-
-        // note: The `modal` prop is truthy for `true` and any number
-        //  (including 0, which means "open as modal, render deepest only").
-        //  Using an explicit `=== false` check elsewhere avoids the 0
-        //  pitfall. `modalFlag()` normalises the prop into the same shape
-        //  patchRouter expects on `RouteLocationOptions.modal`.
+        // note: `modal` is truthy for `true` and any number (including 0,
+        //  which means "open as modal, deepest only"). Normalises into
+        //  the shape patchRouter expects on `RouteLocationOptions.modal`.
         function modalFlag(): boolean | number {
             return typeof props.modal === 'number' ? props.modal : props.modal === true;
         }
@@ -61,10 +62,10 @@ const RouterLink: Component = defineComponent({
         async function navigate(event?: MouseEvent): Promise<void> {
             if (isModalRequested()) {
                 if (event) {
-                    // note: Let modifier clicks / non-primary buttons fall
-                    //  through so middle-click and ctrl+click still open the
-                    //  URL in a new tab without entering modal mode. Each
-                    //  modal route must be a valid standalone page.
+                    // note: Let modifier clicks / non-primary buttons
+                    //  fall through so middle-click / ctrl+click still
+                    //  open the URL in a new tab. Modal routes must be
+                    //  valid standalone pages.
                     if (event.defaultPrevented) {
                         return;
                     }

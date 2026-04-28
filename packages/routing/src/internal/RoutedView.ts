@@ -5,11 +5,13 @@ import { isInModalKey, routeOverrideKey } from '../symbol';
 const TRUE_REF = shallowRef(true);
 const FALSE_REF = shallowRef(false);
 
-// note: Both providers override vue-router's internal `routerViewLocationKey`
-//  so any descendant `<RouterView>` renders `route` instead of the router's
-//  live currentRoute. `viewDepthKey` is reset to 0 so the first RouterView
-//  below the provider starts at matched[0]; nested RouterViews inside
-//  components increment depth as usual.
+// note: Both providers override `routerViewLocationKey` so descendant
+//  `<RouterView>`s render the supplied `route` instead of the router's
+//  live currentRoute. `viewDepthKey` is set to the index at which the
+//  inner `VueRouterView` should resume in `matched[]` — for
+//  `BackgroundProvider`, the host's own depth (so a nested host doesn't
+//  re-render its ancestors); for `ModalProvider`, the absolute matched
+//  index computed by RouterView from `ctx.depth`.
 
 export const BackgroundProvider: Component = defineComponent({
     name: 'BackgroundProvider',
@@ -17,13 +19,17 @@ export const BackgroundProvider: Component = defineComponent({
         route: {
             type: Object as PropType<RouteLocationNormalized>,
             required: true
+        },
+        viewDepth: {
+            type: Number,
+            default: 0
         }
     },
     setup(props, {slots}) {
         const routeRef = computed(() => props.route);
 
         provide(routerViewLocationKey, routeRef);
-        provide(viewDepthKey, 0);
+        provide(viewDepthKey, props.viewDepth);
         provide(routeOverrideKey, routeRef);
         provide(isInModalKey, FALSE_REF);
 
@@ -38,12 +44,10 @@ export const ModalProvider: Component = defineComponent({
             type: Object as PropType<RouteLocationNormalized>,
             required: true
         },
-        // note: Accept `depthRef` as a Ref<number> rather than a plain
-        //  number prop. Vue's runtime `h(...)` prop diffing can miss
-        //  primitive prop updates when the same component patches in a
-        //  tight cycle together with reactive route changes; passing a
-        //  ref sidesteps that because the ref identity stays stable and
-        //  `.value` changes propagate through normal reactivity.
+        // note: Ref instead of a plain number — Vue's runtime `h()` prop
+        //  diffing can miss primitive updates when patching in a tight
+        //  cycle alongside reactive route changes. Ref identity stays
+        //  stable; `.value` propagates through normal reactivity.
         depthRef: {
             type: Object as PropType<Ref<number>>,
             required: true
@@ -53,11 +57,6 @@ export const ModalProvider: Component = defineComponent({
         const routeRef = computed(() => props.route);
 
         provide(routerViewLocationKey, routeRef);
-        // note: `viewDepthKey` tells the first `<RouterView>` below this
-        //  provider at which index of `matched[]` to start rendering. We
-        //  compute this in `RouterView` (see `component/RouterView.ts`) so
-        //  the modal content skips parent records that are already rendered
-        //  by the background tree.
         provide(viewDepthKey, props.depthRef);
         provide(routeOverrideKey, routeRef);
         provide(isInModalKey, TRUE_REF);

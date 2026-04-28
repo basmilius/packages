@@ -18,18 +18,17 @@ export default function (): UseRoute {
     const raw = useVueRoute();
 
     const routeRef = computed<RouteLocationNormalizedLoaded>(() => {
-        // note: Inside a BackgroundProvider / ModalProvider subtree, use the
-        //  explicit route override provided by the parent. This is what lets
-        //  components rendered in the background tree see the background
-        //  route, and components inside the modal wrapper see the modal
-        //  route — independent of the router's live currentRoute.
+        // note: Inside a Background/ModalProvider subtree — use the
+        //  explicit override so background-tree components see the
+        //  background route and modal-wrapper components see the modal
+        //  route, independent of the router's live currentRoute.
         if (override !== null) {
             return unref(override) as RouteLocationNormalizedLoaded;
         }
 
-        // note: Outside any provider (e.g. top-level layouts), surface the
-        //  background route while a modal is open. This keeps layout-level
-        //  `:key`s and state stable when a modal opens / closes.
+        // note: Outside any provider (top-level layouts) — surface the
+        //  background route while a modal is open so layout-level
+        //  `:key`s stay stable across opens/closes.
         if (ctx !== null && unref(ctx.isModal)) {
             const bg = unref(ctx.backgroundRoute);
 
@@ -43,10 +42,10 @@ export default function (): UseRoute {
 
     const promote = ctx !== null ? ctx.promote : NOOP;
 
-    // note: A Proxy (not a Ref) so the object can be used directly in
-    //  templates without auto-unwrapping stripping our extras. All route
-    //  properties flow through `routeRef.value`, which keeps reactivity
-    //  tracking intact inside effects (templates, computeds, watchers).
+    // note: Proxy (not a Ref) so the object can be used directly in
+    //  templates without auto-unwrapping stripping our extras. All
+    //  route properties flow through `routeRef.value` to keep reactivity
+    //  tracking intact in templates, computeds, and watchers.
     return new Proxy({} as UseRoute, {
         get(_target, key) {
             if (key === 'isModal') {

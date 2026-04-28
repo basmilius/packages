@@ -5,14 +5,12 @@ export type ModalState = {
     readonly depth: number;
 };
 
-// note: Schema of the modal-related fields stored on `history.state`:
+// note: Modal fields on `history.state`:
 //   { modal: true, modalBackgroundPath: '/users', modalDepth: 0 }
-//  - `modal: true` is the source of truth for "this entry is a modal".
-//  - `modalBackgroundPath` is the fullPath of the route rendered behind
-//    the modal wrapper.
-//  - `modalDepth` is the number of parent records above the deepest matched
-//    record that should render inside the modal wrapper (default 0 = only
-//    render the deepest matched record).
+//  - `modal` flags the entry as a modal.
+//  - `modalBackgroundPath` is the fullPath rendered behind the wrapper.
+//  - `modalDepth` is the parent-record count above the deepest matched
+//    record that renders inside the wrapper (0 = deepest only).
 
 export function readModalState(): ModalState | null {
     if (typeof history === 'undefined' || !history.state) {
@@ -39,9 +37,8 @@ export function writeModalState(base: HistoryState | null, backgroundPath: strin
     const next: HistoryState = {...(base ?? {})};
 
     if (backgroundPath === null) {
-        // note: Using `null` rather than `delete` — vue-router's history
-        //  replace/push merges state, and `null` unambiguously wipes the
-        //  previous value in the merged entry.
+        // note: `null` (not `delete`) so vue-router's state-merging
+        //  unambiguously wipes the previous value.
         next.modal = null;
         next.modalBackgroundPath = null;
         next.modalDepth = null;

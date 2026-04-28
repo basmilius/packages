@@ -1,5 +1,5 @@
-import { type Component, defineComponent, Fragment, h, inject, nextTick, provide, type Ref, shallowRef, type VNodeChild, watch } from 'vue';
-import { RouterView as VueRouterView, useRoute, useRouter } from 'vue-router';
+import { type Component, defineComponent, Fragment, h, inject, nextTick, onBeforeUnmount, provide, type Ref, shallowRef, unref, type VNodeChild, watch } from 'vue';
+import { RouterView as VueRouterView, useRoute, useRouter, viewDepthKey } from 'vue-router';
 import { BackgroundProvider, ModalProvider } from '../internal/RoutedView';
 import resolveModal from '../internal/resolveModal';
 import { innerReadyKey, modalContextKey, routeOverrideKey } from '../symbol';
@@ -8,70 +8,82 @@ import type { ModalConfig } from '../types';
 const RouterView: Component = defineComponent({
     name: 'RouterView',
     inheritAttrs: false,
-    setup(_props, {attrs, slots}) {
+    props: {
+        // note: Opts this instance in as the host that renders the modal
+        //  layer on top of the background route. Exactly one `<RouterView>`
+        //  in the tree should set this; if multiple do, the first to mount
+        //  wins (others render vanilla and emit a console warning).
+        modals: {
+            type: Boolean,
+            default: false
+        }
+    },
+    setup(props, {attrs, slots}) {
         const ctx = inject(modalContextKey, null);
         const override = inject(routeOverrideKey, null);
         const route = useRoute();
         const router = useRouter();
 
-        // note: Remember the most-recently-resolved modal config. The wrapper
-        //  component (FluxOverlay / FluxSlideOver / …) stays mounted across
-        //  closes so its internal `<Transition>` can play the leave
-        //  animation; the same wrapper is reused when consecutive modals
-        //  share the same component (no remount, no animation glitch).
+        // note: Vue-router injects `viewDepthKey` from the parent
+        //  `VueRouterView` (or 0 at the top). It can be a number or a
+        //  `Ref<number>`; `unref` collapses both. Passed to
+        //  `BackgroundProvider` so the background tree resumes at the
+        //  correct matched index when this RouterView is nested.
+        const injectedViewDepth = inject(viewDepthKey, 0);
+
+        // note: Identity used to claim/release the modal host role on the
+        //  shared `modalContext`. The matching unmount release targets
+        //  exactly our claim — never a successor's.
+        const hostId = Symbol('basmilius:routing:router-view-host');
+
+        let isModalHost = false;
+
+        if (props.modals && override === null && ctx) {
+            isModalHost = ctx.claimHost(hostId);
+
+            if (!isModalHost) {
+                // eslint-disable-next-line no-console
+                console.warn(
+                    '[routing] Multiple <RouterView modals> instances detected. ' +
+                    'The first mounted instance owns the modal host role; this ' +
+                    'instance will render as a vanilla RouterView.'
+                );
+            } else {
+                onBeforeUnmount(() => ctx.releaseHost(hostId));
+            }
+        }
+
+        // note: Wrapper component (e.g. FluxOverlay) stays mounted across
+        //  modal close for its leave animation, and is reused when
+        //  consecutive modals share the same wrapper.
         const lastModal = shallowRef<ModalConfig | null>(null);
 
-        // note: Owning the modal viewDepth as a ref in our setup sidesteps
-        //  a subtle Vue runtime-`h()` quirk: when the render creates a new
-        //  ModalProvider VNode in the same tick as a reactive route change,
-        //  a plain numeric prop update can be missed. The ref identity is
-        //  stable and its `.value` propagates through normal reactivity,
-        //  so consumers of `viewDepthKey` always see the current value.
+        // note: Held as a ref because Vue's runtime `h()` can miss
+        //  primitive prop updates on `ModalProvider` when route changes
+        //  patch in the same tick. Ref identity stays stable.
         const modalDepthRef: Ref<number> = shallowRef(0);
 
-        // note: Controls whether the modal's inner `<RouterView>` is attached
-        //  to the wrapper's default slot. When a user triggers an open,
-        //  wrapper and inner would otherwise mount in the same tick — the
-        //  wrapper's internal `<Transition>` then sees content on mount and
-        //  skips the enter animation (Vue's default `appear: false`). By
-        //  holding the inner back for one tick after the wrapper is in the
-        //  tree, `<Transition>` observes "no child -> child" and plays the
-        //  enter animation.
-        //
-        //  On a hard refresh of a modal URL we intentionally keep this `true`
-        //  so both layers render together without an opening animation —
-        //  the page is arriving already-open, a transition would look wrong.
+        // note: Gates whether the modal's inner `<RouterView>` is attached.
+        //  On a user-triggered open we hold it back one tick so the
+        //  wrapper's `<Transition>` observes "no child -> child" and plays
+        //  its enter animation. On hard refresh of a modal URL we skip the
+        //  gate so the page arrives already-open without animating.
         const innerReady = shallowRef(false);
 
-        // note: Snapshot `initiallyOpen` at setup time. `modalContext` flips
-        //  it back to `false` the moment the background route resolves, so
-        //  reading it from the watcher below is already too late. The
-        //  snapshot stays stable for the component's lifetime and tells us
-        //  "this mount started from a modal URL", regardless of whether the
-        //  background chunks loaded synchronously or asynchronously.
+        // note: Snapshot at setup — `modalContext` flips `initiallyOpen`
+        //  back to `false` once the background route resolves, which is
+        //  too early to read from the watcher below.
         const wasInitiallyOpen = ctx?.initiallyOpen.value ?? false;
 
-        // note: Tracks whether we've ever observed an active modal. Combined
-        //  with `wasInitiallyOpen`, this lets us distinguish the pageload
-        //  path (first activation, arrived open) from the user-triggered
-        //  path (first activation, opened mid-session) and from repeated
-        //  opens (N-th activation, always animates).
         let hasSeenActiveModal = false;
 
-        // note: Expose `innerReady` to descendants so `ModalRouterView`
-        //  instances inside consumer wrapper templates honour the same
-        //  one-tick delay as the fallback slot. Without this a consumer
-        //  that swaps `<slot/>` for `<ModalRouterView v-slot>` would
-        //  mount their own `VueRouterView` in the same tick as the
-        //  wrapper, defeating the enter animation fix.
+        // note: Exposed so `ModalRouterView` inside consumer wrapper
+        //  templates honours the same one-tick delay as the fallback slot.
         provide(innerReadyKey, innerReady);
 
-        if (ctx) {
+        if (ctx && isModalHost) {
             watch(() => ctx.backgroundRoute.value !== null, async (isOpen) => {
                 if (!isOpen) {
-                    // note: Modal closed (or never opened). Drop the inner so
-                    //  a subsequent open is observed as "no child -> child"
-                    //  by the wrapper's `<Transition>`.
                     innerReady.value = false;
 
                     return;
@@ -80,19 +92,16 @@ const RouterView: Component = defineComponent({
                 const isFirstActivation = !hasSeenActiveModal;
                 hasSeenActiveModal = true;
 
+                // note: Pageload of a modal URL — wrapper and inner mount
+                //  together without a transition.
                 if (isFirstActivation && wasInitiallyOpen) {
-                    // note: Pageload path — wrapper and inner mount together,
-                    //  no transition. Matches user expectation that a direct
-                    //  URL load of a modal shouldn't animate open.
                     innerReady.value = true;
 
                     return;
                 }
 
-                // note: User-triggered open. Let the wrapper render first
-                //  with an empty slot so its `<Transition>` registers the
-                //  "no child" state, then attach the inner on the next tick
-                //  so the transition observes the change and animates in.
+                // note: User-triggered open — wrapper renders first with
+                //  an empty slot, inner attaches next tick to animate in.
                 innerReady.value = false;
                 await nextTick();
                 innerReady.value = true;
@@ -100,32 +109,29 @@ const RouterView: Component = defineComponent({
         }
 
         return (): VNodeChild => {
-            // note: Inside a BackgroundProvider / ModalProvider subtree, a
-            //  parent `<RouterView>` already injected the override. Behave
-            //  as a vanilla RouterView so we don't recurse into another
+            // note: Already inside a BackgroundProvider / ModalProvider
+            //  subtree — render vanilla so we don't recurse into another
             //  background/modal split.
             if (override !== null) {
                 return h(VueRouterView, attrs, slots);
             }
 
-            // note: No modal context installed -> vanilla. Library consumers
-            //  that install the router via `app.use(router)` always get a
-            //  context, so this branch mostly guards against misuse.
             if (!ctx) {
                 return h(VueRouterView, attrs, slots);
             }
 
-            const isOpen = ctx.isModal.value;
-            const backgroundRoute = ctx.backgroundRoute.value;
-            const modalActive = isOpen && backgroundRoute !== null;
+            // note: Only the instance that claimed the host role renders
+            //  modals. All others fall through to vanilla.
+            if (!isModalHost) {
+                return h(VueRouterView, attrs, slots);
+            }
 
-            // note: Resolve the wrapper inline instead of via a watcher.
-            //  A watcher with `immediate: true` fires during setup when
-            //  `route` is still `START_LOCATION` (matched is empty), and
-            //  `resolveModal` can't find the per-route `meta.modal` yet.
-            //  Resolving here guarantees the current render already sees
-            //  the correct wrapper once the async initial navigation
-            //  completes and `route.matched` populates.
+            const backgroundRoute = ctx.backgroundRoute.value;
+            const modalActive = ctx.isModal.value && backgroundRoute !== null;
+
+            // note: Resolve inline (not via watcher) — at setup the route
+            //  is `START_LOCATION` with empty `matched`, so a watcher with
+            //  `immediate: true` would miss the per-route `meta.modal`.
             if (modalActive) {
                 const resolved = resolveModal(route, ctx.defaultModal);
 
@@ -136,58 +142,29 @@ const RouterView: Component = defineComponent({
 
             const wrapperConfig = lastModal.value;
 
-            // note: Modal has never been active AND there's no wrapper to
-            //  keep mounted -> vanilla RouterView. This is the normal path
-            //  for routes that aren't part of any modal flow.
+            // note: Never been a modal here -> plain RouterView.
             if (!modalActive && !wrapperConfig) {
                 return h(VueRouterView, attrs, slots);
             }
 
-            // note: Background tree renders either the stored background
-            //  route (modal currently open) or the actual current route
-            //  (modal closed, wrapper lingering for its leave animation).
-            //  Routing this way keeps layout-level `useRoute()` stable when
-            //  a modal opens/closes.
+            // note: Background renders the stored route while open; the
+            //  current route while closed (wrapper lingering for leave
+            //  animation). Keeps layout-level `useRoute()` stable.
             const bgRoute = modalActive ? backgroundRoute : route;
 
-            // note: `ctx.depth` is the user-supplied parent count (how
-            //  many matched records above the deepest should render
-            //  inside the modal wrapper). Translate to `viewDepthKey`:
-            //    depth 0 -> start at matched[length - 1] (deepest only)
-            //    depth 1 -> start at matched[length - 2] (one parent)
-            //    depth N -> start at matched[length - 1 - N]
+            // note: `ctx.depth` is the user-supplied parent count. Translate
+            //  to an absolute `matched[]` index:
+            //    depth 0 -> matched[length - 1] (deepest only)
+            //    depth N -> matched[length - 1 - N]
             const parentCount = ctx.depth.value;
             const viewDepth = Math.max(0, route.matched.length - 1 - parentCount);
 
             modalDepthRef.value = viewDepth;
 
-            // eslint-disable-next-line no-console
-            console.log('[routing] RouterView render', {
-                routePath: route.fullPath,
-                routeMatched: route.matched.map(m => ({name: m.name, path: m.path})),
-                routeMatchedLength: route.matched.length,
-                parentCount,
-                viewDepth,
-                modalDepthRefValue: modalDepthRef.value,
-                modalActive,
-                bgPath: backgroundRoute?.fullPath
-            });
-
-            // note: `ModalProvider` wraps the wrapper component (not the
-            //  other way around) so the provide/inject chain goes:
-            //    ModalProvider -> Wrapper (FluxOverlay/FluxSlideOver) -> VueRouterView
-            //  The wrapper itself uses Teleport internally; putting the
-            //  provider outside means the teleported content still inherits
-            //  the provider's context.
-            //
-            //  Modal content is only rendered while a modal is active AND
-            //  `innerReady` has been flipped on. The `innerReady` gate
-            //  defers the first attachment by one tick on user-triggered
-            //  opens so the wrapper's `<Transition>` sees "no child ->
-            //  child" and plays the enter animation. When closed, the
-            //  slot is `undefined` which lets `createDialogRenderer`
-            //  (FluxOverlay/FluxSlideOver) see an empty slot and play its
-            //  leave transition.
+            // note: ModalProvider wraps the wrapper component so the
+            //  wrapper's internal Teleport still inherits the provider
+            //  context. Inner is `undefined` while closed or gated, so
+            //  the wrapper's `<Transition>` observes an empty slot.
             const modalInner = modalActive && innerReady.value
                 ? h(VueRouterView)
                 : undefined;
@@ -195,40 +172,14 @@ const RouterView: Component = defineComponent({
             const wrappedModalInner = wrapperConfig
                 ? h(wrapperConfig.component, {
                     ...(wrapperConfig.props ?? {}),
-                    // note: Runtime-supplied props are written after the
-                    //  user-configured spread so consumers cannot
-                    //  accidentally shadow them via `meta.modal.props`.
-                    //
-                    //  `modalRoute` gives the wrapper direct access to
-                    //  the route driving the modal (handy for script
-                    //  logic, transition keys, headings, etc.).
-                    //
-                    //  `modalActive` is the logical open/close flag —
-                    //  true from the start of opening through the
-                    //  beginning of closing. Useful for script-level
-                    //  state (disable inputs on close, etc.) but NOT
-                    //  for gating the inner `<ModalRouterView>` on a
-                    //  user-triggered open: the first render has
-                    //  `modalActive: true` in the same tick as the
-                    //  wrapper mount, which would make the wrapper's
-                    //  `<Transition>` see content at mount time and
-                    //  skip the enter animation.
-                    //
-                    //  `modalReady` is the v-if flag consumers should
-                    //  use. It's the AND of `modalActive` and the
-                    //  internal one-tick gate, so it stays `false` for
-                    //  exactly the render where the wrapper mounts —
-                    //  giving the wrapper's `<Transition>` an empty
-                    //  slot on mount and then the content one tick
-                    //  later, which is what makes the enter animation
-                    //  play.
+                    // note: Runtime props after the spread so consumers
+                    //  can't shadow them via `meta.modal.props`. Use
+                    //  `modalReady` (not `modalActive`) to v-if the
+                    //  inner `<ModalRouterView>` — `modalActive` is true
+                    //  at mount and would skip the enter animation.
                     modalRoute: route,
                     modalActive,
                     modalReady: modalActive && innerReady.value,
-                    // note: FluxOverlay / FluxSlideOver and dialog-like
-                    //  wrappers emit `close`. We hook into it so their
-                    //  own close affordance (backdrop click, escape,
-                    //  close button) navigates back automatically.
                     onClose: (): void => {
                         router.back();
                     }
@@ -241,8 +192,10 @@ const RouterView: Component = defineComponent({
                 default: (): VNodeChild => wrappedModalInner
             });
 
+            const hostViewDepth = unref(injectedViewDepth);
+
             return h(Fragment, [
-                h(BackgroundProvider, {route: bgRoute}, {
+                h(BackgroundProvider, {route: bgRoute, viewDepth: hostViewDepth}, {
                     default: (): VNodeChild => h(VueRouterView, attrs, slots)
                 }),
                 modalLayer
