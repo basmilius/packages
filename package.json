@@ -2,10 +2,19 @@
     "name": "basmilius-packages",
     "private": true,
     "workspaces": [
-        "packages/*"
+        "packages/*",
+        "docs"
     ],
+    "scripts": {
+        "build": "./build.sh",
+        "docs:dev": "bun --cwd docs dev",
+        "docs:build": "bun --cwd docs build",
+        "docs:preview": "bun --cwd docs preview",
+        "docs:deploy": "wrangler deploy"
+    },
     "devDependencies": {
-        "@typescript/native-preview": "^7.0.0-dev.20260428.1"
+        "@typescript/native-preview": "^7.0.0-dev.20260428.1",
+        "wrangler": "^4.69.0"
     },
     "overrides": {
         "@microsoft/api-extractor": "7.57.1"

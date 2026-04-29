@@ -1,0 +1,58 @@
+{
+    "compilerOptions": {
+        "target": "esnext",
+        "module": "esnext",
+        "moduleResolution": "bundler",
+        "strict": true,
+        "skipLibCheck": true,
+        "esModuleInterop": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "jsx": "preserve",
+        "lib": [
+            "esnext",
+            "dom"
+        ],
+        "experimentalDecorators": true,
+        "useDefineForClassFields": true,
+        "allowSyntheticDefaultImports": true,
+        "paths": {
+            "@basmilius/common": [
+                "../packages/common/src/index.ts"
+            ],
+            "@basmilius/http-client": [
+                "../packages/http-client/src/index.ts"
+            ],
+            "@basmilius/routing": [
+                "../packages/routing/src/index.ts"
+            ],
+            "@basmilius/utils": [
+                "../packages/utils/src/index.ts"
+            ],
+            "@basmilius/tools": [
+                "../packages/tools/src/index.ts"
+            ],
+            "@basmilius/vite-preset": [
+                "../packages/vite-preset/src/index.ts"
+            ],
+            "@basmilius/worker": [
+                "../packages/worker/src/index.ts"
+            ]
+        }
+    },
+    "include": [
+        "./.vitepress/**/*.ts",
+        "./.vitepress/**/*.vue",
+        "./code/**/*.ts",
+        "./code/**/*.vue"
+    ],
+    "exclude": [
+        "node_modules",
+        ".vitepress/dist",
+        ".vitepress/cache"
+    ],
+    "vueCompilerOptions": {
+        "target": 3.5,
+        "strictTemplates": false
+    }
+}

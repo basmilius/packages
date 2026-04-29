@@ -1,0 +1,31 @@
+{
+    "name": "@basmilius/docs",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vitepress dev",
+        "build": "vitepress build",
+        "preview": "vitepress preview"
+    },
+    "dependencies": {
+        "@basmilius/common": "workspace:*",
+        "@basmilius/http-client": "workspace:*",
+        "@basmilius/routing": "workspace:*",
+        "@basmilius/tools": "workspace:*",
+        "@basmilius/utils": "workspace:*",
+        "@basmilius/vite-preset": "workspace:*",
+        "@basmilius/worker": "workspace:*"
+    },
+    "devDependencies": {
+        "@types/luxon": "^3.7.1",
+        "@types/node": "^25.6.0",
+        "luxon": "^3.7.2",
+        "pinia": "^3.0.4",
+        "vitepress": "^1.6.3",
+        "vitepress-plugin-example": "^1.4.0",
+        "vitepress-plugin-group-icons": "^1.7.5",
+        "vitepress-plugin-render": "^1.4.0",
+        "vue": "^3.6.0-beta.10",
+        "vue-router": "^5.0.6"
+    }
+}
