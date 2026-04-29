@@ -40,6 +40,7 @@ jobs:
                     # bun pm version --cwd packages/vite-preset ${{ env.RELEASE_VERSION }} --no-git-tag-version
                     # bun pm version --cwd packages/http-client ${{ env.RELEASE_VERSION }} --no-git-tag-version
                     # bun pm version --cwd packages/common ${{ env.RELEASE_VERSION }} --no-git-tag-version
+                    # bun pm version --cwd packages/routing ${{ env.RELEASE_VERSION }} --no-git-tag-version
                     # bun pm version --cwd packages/worker ${{ env.RELEASE_VERSION }} --no-git-tag-version
 
             -   name: 📦️ Install dependencies
@@ -52,6 +53,7 @@ jobs:
                     bun --cwd packages/vite-preset build
                     bun --cwd packages/http-client build
                     bun --cwd packages/common build
+                    bun --cwd packages/routing build
                     bun --cwd packages/worker build
 
             -   name: 🚀 Publish v${{ env.RELEASE_VERSION }} (Pre-release)
@@ -62,6 +64,7 @@ jobs:
                     (cd packages/vite-preset && npm publish --access public --tag next)
                     (cd packages/http-client && npm publish --access public --tag next)
                     (cd packages/common && npm publish --access public --tag next)
+                    (cd packages/routing && npm publish --access public --tag next)
                     (cd packages/worker && npm publish --access public --tag next)
 
             -   name: 🚀 Publish v${{ env.RELEASE_VERSION }}
@@ -72,4 +75,5 @@ jobs:
                     (cd packages/vite-preset && npm publish --access public)
                     (cd packages/http-client && npm publish --access public)
                     (cd packages/common && npm publish --access public)
+                    (cd packages/routing && npm publish --access public)
                     (cd packages/worker && npm publish --access public)
