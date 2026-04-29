@@ -11,6 +11,7 @@ type Options = {
     readonly autoConfigureTsconfig?: boolean;
     readonly isolated?: false;
     readonly name: string;
+    readonly peerDependencies?: readonly string[];
     readonly sourcesPathGenerator?: PathGenerator;
     readonly tsAliasPathGenerator?: PathGenerator;
 };
@@ -32,7 +33,8 @@ export default (options: Options): ComposePlugin => {
 
         config: (): UserConfig => ({
             optimizeDeps: {
-                exclude: [options.name]
+                exclude: [options.name],
+                include: options.peerDependencies ? [...options.peerDependencies] : undefined
             },
             resolve: {
                 alias: {
