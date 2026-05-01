@@ -5,7 +5,7 @@ type LibraryPlugin = () => Plugin;
 
 export const flux: LibraryPlugin = composeLibrary({
     name: '@flux-ui/components',
-    alias: '~flux',
+    alias: '~flux/components',
     peerDependencies: ['luxon', 'vue']
 });
 

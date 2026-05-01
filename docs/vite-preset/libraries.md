@@ -16,7 +16,7 @@ import { flux, fluxApplication, fluxDashboard, fluxStatistics } from '@basmilius
 
 | Factory           | Package name              | Alias                |
 |-------------------|---------------------------|----------------------|
-| `flux`            | `@flux-ui/components`     | `~flux`              |
+| `flux`            | `@flux-ui/components`     | `~flux/components`   |
 | `fluxApplication` | `@flux-ui/application`    | `~flux/application`  |
 | `fluxDashboard`   | `@flux-ui/dashboard`      | `~flux/dashboard`    |
 | `fluxStatistics`  | `@flux-ui/statistics`     | `~flux/statistics`   |
@@ -36,7 +36,7 @@ export default defineConfig({
 });
 ```
 
-After the first run the host `tsconfig.json` will gain `paths` entries for `~flux/*`, `~flux/application/*`, and so on, so you can `import '~flux/button'` directly. The unified `~flux/*` namespace places `@flux-ui/components` as the default, with the other Flux packages mounted under sub-paths.
+After the first run the host `tsconfig.json` will gain `paths` entries for `~flux/components/*`, `~flux/application/*`, and so on. The unified `~flux/*` namespace mounts each Flux package under its own sub-path, so `import '~flux/components/button'` and `import '~flux/application/menu'` are symmetric.
 
 ## Roll your own
 
