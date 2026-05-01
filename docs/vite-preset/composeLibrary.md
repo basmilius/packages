@@ -55,7 +55,7 @@ After the first `vite dev`/`vite build` the host `tsconfig.json` will gain:
 | Option                       | Type                                            | Description                                                                                     |
 |------------------------------|-------------------------------------------------|-------------------------------------------------------------------------------------------------|
 | `name`                       | `string`                                        | The npm package name to alias. Required.                                                        |
-| `alias`                      | `string`                                        | A short alias such as `$flux`. The plugin aliases both `name` and `name/*` and `alias` and `alias/*`. Required. |
+| `alias`                      | `string`                                        | A short alias such as `~flux`. The plugin aliases both `name` and `name/*` and `alias` and `alias/*`. Required. |
 | `autoConfigureTsconfig`      | `boolean`                                       | When `false`, only logs a warning instead of writing to `tsconfig.json`. Default: `true`.       |
 | `isolated`                   | `false`                                         | Set to `false` to resolve the package via the workspace root `node_modules` (Bun's isolated linker). |
 | `sourcesPathGenerator`       | `(name) => string`                              | Override how the absolute source path is computed.                                              |

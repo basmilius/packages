@@ -16,10 +16,10 @@ import { flux, fluxApplication, fluxDashboard, fluxStatistics } from '@basmilius
 
 | Factory           | Package name              | Alias                |
 |-------------------|---------------------------|----------------------|
-| `flux`            | `@flux-ui/components`     | `$flux`              |
-| `fluxApplication` | `@flux-ui/application`    | `$fluxApplication`   |
-| `fluxDashboard`   | `@flux-ui/dashboard`      | `$fluxDashboard`     |
-| `fluxStatistics`  | `@flux-ui/statistics`     | `$fluxStatistics`    |
+| `flux`            | `@flux-ui/components`     | `~flux`              |
+| `fluxApplication` | `@flux-ui/application`    | `~flux/application`  |
+| `fluxDashboard`   | `@flux-ui/dashboard`      | `~flux/dashboard`    |
+| `fluxStatistics`  | `@flux-ui/statistics`     | `~flux/statistics`   |
 
 ## Usage
 
@@ -36,7 +36,7 @@ export default defineConfig({
 });
 ```
 
-After the first run the host `tsconfig.json` will gain `paths` entries for `$flux/*`, `$fluxApplication/*`, and so on, so you can `import '$flux/button'` directly.
+After the first run the host `tsconfig.json` will gain `paths` entries for `~flux/*`, `~flux/application/*`, and so on, so you can `import '~flux/button'` directly. The unified `~flux/*` namespace places `@flux-ui/components` as the default, with the other Flux packages mounted under sub-paths.
 
 ## Roll your own
 
@@ -47,7 +47,7 @@ import { composeLibrary } from '@basmilius/vite-preset';
 
 export const myLibrary = composeLibrary({
     name: '@my-org/library',
-    alias: '$myLib'
+    alias: '~myLib'
 });
 ```
 
