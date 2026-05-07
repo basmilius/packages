@@ -15,3 +15,5 @@ export { default as usePagination } from './usePagination';
 export { default as usePasswordStrength } from './usePasswordStrength';
 export { default as useResizeObserver } from './useResizeObserver';
 export { default as useService } from './useService';
+export { default as useUrlState } from './useUrlState';
+export type { UrlStateInput, UrlStateOptions, UrlStatePrimitive, UrlStateSerializer, UrlStateValue } from './useUrlState';
