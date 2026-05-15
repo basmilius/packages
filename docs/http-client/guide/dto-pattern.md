@@ -127,6 +127,10 @@ const restored = deserialize(json) as UserDto;
 
 `serialize` retains nested DTOs, Luxon `DateTime` values, arrays and plain objects. `deserialize` rebuilds DTO instances by their class name from the global DTO class map, so the originating class must be imported (and therefore registered) in the consuming runtime.
 
+::: warning
+The class name lookup means production minification can break `deserialize` and `cloneDto`. Add the [`dtoNames`](/http-client/vite/dtoNames) Vite plugin to pin authored class names through any minifier.
+:::
+
 ## Dirty tracking
 
 Forms typically need to know whether something changed. The `@dto` machinery tracks a per-instance `DIRTY` flag that flips on the first write and propagates up through `PARENT` references.

@@ -55,5 +55,12 @@ export const httpClient: DefaultTheme.SidebarItem[] = [
             {text: 'RequestBuilder', link: '/http-client/http/RequestBuilder'},
             {text: 'Helpers', link: '/http-client/http/helpers'}
         ]
+    },
+    {
+        text: 'Vite',
+        collapsed: false,
+        items: [
+            {text: 'dtoNames', link: '/http-client/vite/dtoNames'}
+        ]
     }
 ];
