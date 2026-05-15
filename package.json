@@ -13,8 +13,8 @@
         "docs:deploy": "wrangler deploy"
     },
     "devDependencies": {
-        "@typescript/native-preview": "^7.0.0-dev.20260511.1",
-        "wrangler": "^4.90.0"
+        "@typescript/native-preview": "^7.0.0-dev.20260515.1",
+        "wrangler": "^4.92.0"
     },
     "overrides": {
         "@microsoft/api-extractor": "7.57.1"

@@ -52,10 +52,10 @@
         "vite-plugin-dts": "^5.0.0"
     },
     "peerDependencies": {
-        "vite": "^8.0.12"
+        "vite": "^8.0.13"
     },
     "devDependencies": {
         "tsdown": "^0.22.0",
-        "vite": "^8.0.12"
+        "vite": "^8.0.13"
     }
 }
