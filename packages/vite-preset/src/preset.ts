@@ -1,3 +1,4 @@
+import { resolve } from 'node:path';
 import { camelCase, kebabCase } from 'change-case';
 import { patchCssModules } from 'vite-css-modules';
 import type { Plugin } from 'vite';
