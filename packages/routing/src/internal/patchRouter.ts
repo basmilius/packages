@@ -23,7 +23,7 @@ function injectState(to: RouteLocationRaw, backgroundPath: string | null, depth:
     return withState(to, writeModalState(base, backgroundPath, depth));
 }
 
-function readModalFlag(flag: boolean | number | undefined): {open: boolean; depth: number; explicitClose: boolean} {
+function readModalFlag(flag: boolean | number | undefined): { open: boolean; depth: number; explicitClose: boolean } {
     if (flag === true) {
         return {open: true, depth: 0, explicitClose: false};
     }

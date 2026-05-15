@@ -1,4 +1,3 @@
-import { resolve } from 'node:path';
 import { camelCase, kebabCase } from 'change-case';
 import { patchCssModules } from 'vite-css-modules';
 import type { Plugin } from 'vite';
@@ -41,7 +40,7 @@ const preset = (options: Options): Plugin => {
         if (visitedClasses.includes(name)) {
             return prefix + className(visitedClasses.indexOf(name));
         }
-    
+
         return prefix + className(visitedClasses.push(name) - 1);
     }
 
