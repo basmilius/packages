@@ -18,7 +18,7 @@
     },
     "devDependencies": {
         "@types/luxon": "^3.7.1",
-        "@types/node": "^25.8.0",
+        "@types/node": "^25.9.1",
         "luxon": "^3.7.2",
         "pinia": "^3.0.4",
         "vitepress": "^1.6.3",
