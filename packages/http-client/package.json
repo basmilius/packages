@@ -50,10 +50,17 @@
         "provenance": true
     },
     "dependencies": {
-        "@basmilius/utils": "workspace:*",
-        "luxon": "^3.7.2"
+        "@basmilius/utils": "workspace:*"
+    },
+    "devDependencies": {
+        "@types/luxon": "^3.7.1",
+        "luxon": "^3.7.2",
+        "tsdown": "^0.22.0",
+        "vite": "^8.0.14",
+        "vue": "^3.6.0-beta.12"
     },
     "peerDependencies": {
+        "luxon": "^3.7.2",
         "vite": ">=5",
         "vue": "^3.6.0-beta.12"
     },
@@ -61,11 +68,5 @@
         "vite": {
             "optional": true
         }
-    },
-    "devDependencies": {
-        "@types/luxon": "^3.7.1",
-        "tsdown": "^0.22.0",
-        "vite": "^8.0.14",
-        "vue": "^3.6.0-beta.12"
     }
 }

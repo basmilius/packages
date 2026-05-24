@@ -13,7 +13,7 @@
         "docs:deploy": "wrangler deploy"
     },
     "devDependencies": {
-        "@typescript/native-preview": "^7.0.0-dev.20260523.1",
+        "@typescript/native-preview": "^7.0.0-dev.20260524.1",
         "wrangler": "^4.94.0"
     },
     "overrides": {
