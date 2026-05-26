@@ -84,7 +84,7 @@ Several packages — most notably `@basmilius/http-client` — rely on stage-2 d
 }
 ```
 
-`isolatedDeclarations` is recommended but optional — it produces faster `.d.ts` emit when paired with [`@basmilius/tools`](/tools/).
+`isolatedDeclarations` is recommended but optional — it enables faster `.d.ts` emit in your build pipeline.
 
 ## Next steps
 

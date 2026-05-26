@@ -29,9 +29,6 @@
             "@basmilius/utils": [
                 "../packages/utils/src/index.ts"
             ],
-            "@basmilius/tools": [
-                "../packages/tools/src/index.ts"
-            ],
             "@basmilius/vite-preset": [
                 "../packages/vite-preset/src/index.ts"
             ],

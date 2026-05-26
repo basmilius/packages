@@ -7,7 +7,7 @@ titleTemplate: 'Documentation'
 hero:
     name: 'Packages'
     text: 'Tiny, opinionated building blocks.'
-    tagline: 'Vue composables, an HTTP client with DTOs, modal-aware routing, utilities, build tools and a Worker runtime — published as seven independent npm packages.'
+    tagline: 'Vue composables, an HTTP client with DTOs, modal-aware routing, utilities and a Worker runtime — published as six independent npm packages.'
     image:
         src: /logo.svg
         alt: 'Packages'
@@ -35,10 +35,6 @@ features:
     -   title: Utils
         details: '47+ utilities for dates, colors, math, DOM and more — small, focused, and tree-shakeable.'
         link: /utils/
-        linkText: View package
-    -   title: Tools
-        details: 'Build tools for libraries powered by oxc-transform — build, clean, copy, dts.'
-        link: /tools/
         linkText: View package
     -   title: Vite Preset
         details: 'Opinionated Vite preset with CSS modules, library composition and chunk splitting.'

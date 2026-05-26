@@ -4,7 +4,7 @@ outline: deep
 
 # Monorepo layout
 
-**Packages** is a [Bun](https://bun.sh/) workspace. The seven packages live under `packages/*`, and the documentation site lives in `docs/`.
+**Packages** is a [Bun](https://bun.sh/) workspace. The six packages live under `packages/*`, and the documentation site lives in `docs/`.
 
 ```
 basmilius-packages/
@@ -12,7 +12,6 @@ basmilius-packages/
         common/
         http-client/
         routing/
-        tools/
         utils/
         vite-preset/
         worker/
@@ -33,7 +32,6 @@ Some packages depend on each other, others are entirely standalone:
 common  ──► http-client ──► utils
 common  ──► utils
 routing                                  (peer: vue, vue-router)
-tools                                    (build-only, no runtime deps)
 utils                                    (luxon)
 vite-preset                              (peer: vite)
 worker                                   (luxon, Cloudflare-only)
@@ -46,7 +44,6 @@ worker                                   (luxon, Cloudflare-only)
 Every package builds with `tsdown`-style scripts.
 
 ```shell
-bun --cwd packages/tools build
 bun --cwd packages/utils build
 bun --cwd packages/vite-preset build
 bun --cwd packages/http-client build
