@@ -5,6 +5,7 @@
     "type": "module",
     "license": "MIT",
     "funding": "https://github.com/sponsors/basmilius",
+    "homepage": "https://github.com/basmilius/packages",
     "author": {
         "name": "Bas Milius",
         "email": "bas@mili.us",
@@ -21,6 +22,9 @@
         "preset",
         "vue"
     ],
+    "scripts": {
+        "build": "tsgo --noEmit && tsdown"
+    },
     "files": [
         "dist",
         "src",
@@ -30,9 +34,6 @@
     "publishConfig": {
         "access": "public",
         "provenance": true
-    },
-    "scripts": {
-        "build": "tsgo --noEmit && tsdown"
     },
     "main": "./dist/index.mjs",
     "types": "./dist/index.d.mts",

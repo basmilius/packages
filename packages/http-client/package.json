@@ -2,9 +2,15 @@
     "name": "@basmilius/http-client",
     "description": "Http client for Vue projects.",
     "version": "0.0.0",
+    "type": "module",
     "license": "MIT",
     "funding": "https://github.com/sponsors/basmilius",
     "homepage": "https://github.com/basmilius/packages",
+    "author": {
+        "name": "Bas Milius",
+        "email": "bas@mili.us",
+        "url": "https://bas.dev"
+    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/basmilius/packages.git",
@@ -22,16 +28,12 @@
         "build": "tsgo --noEmit && tsdown",
         "dev": "tsdown --watch"
     },
-    "engines": {
-        "node": ">=23"
-    },
     "files": [
         "dist",
         "src",
         "CODEOWNERS",
         "LICENSE"
     ],
-    "type": "module",
     "main": "./dist/index.mjs",
     "module": "./dist/index.mjs",
     "types": "./dist/index.d.mts",
