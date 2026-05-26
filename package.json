@@ -6,7 +6,7 @@
         "docs"
     ],
     "scripts": {
-        "build": "./build.sh",
+        "build": "bun -F './packages/*' build",
         "docs:dev": "bun --cwd docs dev",
         "docs:build": "bun --cwd docs build",
         "docs:preview": "bun --cwd docs preview",

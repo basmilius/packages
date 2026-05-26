@@ -27,7 +27,7 @@ bun --cwd packages/utils build
 Build everything in dependency order:
 
 ```shell
-./build.sh
+bun run build
 ```
 
 ## Documentation

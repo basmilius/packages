@@ -4,7 +4,7 @@ outline: deep
 
 # Monorepo layout
 
-**Packages** is a [Bun](https://bun.sh/) workspace. The seven packages live under `packages/*`, the documentation site lives in `docs/`, and the build orchestration is a tiny `build.sh` at the root.
+**Packages** is a [Bun](https://bun.sh/) workspace. The seven packages live under `packages/*`, and the documentation site lives in `docs/`.
 
 ```
 basmilius-packages/
@@ -20,7 +20,6 @@ basmilius-packages/
         .vitepress/
         index.md
         ...
-    build.sh
     bunfig.toml
     package.json
     wrangler.toml
@@ -44,7 +43,7 @@ worker                                   (luxon, Cloudflare-only)
 
 ## Building
 
-Every package builds with `tsdown`-style scripts that wrap [`@basmilius/tools`](/tools/). The root [`build.sh`](https://github.com/basmilius/packages/blob/main/build.sh) executes them in dependency order:
+Every package builds with `tsdown`-style scripts.
 
 ```shell
 bun --cwd packages/tools build
@@ -59,7 +58,7 @@ bun --cwd packages/worker build
 Run all of them with:
 
 ```shell
-./build.sh
+bun -F './packages/*' build
 ```
 
 ## Workspace tooling
