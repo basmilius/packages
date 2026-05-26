@@ -1,5 +1,5 @@
 import { ENABLE_GET_LOGGING, ENABLE_SET_LOGGING } from './const';
-import { areEqual, markDtoDirty, relateValueTo, trackDto, triggerDto, unrelateValueFrom } from './helper';
+import { areEqual, isProxiedArray, markDtoDirty, relateValueTo, trackDto, triggerDto, unrelateValueFrom } from './helper';
 import { DESCRIPTORS, NAME, PROPERTIES, PROXY } from './symbols';
 import arrayProxy from './arrayProxy';
 import type DtoInstance from './instance';
@@ -73,7 +73,7 @@ export default {
 
         unrelateValueFrom(target, oldValue);
 
-        if (Array.isArray(value) && !value[PROXY]) {
+        if (Array.isArray(value) && !isProxiedArray(value)) {
             value = new Proxy(value, arrayProxy);
         }
 

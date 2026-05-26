@@ -6,5 +6,5 @@ export default function (obj: DateTime): SerializedDateTime {
     return [SERIALIZED_DATETIME, obj.toISO({
         extendedZone: true,
         includeOffset: true
-    })];
+    })!];
 }

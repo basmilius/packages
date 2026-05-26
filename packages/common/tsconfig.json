@@ -27,8 +27,7 @@
         "verbatimModuleSyntax": true
     },
     "include": [
-        "src/**/*.ts",
-        "build.ts"
+        "src/**/*.ts"
     ],
     "exclude": [
         "dist",

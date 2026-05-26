@@ -2,10 +2,14 @@ import { ENABLE_CIRCULAR_LOGGING } from '../const';
 import type DtoInstance from '../instance';
 
 type CircularMap = WeakMap<DtoInstance<unknown>, (string | symbol)[]>;
-const CIRCULAR_MAP = Symbol();
+const CIRCULAR_MAP: unique symbol = Symbol();
 
-export default function <T extends (...args: any[]) => unknown>(fn: T, arg1: number = 0, arg2?: number): T {
-    return function (...args: any[]): unknown {
+type CheckFunction = ((...args: any[]) => unknown) & {
+    [CIRCULAR_MAP]?: WeakMap<DtoInstance<unknown>, (string | symbol)[]>;
+};
+
+export default function <T extends CheckFunction>(fn: T, arg1: number = 0, arg2?: number): T {
+    return function (this: T, ...args: any[]): unknown {
         const map: CircularMap = fn[CIRCULAR_MAP] ??= new WeakMap();
         const primary = args[arg1];
         const secondary = arg2 !== undefined ? args[arg2] : 'self';

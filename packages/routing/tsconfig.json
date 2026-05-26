@@ -28,8 +28,7 @@
     },
     "include": [
         "src/**/*.ts",
-        "src/**/*.vue",
-        "build.ts"
+        "src/**/*.vue"
     ],
     "exclude": [
         "dist",

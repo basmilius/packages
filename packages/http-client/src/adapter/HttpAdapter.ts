@@ -25,7 +25,7 @@ export class HttpAdapter {
         const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
         const matches = filenameRegex.exec(header);
 
-        if ((matches?.length || 0) < 2) {
+        if (!matches || matches.length < 2) {
             return defaultFilename;
         }
 
@@ -46,14 +46,15 @@ export class HttpAdapter {
     }
 
     public static parseValidationError(data: ForeignData): ValidationError {
-        let errors: Record<string, ValidationError>;
+        let errors: Record<string, ValidationError> | undefined;
 
         if (data.errors) {
-            errors = {};
-
-            Object.entries(data.errors).forEach(([key, value]) => {
-                errors[key] = HttpAdapter.parseValidationError(value as object);
-            });
+            errors = Object.fromEntries(
+                Object.entries(data.errors).map(([key, value]) => [
+                    key,
+                    HttpAdapter.parseValidationError(value as object)
+                ])
+            );
         }
 
         return new ValidationError(

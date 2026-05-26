@@ -1,11 +1,11 @@
 import { isDto } from './helper';
 import { DESCRIPTORS } from './symbols';
-import type DtoInstance from './instance';
+import type { ProxiedDto } from './types';
 
 /**
  * Fills the dto with the given data.
  */
-export default function (this: DtoInstance<unknown>, data: Record<string, unknown>): void {
+export default function (this: ProxiedDto, data: Record<string, unknown>): void {
     for (let key in data) {
         const descriptor = this[DESCRIPTORS][key];
 

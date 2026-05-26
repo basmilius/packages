@@ -1,5 +1,6 @@
 import { ENABLE_REACTIVE_LOGGING } from '../const';
 import { NAME, PARENT, PARENT_KEY, TRIGGER } from '../symbols';
+import type { ProxiedDto } from '../types';
 import type DtoInstance from '../instance';
 import circularProtect from './circularProtect';
 
@@ -12,7 +13,7 @@ const triggerDto: (dto: DtoInstance<unknown>, key: string | symbol, value: unkno
 
     ENABLE_REACTIVE_LOGGING && console.log(`%c@dto %c${dto[NAME]} %ctrigger`, 'color: #0891b2', 'color: #059669', 'color: #1d4ed8', key, {dto, value, oldValue});
 
-    dto[PARENT] && triggerDto(dto[PARENT], dto[PARENT_KEY], dto[PARENT][dto[PARENT_KEY]]);
+    dto[PARENT] && triggerDto(dto[PARENT], dto[PARENT_KEY]!, (dto[PARENT] as ProxiedDto)[dto[PARENT_KEY]!]);
 }, 0, 1);
 
 export default triggerDto;

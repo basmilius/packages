@@ -7,6 +7,7 @@ import instance from './instance';
 import isDto from './isDto';
 import isDtoClean from './isDtoClean';
 import isDtoDirty from './isDtoDirty';
+import isProxiedArray from './isProxiedArray';
 import markDtoClean from './markDtoClean';
 import markDtoDirty from './markDtoDirty';
 import relateDtoTo from './relateDtoTo';
@@ -26,6 +27,7 @@ export {
     isDto,
     isDtoClean,
     isDtoDirty,
+    isProxiedArray,
     markDtoClean,
     markDtoDirty,
     relateDtoTo,
