@@ -37,7 +37,7 @@ export default class RequestBuilder {
     readonly #client: HttpClient;
     #autoCancelIdentifier: symbol | null = null;
     #path: string;
-    #options: RequestInit & { headers?: Record<string, string>; } = {};
+    #options: RequestInit = {};
     #query: QueryString | null = null;
 
     constructor(path: string, client?: HttpClient) {
@@ -53,7 +53,7 @@ export default class RequestBuilder {
         return this;
     }
 
-    public bearerToken(token?: string | null): RequestBuilder {
+    public bearerToken(token?: string): RequestBuilder {
         token = token ?? this.#client.authToken;
 
         if (token) {
@@ -144,7 +144,7 @@ export default class RequestBuilder {
         return new BaseResponse(data, response);
     }
 
-    public async runAdapter<TResult extends {}>(adapterMethod: (item: any) => TResult): Promise<BaseResponse<TResult>> {
+    public async runAdapter<TResult extends {}>(adapterMethod: (item: object) => TResult): Promise<BaseResponse<TResult>> {
         const {data, response} = await this.#executeSafe<TResult>();
 
         return new BaseResponse(adapterMethod(data), response);
@@ -208,7 +208,7 @@ export default class RequestBuilder {
     async #executeSafe<TResult>(): Promise<BaseResponse<TResult>> {
         return await this
             .#execute()
-            .then(response => RequestBuilder.#handleResponse<TResult>(response, this.client.dataField)) as BaseResponse<TResult>;
+            .then(response => RequestBuilder.#handleResponse<TResult>(response, this.client.dataField));
     }
 
     static async #handleResponse<TResult>(response: Response, dataField: boolean): Promise<BaseResponse<TResult | null>> {

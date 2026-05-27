@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "target": "esnext",
+        "target": "es2022",
         "lib": [
             "dom",
             "dom.iterable",
@@ -8,7 +8,7 @@
         ],
         "allowJs": false,
         "skipLibCheck": true,
-        "strict": true,
+        "strict": false,
         "forceConsistentCasingInFileNames": true,
         "esModuleInterop": true,
         "module": "esnext",
@@ -23,8 +23,7 @@
         "declarationDir": "dist",
         "declarationMap": true,
         "emitDeclarationOnly": true,
-        "experimentalDecorators": true,
-        "verbatimModuleSyntax": true
+        "experimentalDecorators": true
     },
     "include": [
         "src/**/*.ts"

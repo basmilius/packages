@@ -1,7 +1,6 @@
 import { PARENT, PARENT_KEY } from '../symbols';
 import type DtoInstance from '../instance';
 import isDto from './isDto';
-import isProxiedArray from './isProxiedArray';
 import unrelateDtoFrom from './unrelateDtoFrom';
 
 /**
@@ -10,7 +9,7 @@ import unrelateDtoFrom from './unrelateDtoFrom';
 export default function (dto: DtoInstance<unknown>, value: unknown): void {
     if (isDto(value)) {
         unrelateDtoFrom(value, dto);
-    } else if (isProxiedArray(value)) {
+    } else if (Array.isArray(value)) {
         for (const item of value) {
             if (isDto(item)) {
                 unrelateDtoFrom(item, dto);

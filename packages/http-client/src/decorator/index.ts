@@ -29,10 +29,3 @@ export {
 export type {
     DtoInstance
 } from './dto';
-
-class X {
-    @bound()
-    test(): boolean {
-        return true;
-    }
-}

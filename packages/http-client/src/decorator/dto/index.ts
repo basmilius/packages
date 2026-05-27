@@ -21,7 +21,8 @@ export default function <T extends Constructor>(clazz: T): T {
     setObjectValue(clazz.prototype, DESCRIPTORS, descriptors);
     setObjectValue(clazz.prototype, NAME, clazz.name);
     setObjectValue(clazz.prototype, PROPERTIES, properties);
-    setObjectValue(clazz, Symbol.hasInstance, (instance: unknown) => typeof instance === 'object' && instance !== null && NAME in instance && (instance as Record<symbol, unknown>)[NAME] === clazz.name);
+    setObjectValue(clazz, Symbol.hasInstance, (instance: unknown) => typeof instance === 'object' && instance?.[NAME] === clazz.name);
+
     setObjectMethod(clazz, 'clone', clone<T>);
     setObjectMethod(clazz, 'fill', fill);
     setObjectMethod(clazz, 'toJSON', toJSON);

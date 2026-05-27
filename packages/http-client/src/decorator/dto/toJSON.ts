@@ -1,11 +1,11 @@
 import { isDto } from './helper';
+import type DtoInstance from './instance';
 import { PROPERTIES } from './symbols';
-import type { ProxiedDto } from './types';
 
 /**
  * Returns the json object representation of the dto.
  */
-export default function (this: ProxiedDto): Record<string, unknown> {
+export default function (this: DtoInstance<unknown>): Record<string, unknown> {
     const result: Record<string, unknown> = {};
 
     for (const property of this[PROPERTIES]) {

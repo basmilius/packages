@@ -1,5 +1,5 @@
 export default function () {
-    return (target: any, method: string): void => {
+    return (target: object, method: string): void => {
         target[method] = target[method].bind(target);
     };
 }
