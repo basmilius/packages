@@ -50,7 +50,7 @@
         "@types/luxon": "^3.7.1",
         "@types/node": "^25.9.1",
         "luxon": "^3.7.2",
-        "tsdown": "^0.22.0"
+        "tsdown": "^0.22.1"
     },
     "peerDependencies": {
         "luxon": "^3.7.2"
