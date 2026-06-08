@@ -11,7 +11,7 @@ Various utilities that are commonly used throughout personal Cloudflare Worker-r
 ## ⭐️ Prerequisites
 
 - Bun >= 1.3.0
-- Node >= 23
+- Node >= 25
 
 ## 🚀 Getting started
 

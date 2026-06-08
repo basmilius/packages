@@ -11,14 +11,16 @@ This repository contains the source code for various Bun packages that I use in 
 ## 📦 Registry
 
 - Common is available under `@basmilius/common`.
+- HTTP client is available under `@basmilius/http-client`.
+- Routing is available under `@basmilius/routing`.
 - Utils is available under `@basmilius/utils`.
 - Vite preset is available under `@basmilius/vite-preset`.
-- HTTP client is available under `@basmilius/http-client`.
 - Cloudflare worker primitives is available under `@basmilius/worker`.
 
 ## ⭐️ Prerequisites
 
-- Bun >= 1.3.11
+- Bun >= 1.3.0
+- Node >= 25
 
 ## 🚀 Getting started
 

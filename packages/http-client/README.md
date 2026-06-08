@@ -10,8 +10,8 @@ This repository contains the source code for the Http client that I use in perso
 
 ## ⭐️ Prerequisites
 
-- Bun >= 1.2.11
-- Node >= 23
+- Bun >= 1.3.0
+- Node >= 25
 
 ## 🚀 Getting started
 

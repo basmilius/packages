@@ -4,7 +4,7 @@ outline: deep
 
 # Conventions
 
-The seven packages share a small but strict set of conventions. They make code review boring (a good thing), keep type emit fast and ensure every export is documented.
+The six packages share a small but strict set of conventions. They make code review boring (a good thing), keep type emit fast and ensure every export is documented.
 
 ## TypeScript
 

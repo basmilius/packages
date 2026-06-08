@@ -10,8 +10,8 @@ Contains presets for [Vite](https://vite.dev) and [Vue](https://vuejs.org).
 
 ## ⭐️ Prerequisites
 
-- Bun >= 1.2.11
-- Node >= 23
+- Bun >= 1.3.0
+- Node >= 25
 
 ## 🚀 Getting started
 

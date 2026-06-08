@@ -14,7 +14,7 @@ cd packages
 bun install
 ```
 
-Bun is required (`>= 1.3.11`); `npm` and `pnpm` should also work as installers, but builds and the docs site are scripted around `bun --cwd <pkg> build`.
+Bun is required (`>= 1.3.0`); `npm` and `pnpm` should also work as installers, but builds and the docs site are scripted around `bun --cwd <pkg> build`.
 
 ## Building
 
@@ -58,12 +58,9 @@ The output lives at `docs/.vitepress/dist`.
 
 ## CI
 
-Two GitHub Actions workflows run on every PR:
+On every PR, the **Docs PR preview** workflow deploys the docs to a Cloudflare preview URL via `wrangler versions upload --tag pr-<num>`. The deployment URL is posted as a check on the PR.
 
-- **Package build** — checks every package compiles cleanly.
-- **Docs PR preview** — deploys the docs to a Cloudflare preview URL via `wrangler versions upload --tag pr-<num>`. The deployment URL is posted as a check on the PR.
-
-A successful release (created via the GitHub Releases UI) triggers `docs-released.yml`, which re-deploys the docs to `packages.bas.dev`.
+A release (created via the GitHub Releases UI) triggers two workflows: `released.yml` builds every package and publishes it to npm, and `docs-released.yml` re-deploys the docs to `packages.bas.dev`.
 
 ## Asking for help
 

@@ -8,7 +8,7 @@ This guide walks you through installing one or more `@basmilius/*` packages into
 
 ## Prerequisites
 
-- Node.js `>= 23` or [Bun](https://bun.sh/) `>= 1.3.11`.
+- Node.js `>= 25` or [Bun](https://bun.sh/) `>= 1.3.0`.
 - A Vue 3.6+ project, ideally scaffolded with `bun create vite`.
 - TypeScript with `experimentalDecorators` enabled if you plan to use [`@basmilius/http-client`](/http-client/).
 
