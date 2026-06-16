@@ -6,6 +6,12 @@ outline: deep
 
 Run a handler whenever a `pointerdown` happens outside one or more elements. Useful for closing dropdowns, popovers and modal-like UI without binding `click` listeners on every other element on the page.
 
+## Demo
+
+::: example
+example=./examples/UseClickOutside.vue
+:::
+
 ## Importing
 
 ```ts

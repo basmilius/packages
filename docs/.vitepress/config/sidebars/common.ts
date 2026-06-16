@@ -19,7 +19,9 @@ export const common: DefaultTheme.SidebarItem[] = [
             {text: 'useDebounced', link: '/common/composable/useDebounced'},
             {text: 'useDebouncedRef', link: '/common/composable/useDebouncedRef'},
             {text: 'useDtoForm', link: '/common/composable/useDtoForm'},
+            {text: 'useEventListener', link: '/common/composable/useEventListener'},
             {text: 'useInterval', link: '/common/composable/useInterval'},
+            {text: 'useInView', link: '/common/composable/useInView'},
             {text: 'useLoaded', link: '/common/composable/useLoaded'},
             {text: 'useLoadedAction', link: '/common/composable/useLoadedAction'},
             {text: 'useLocalFile', link: '/common/composable/useLocalFile'},
@@ -28,6 +30,7 @@ export const common: DefaultTheme.SidebarItem[] = [
             {text: 'usePagination', link: '/common/composable/usePagination'},
             {text: 'usePasswordStrength', link: '/common/composable/usePasswordStrength'},
             {text: 'useResizeObserver', link: '/common/composable/useResizeObserver'},
+            {text: 'useScrollPosition', link: '/common/composable/useScrollPosition'},
             {text: 'useService', link: '/common/composable/useService'}
         ]
     },
@@ -72,7 +75,8 @@ export const common: DefaultTheme.SidebarItem[] = [
             {text: 'persistentStringRef', link: '/common/util/persistentStringRef'},
             {text: 'runBefore', link: '/common/util/runBefore'},
             {text: 'unrefAll', link: '/common/util/unrefAll'},
-            {text: 'unwrapElement', link: '/common/util/unwrapElement'}
+            {text: 'unwrapElement', link: '/common/util/unwrapElement'},
+            {text: 'unwrapTarget', link: '/common/util/unwrapTarget'}
         ]
     }
 ];

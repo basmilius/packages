@@ -8,6 +8,12 @@ A small reactive container for pagination state. Returns refs for the current pa
 
 The defaults are conservative — page `1`, `25` items per page and `[5, 10, 25, 50, 100]` as options. [`useDataTable`](/common/composable/useDataTable) builds on top of this composable.
 
+## Demo
+
+::: example
+example=./examples/UsePagination.vue
+:::
+
 ## Importing
 
 ```ts

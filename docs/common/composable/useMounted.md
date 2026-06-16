@@ -6,6 +6,12 @@ outline: deep
 
 A trivial helper that returns a `Ref<boolean>` flipping to `true` on `onMounted`. Useful for SSR-safe rendering that needs the component to have hit the DOM before performing client-only work.
 
+## Demo
+
+::: example
+example=./examples/UseMounted.vue
+:::
+
 ## Importing
 
 ```ts

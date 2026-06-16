@@ -6,6 +6,12 @@ outline: deep
 
 Create a `Ref<T>` whose writes are debounced. Reads are immediate, writes are deferred to a `setTimeout` followed by a `requestAnimationFrame`, so consumers always see the most recent committed value while frequent writers (text inputs, scroll handlers, ...) settle without thrashing reactivity.
 
+## Demo
+
+::: example
+example=./examples/UseDebouncedRef.vue
+:::
+
 ## Importing
 
 ```ts

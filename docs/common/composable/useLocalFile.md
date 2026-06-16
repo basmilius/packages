@@ -6,6 +6,12 @@ outline: deep
 
 Manage a single locally-uploaded `File` together with its preview `URL`. The composable exposes refs for the file and a `URL.createObjectURL` URL, and takes care of revoking the object URL when the file is replaced or cleared.
 
+## Demo
+
+::: example
+example=./examples/UseLocalFile.vue
+:::
+
 ## Importing
 
 ```ts

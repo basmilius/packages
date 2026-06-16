@@ -8,6 +8,12 @@ Compute a coarse-grained password strength based on length and character class d
 
 The result reports the password length, the matched rules (lowercase, uppercase, number, symbol) and a strength bucket (`too_weak`, `weak`, `medium`, `strong`).
 
+## Demo
+
+::: example
+example=./examples/UsePasswordStrength.vue
+:::
+
 ## Importing
 
 ```ts

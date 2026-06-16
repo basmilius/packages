@@ -6,6 +6,12 @@ outline: deep
 
 Attach a `MutationObserver` to an element ref. The observer is created when the ref resolves, disconnected when the ref changes or the component scope is disposed, and re-attached automatically when the ref points at a new element.
 
+## Demo
+
+::: example
+example=./examples/UseMutationObserver.vue
+:::
+
 ## Importing
 
 ```ts

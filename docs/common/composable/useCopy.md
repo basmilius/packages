@@ -6,6 +6,12 @@ outline: deep
 
 Build a one-shot function that copies the current value of a `Ref<string>` to the clipboard via `navigator.clipboard.writeText`, optionally invoking a success callback after the copy resolves.
 
+## Demo
+
+::: example
+example=./examples/UseCopy.vue
+:::
+
 ## Importing
 
 ```ts

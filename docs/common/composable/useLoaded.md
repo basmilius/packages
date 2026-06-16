@@ -6,6 +6,12 @@ outline: deep
 
 Track the loading state of one or more async operations. The composable returns a `loaded(fn)` decorator that increments an internal task counter while a promise is in flight, and exposes a debounced `isLoading` flag suitable for binding to spinners and skeleton states.
 
+## Demo
+
+::: example
+example=./examples/UseLoaded.vue
+:::
+
 ## Importing
 
 ```ts

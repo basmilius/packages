@@ -6,6 +6,12 @@ outline: deep
 
 Wrap a function so that consecutive calls within `delay` milliseconds collapse into a single invocation, using the [`debounce`](/utils/function/debounce) helper from [`@basmilius/utils`](/utils/). The composable preserves the original function signature.
 
+## Demo
+
+::: example
+example=./examples/UseDebounced.vue
+:::
+
 ## Importing
 
 ```ts

@@ -6,6 +6,12 @@ outline: deep
 
 Run a function on a recurring interval that lives only as long as the component does. The composable schedules the next tick with `setTimeout` and runs the callback inside `requestAnimationFrame`, so no work happens while the tab is in the background.
 
+## Demo
+
+::: example
+example=./examples/UseInterval.vue
+:::
+
 ## Importing
 
 ```ts

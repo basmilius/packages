@@ -6,6 +6,12 @@ outline: deep
 
 Convenience wrapper around [`useLoaded`](/common/composable/useLoaded) for the common case of a single async action with its own loading flag. Returns a tuple of `[wrappedAction, isLoading]`.
 
+## Demo
+
+::: example
+example=./examples/UseLoadedAction.vue
+:::
+
 ## Importing
 
 ```ts
