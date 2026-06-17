@@ -163,6 +163,46 @@ async function permalink(): Promise<void> {
 }
 ```
 
+## Modal-aware navigation guards
+
+Navigation guards receive bare `RouteLocationNormalized` objects, which normally
+don't tell you whether a navigation is a modal. This package augments them with a
+reactive `isModal` flag, so `to.isModal` and `from.isModal` are available in
+guards — with the same meaning as [`useRoute().isModal`](/routing/composable/useRoute#ismodal):
+`true` when that location is shown as a modal.
+
+```ts
+router.beforeEach((to, from) => {
+    if (from.isModal && !to.isModal) {
+        // leaving the modal layer back to a full page
+    }
+});
+```
+
+`isModal` is also present on `router.currentRoute.value` and on the route from a
+plain `useRoute()`.
+
+### Inside `onBeforeRouteLeave`
+
+`from.isModal` works in every guard, including `onBeforeRouteLeave`. For
+`to.isModal` inside `onBeforeRouteLeave`, import the guard from
+`@basmilius/routing` instead of `vue-router` — vue-router runs leave guards
+before any global guard could stamp `to`, so the package ships a thin wrapper
+that fills it in:
+
+```ts
+import { onBeforeRouteLeave } from '@basmilius/routing';
+
+onBeforeRouteLeave((to, from) => {
+    if (from.isModal && to.isModal) {
+        // moving between two modal routes
+    }
+});
+```
+
+This is Composition-API only. The options-API `beforeRouteLeave` component
+option is not wrapped and won't populate `to.isModal`.
+
 ## See also
 
 - [Slot props guide](/routing/guide/slot-props)

@@ -17,8 +17,9 @@ import { useRoute, type UseRoute } from '@basmilius/routing';
 ```ts
 declare function useRoute(): UseRoute;
 
+// `isModal` comes from the augmented `RouteLocationNormalizedLoaded`;
+// `promote()` is unique to this composable.
 type UseRoute = RouteLocationNormalizedLoaded & {
-    readonly isModal: boolean;
     promote(): Promise<void>;
 };
 ```
@@ -57,6 +58,8 @@ Because `UseRoute` is a Proxy (not a Ref), it can be used directly in templates 
 ## isModal
 
 Reactive boolean. `true` when the consuming component is inside a `ModalProvider` subtree. Used by modal wrappers and shared components that need to behave differently when rendered as a modal.
+
+The same flag is available on any `RouteLocationNormalized` — including `to` and `from` in navigation guards. See [Modal-aware navigation guards](/routing/guide/modal-routing#modal-aware-navigation-guards).
 
 ## promote()
 

@@ -3,6 +3,7 @@ import { loadRouteLocation, type RouteLocationNormalized, type Router } from 'vu
 import type { ModalConfig } from '../types';
 import { readModalState, writeModalState } from './modalState';
 import type { OriginalNav } from './patchRouter';
+import { setPendingModal, stampModal } from './pendingModal';
 
 // note: True when all matched-record components are already materialised
 //  (not still `() => import(...)` functions). Decides whether to assign
@@ -53,6 +54,17 @@ export default function createModalContext(
 ): ModalContext {
     const initial = readModalState();
 
+    // note: `router.resolve` returns a `RouteLocationResolved`, which has no
+    //  `isModal`. The background route is by definition not a modal, so stamp
+    //  it `false` and surface it as a `RouteLocationNormalized`.
+    function resolveBackground(path: string): RouteLocationNormalized {
+        const resolved = router.resolve(path) as unknown as RouteLocationNormalized;
+
+        stampModal(resolved, false);
+
+        return resolved;
+    }
+
     // note: On hard refresh of a modal URL, the background route's lazy
     //  chunks aren't loaded yet — `components` are still import functions
     //  that Vue would render as promise vnodes inside `<Transition>`. We
@@ -79,7 +91,7 @@ export default function createModalContext(
     //  the first render sees the open-modal state.
     if (initial !== null) {
         const token = ++loadToken;
-        const snapshot = router.resolve(initial.backgroundPath) as RouteLocationNormalized;
+        const snapshot = resolveBackground(initial.backgroundPath);
 
         if (isFullyLoaded(snapshot)) {
             backgroundRoute.value = snapshot;
@@ -91,7 +103,7 @@ export default function createModalContext(
                         return;
                     }
 
-                    backgroundRoute.value = router.resolve(initial.backgroundPath) as RouteLocationNormalized;
+                    backgroundRoute.value = resolveBackground(initial.backgroundPath);
                     initiallyOpen.value = false;
                 })
                 .catch(() => {
@@ -130,7 +142,7 @@ export default function createModalContext(
 
         const token = ++loadToken;
         const backgroundPath = state.backgroundPath;
-        const snapshot = router.resolve(backgroundPath) as RouteLocationNormalized;
+        const snapshot = resolveBackground(backgroundPath);
 
         // note: Fast path — chunks already loaded (typical navigation),
         //  assign synchronously to avoid a flash of modal-as-fullpage.
@@ -147,7 +159,7 @@ export default function createModalContext(
                     return;
                 }
 
-                backgroundRoute.value = router.resolve(backgroundPath) as RouteLocationNormalized;
+                backgroundRoute.value = resolveBackground(backgroundPath);
             })
             .catch(() => {
                 if (token !== loadToken) {
@@ -160,6 +172,12 @@ export default function createModalContext(
 
     async function promote(): Promise<void> {
         const current = unref(router.currentRoute);
+
+        // note: The promoted URL becomes a real page, so any guard that runs
+        //  for this navigation must see `to.isModal === false` even before it
+        //  commits. `original.replace` bypasses `patchRouter.transform`, which
+        //  is where the pending flag is normally set.
+        setPendingModal(false);
 
         // note: Turns the modal's URL into the "real" page. `replace`
         //  avoids a duplicate history entry; `force: true` because

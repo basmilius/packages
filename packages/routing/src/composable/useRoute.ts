@@ -2,9 +2,9 @@ import { computed, inject, shallowRef, unref } from 'vue';
 import { type RouteLocationNormalizedLoaded, useRoute as useVueRoute } from 'vue-router';
 import { isInModalKey, modalContextKey, routeOverrideKey } from '../symbol';
 
+// note: `isModal` comes from the `RouteLocationNormalizedLoaded` augmentation
+//  (see `augmentations.ts`); only `promote()` is unique to this composable.
 export type UseRoute = RouteLocationNormalizedLoaded & {
-    readonly isModal: boolean;
-
     promote(): Promise<void>;
 };
 

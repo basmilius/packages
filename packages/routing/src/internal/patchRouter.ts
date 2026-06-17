@@ -1,6 +1,7 @@
 import { unref } from 'vue';
 import type { HistoryState, NavigationFailure, RouteLocationOptions, RouteLocationRaw, Router } from 'vue-router';
 import { readModalState, writeModalState } from './modalState';
+import { setPendingModal } from './pendingModal';
 
 type Navigate = (to: RouteLocationRaw) => Promise<NavigationFailure | void | undefined>;
 
@@ -53,11 +54,15 @@ export default function patchRouter(router: Router): OriginalNav {
         if (flag.open) {
             const backgroundPath = current?.backgroundPath ?? unref(router.currentRoute).fullPath;
 
+            setPendingModal(true);
+
             return injectState(to, backgroundPath, flag.depth);
         }
 
         // note: Explicit `modal: false` exits the modal entirely.
         if (flag.explicitClose) {
+            setPendingModal(false);
+
             return injectState(to, null);
         }
 
@@ -70,8 +75,12 @@ export default function patchRouter(router: Router): OriginalNav {
             const nextRoot = resolved.matched[0]?.path;
             const sameRoot = !!currentRoot && currentRoot === nextRoot;
 
+            setPendingModal(sameRoot);
+
             return sameRoot ? injectState(to, current.backgroundPath, current.depth) : injectState(to, null);
         }
+
+        setPendingModal(false);
 
         return to;
     }

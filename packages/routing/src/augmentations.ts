@@ -17,6 +17,16 @@ declare module 'vue-router' {
         /** Modal wrapper configuration used when this route is rendered as a modal. */
         modal?: ModalConfig;
     }
+
+    // note: `RouteLocationNormalizedLoadedGeneric` and the typed variants all
+    //  extend this generic, so augmenting it once surfaces `isModal` on every
+    //  normalized location — `to`/`from` in navigation guards and the route
+    //  returned by `useRoute`. `true` when the location is shown as a modal
+    //  (its `history.state.modal === true`). Stamped at navigation lifecycle
+    //  points by `createRouter`; see `internal/pendingModal`.
+    interface RouteLocationNormalizedGeneric {
+        readonly isModal: boolean;
+    }
 }
 
 export {};

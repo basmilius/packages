@@ -15,6 +15,11 @@ export { default as ModalRouterView } from './component/ModalRouterView';
 export { default as RouterLink } from './component/RouterLink';
 export { default as RouterView } from './component/RouterView';
 
+// note: Shadows vue-router's `onBeforeRouteLeave` (re-exported above) with a
+//  version that stamps `to.isModal` before the guard runs — see the composable
+//  for why the global `beforeEach` can't cover the leave phase.
+export { default as onBeforeRouteLeave } from './composable/onBeforeRouteLeave';
+
 export { default as useIsView } from './composable/useIsView';
 export { default as useModalRoute } from './composable/useModalRoute';
 export { default as useNamedRoute } from './composable/useNamedRoute';
