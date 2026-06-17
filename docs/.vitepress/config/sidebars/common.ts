@@ -20,6 +20,7 @@ export const common: DefaultTheme.SidebarItem[] = [
             {text: 'useDebouncedRef', link: '/common/composable/useDebouncedRef'},
             {text: 'useDtoForm', link: '/common/composable/useDtoForm'},
             {text: 'useEventListener', link: '/common/composable/useEventListener'},
+            {text: 'useHotKey', link: '/common/composable/useHotKey'},
             {text: 'useInterval', link: '/common/composable/useInterval'},
             {text: 'useInView', link: '/common/composable/useInView'},
             {text: 'useLoaded', link: '/common/composable/useLoaded'},

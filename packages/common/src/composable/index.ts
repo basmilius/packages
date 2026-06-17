@@ -6,6 +6,7 @@ export { default as useDebounced } from './useDebounced';
 export { default as useDebouncedRef } from './useDebouncedRef';
 export { default as useDtoForm } from './useDtoForm';
 export { default as useEventListener } from './useEventListener';
+export { default as useHotKey, type UseHotKeyOptions } from './useHotKey';
 export { default as useInterval } from './useInterval';
 export { default as useInView } from './useInView';
 export { default as useLoaded } from './useLoaded';
