@@ -36,6 +36,15 @@ Pass custom serializer / deserializer functions to handle non-JSON shapes — se
 
 The watcher uses `{ deep: true }`, so mutating nested properties (`settings.value.theme = 'dark'`) is enough to trigger a write.
 
+## Parameters
+
+| Name           | Type                  | Description                                                                          |
+|----------------|-----------------------|--------------------------------------------------------------------------------------|
+| `key`          | `string`              | The `localStorage` key to read from and write back to.                               |
+| `defaultValue` | `T`                   | Value used when the key is missing or its stored value fails to parse.               |
+| `serialize`    | `Serializer<T>`       | Optional. Converts the value to a string. Defaults to `JSON.stringify`.              |
+| `deserialize`  | `Deserializer<T>`     | Optional. Parses the stored string back into `T`. Defaults to `JSON.parse`.          |
+
 ## Type signature
 
 ```ts

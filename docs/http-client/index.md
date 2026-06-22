@@ -1,5 +1,29 @@
 ---
 outline: deep
+
+cards:
+    next:
+        -   title: Quick start
+            details: 'Wire up a client, DTO, adapter and service end-to-end.'
+            link: /http-client/guide/quickstart
+        -   title: DTO pattern
+            details: 'Reactivity, cloning and dirty tracking with @dto.'
+            link: /http-client/guide/dto-pattern
+        -   title: Error handling
+            details: 'RequestError, ValidationError and aborted requests.'
+            link: /http-client/guide/error-handling
+        -   title: HttpClient
+            code: true
+            details: 'The singleton that owns the base URL and bearer token.'
+            link: /http-client/http/HttpClient
+        -   title: BaseService
+            code: true
+            details: 'Base class for endpoint groups returning a RequestBuilder.'
+            link: /http-client/http/BaseService
+        -   title: RequestBuilder
+            code: true
+            details: 'Fluent per-request builder with typed runners.'
+            link: /http-client/http/RequestBuilder
 ---
 
 # HTTP Client
@@ -124,10 +148,9 @@ const response = await userService.get('user-42');
 
 ## Where to next
 
-- Follow the [Quick start](/http-client/guide/quickstart) for a minimal end-to-end setup.
-- Read the [DTO pattern](/http-client/guide/dto-pattern) guide to understand reactivity, cloning and dirty tracking.
-- See [Error handling](/http-client/guide/error-handling) for `RequestError`, `ValidationError` and aborted requests.
-- Browse the [Decorators](/http-client/decorator/dto), [DTOs](/http-client/dto/Paginated) and [HTTP](/http-client/http/HttpClient) sections for the full API reference.
+<LinkCards group="next"/>
+
+Browse the [Decorators](/http-client/decorator/dto), [DTOs](/http-client/dto/Paginated) and [HTTP](/http-client/http/HttpClient) sections for the full API reference.
 
 ## Related packages
 

@@ -6,6 +6,12 @@ outline: deep
 
 Formats a Luxon `DateTime` as a long, locale-aware date with year, month and day.
 
+## Demo
+
+::: example
+example=./examples/DateFormatting.vue
+:::
+
 ## Importing
 
 ```ts

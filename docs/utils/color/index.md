@@ -6,6 +6,14 @@ outline: deep
 
 Conversion helpers between common color spaces. All helpers operate on plain numeric tuples — RGB and HSL/HSV are returned as `[a, b, c]` arrays, hex values are strings prefixed with `#`.
 
+## Demo
+
+Pick a color to see it routed through [`hexToRGB`](/utils/color/hexToRGB), [`rgbToHSL`](/utils/color/rgbToHSL) and [`rgbToHSV`](/utils/color/rgbToHSV).
+
+::: example
+example=./examples/ColorConversions.vue
+:::
+
 ## Conversions
 
 - [`hexToRGB`](/utils/color/hexToRGB) — `#rrggbb` to `[r, g, b]`.

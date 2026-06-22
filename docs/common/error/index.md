@@ -47,6 +47,18 @@ try {
 
 Thrown by [`guarded`](/common/util/guarded) when the underlying HTTP client reports an unsanctioned request — typically a missing or expired session. Catch it to trigger a re-authentication flow.
 
+```ts
+import { UnauthorizedException } from '@basmilius/common';
+
+try {
+    await account.profile();
+} catch (err) {
+    if (err instanceof UnauthorizedException) {
+        await auth.signOutAndRedirect();
+    }
+}
+```
+
 ### `UnresolvedDependencyException`
 
 Thrown by [`unrefAll`](/common/util/unrefAll) when one of the unwrapped dependencies is falsy. [`useDataTable`](/common/composable/useDataTable) catches this exception silently, which makes the pattern of "skip the fetch until every dep is ready" trivial: just call `unrefAll(...)` at the top of your fetcher.

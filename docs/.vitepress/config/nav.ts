@@ -8,14 +8,25 @@ export const nav: DefaultTheme.NavItem[] = [
     },
     {
         text: 'Packages',
-        activeMatch: '^/(common|http-client|routing|utils|vite-preset|worker)/',
+        activeMatch: '^/(packages|common|http-client|routing|utils|vite-preset|worker)/',
         items: [
-            {text: 'Common', link: '/common/'},
-            {text: 'HTTP Client', link: '/http-client/'},
-            {text: 'Routing', link: '/routing/'},
-            {text: 'Utils', link: '/utils/'},
-            {text: 'Vite Preset', link: '/vite-preset/'},
-            {text: 'Worker', link: '/worker/'}
+            {text: 'Overview', link: '/packages/'},
+            {
+                text: 'Vue toolkit',
+                items: [
+                    {text: 'Common', link: '/common/'},
+                    {text: 'HTTP Client', link: '/http-client/'},
+                    {text: 'Routing', link: '/routing/'}
+                ]
+            },
+            {
+                text: 'Standalone',
+                items: [
+                    {text: 'Utils', link: '/utils/'},
+                    {text: 'Vite Preset', link: '/vite-preset/'},
+                    {text: 'Worker', link: '/worker/'}
+                ]
+            }
         ]
     },
     {

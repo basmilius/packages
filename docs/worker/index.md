@@ -1,5 +1,24 @@
 ---
 outline: deep
+
+cards:
+    categories:
+        -   title: createWorker
+            code: true
+            details: 'The entry-point factory that dispatches routes by pathname.'
+            link: /worker/createWorker
+        -   title: Request helpers
+            details: 'queryDate, queryInteger and queryPosition parsers.'
+            link: /worker/request
+        -   title: Response helpers
+            details: 'json and error response builders.'
+            link: /worker/response
+        -   title: Errors
+            details: 'InvalidValueError, MissingParameterError, NotFoundError.'
+            link: /worker/error
+        -   title: Types
+            details: 'Routes, Worker and Coords type definitions.'
+            link: /worker/types
 ---
 
 # Worker
@@ -10,12 +29,7 @@ There are no plugins, no middleware system and no router DSL. Routes are a flat 
 
 ## Categories
 
-- [Installation](/worker/installation)
-- [`createWorker`](/worker/createWorker) — the entry-point factory
-- [Request helpers](/worker/request) — `queryDate`, `queryInteger`, `queryPosition`
-- [Response helpers](/worker/response) — `json`, `error`
-- [Errors](/worker/error) — `InvalidValueError`, `MissingParameterError`, `NotFoundError`
-- [Types](/worker/types) — `Routes<TBindings>`, `Worker<TBindings>`, `Coords`
+<LinkCards group="categories"/>
 
 ## Quick example
 

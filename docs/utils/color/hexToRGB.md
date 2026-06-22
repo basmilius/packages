@@ -6,6 +6,12 @@ outline: deep
 
 Parses a hexadecimal color string into an `[r, g, b]` tuple. The leading `#` is optional.
 
+## Demo
+
+::: example
+example=./examples/ColorConversions.vue
+:::
+
 ## Importing
 
 ```ts

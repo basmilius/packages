@@ -8,6 +8,14 @@ Helpers around [Luxon `DateTime`](https://moment.github.io/luxon/api-docs/index.
 
 All formatters honour the user's locale via `DateTime.toLocaleString` and the classification helpers expose narrow string-literal return types you can use in your own type unions.
 
+## Demo
+
+Pick a date and time to see every formatter applied to the same Luxon `DateTime`.
+
+::: example
+example=./examples/DateFormatting.vue
+:::
+
 ## Formatting
 
 - [`formatDate`](/utils/date/formatDate) — long localized date (year, month, day).

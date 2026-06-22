@@ -15,21 +15,39 @@ export const utils: DefaultTheme.SidebarItem[] = [
         collapsed: false,
         items: [
             {text: 'Overview', link: '/utils/date/'},
-            {text: 'formatDate', link: '/utils/date/formatDate'},
-            {text: 'formatDateFull', link: '/utils/date/formatDateFull'},
-            {text: 'formatDateTime', link: '/utils/date/formatDateTime'},
-            {text: 'formatMonth', link: '/utils/date/formatMonth'},
-            {text: 'formatMonthYear', link: '/utils/date/formatMonthYear'},
-            {text: 'formatTime', link: '/utils/date/formatTime'},
-            {text: 'getCircadianPhase', link: '/utils/date/getCircadianPhase'},
-            {text: 'getDayPeriod', link: '/utils/date/getDayPeriod'},
-            {text: 'getDayPeriodRange', link: '/utils/date/getDayPeriodRange'},
-            {text: 'getMoonPhase', link: '/utils/date/getMoonPhase'},
-            {text: 'getSeason', link: '/utils/date/getSeason'},
-            {text: 'getSeasonalMood', link: '/utils/date/getSeasonalMood'},
-            {text: 'getWorkdayPeriod', link: '/utils/date/getWorkdayPeriod'},
-            {text: 'getZodiacSign', link: '/utils/date/getZodiacSign'},
-            {text: 'isToday', link: '/utils/date/isToday'}
+            {
+                text: 'Formatting',
+                collapsed: false,
+                items: [
+                    {text: 'formatDate', link: '/utils/date/formatDate'},
+                    {text: 'formatDateFull', link: '/utils/date/formatDateFull'},
+                    {text: 'formatDateTime', link: '/utils/date/formatDateTime'},
+                    {text: 'formatMonth', link: '/utils/date/formatMonth'},
+                    {text: 'formatMonthYear', link: '/utils/date/formatMonthYear'},
+                    {text: 'formatTime', link: '/utils/date/formatTime'}
+                ]
+            },
+            {
+                text: 'Periods & seasons',
+                collapsed: false,
+                items: [
+                    {text: 'getCircadianPhase', link: '/utils/date/getCircadianPhase'},
+                    {text: 'getDayPeriod', link: '/utils/date/getDayPeriod'},
+                    {text: 'getDayPeriodRange', link: '/utils/date/getDayPeriodRange'},
+                    {text: 'getSeason', link: '/utils/date/getSeason'},
+                    {text: 'getSeasonalMood', link: '/utils/date/getSeasonalMood'},
+                    {text: 'getWorkdayPeriod', link: '/utils/date/getWorkdayPeriod'}
+                ]
+            },
+            {
+                text: 'Calendar & astronomy',
+                collapsed: false,
+                items: [
+                    {text: 'getMoonPhase', link: '/utils/date/getMoonPhase'},
+                    {text: 'getZodiacSign', link: '/utils/date/getZodiacSign'},
+                    {text: 'isToday', link: '/utils/date/isToday'}
+                ]
+            }
         ]
     },
     {

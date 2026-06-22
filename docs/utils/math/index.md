@@ -6,6 +6,14 @@ outline: deep
 
 Numeric helpers for formatting, snapping to a step, generating tick lists, and a fast deterministic pseudo random number generator.
 
+## Demo
+
+Tune the inputs to see [`formatNumber`](/utils/math/formatNumber) and [`formatPercentage`](/utils/math/formatPercentage) in your locale.
+
+::: example
+example=./examples/NumberFormatting.vue
+:::
+
 ## Formatting
 
 - [`formatNumber`](/utils/math/formatNumber) — locale-aware number formatting with a fixed number of fraction digits.

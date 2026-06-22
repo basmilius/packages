@@ -47,8 +47,8 @@
         "./*": "./*"
     },
     "devDependencies": {
-        "@types/luxon": "^3.7.1",
-        "@types/node": "^25.9.3",
+        "@types/luxon": "^3.7.2",
+        "@types/node": "^26.0.0",
         "luxon": "^3.7.2",
         "tsdown": "^0.22.3"
     },

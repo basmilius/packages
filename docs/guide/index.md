@@ -18,5 +18,6 @@ Welcome to **Packages** — a collection of six small npm packages that power my
 ## Where to start
 
 - New here? Read [Getting started](/guide/getting-started) for installation and a first taste.
+- Want the big picture? The [Packages overview](/packages/) shows all six packages and how they depend on each other.
 - Coming from one of my projects? Jump straight to the package documentation via the **Packages** menu.
 - Curious about how the monorepo is laid out? See [Monorepo](/guide/monorepo).

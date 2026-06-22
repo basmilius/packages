@@ -16,6 +16,9 @@ hero:
             text: Get started
             link: /guide/getting-started
         -   theme: alt
+            text: Browse packages
+            link: /packages/
+        -   theme: alt
             text: View on GitHub
             link: https://github.com/basmilius/packages
 

@@ -1,5 +1,30 @@
 ---
 outline: deep
+
+cards:
+    next:
+        -   title: Modal routing
+            details: 'A complete walkthrough of background + modal routing.'
+            link: /routing/guide/modal-routing
+        -   title: Slot props
+            details: 'The ModalWrapperProps passed into modal wrappers.'
+            link: /routing/guide/slot-props
+        -   title: createRouter
+            code: true
+            details: 'The patched router factory with modal awareness.'
+            link: /routing/createRouter
+        -   title: RouterView
+            code: true
+            details: 'Modal-aware router view that hosts the modal layer.'
+            link: /routing/component/RouterView
+        -   title: RouterLink
+            code: true
+            details: 'Links that open routes as modals via the modal prop.'
+            link: /routing/component/RouterLink
+        -   title: useModalRoute
+            code: true
+            details: 'Read and control the active modal route.'
+            link: /routing/composable/useModalRoute
 ---
 
 # Routing
@@ -63,9 +88,9 @@ export const router = createRouter({
 
 ## Where to next
 
-- Follow the [Modal routing](/routing/guide/modal-routing) guide for a complete walkthrough.
-- Read the [Slot props](/routing/guide/slot-props) reference for [`ModalWrapperProps`](/routing/types).
-- Browse the [components](/routing/component/RouterView), [composables](/routing/composable/useRoute) and [types](/routing/types).
+<LinkCards group="next"/>
+
+Browse the [components](/routing/component/RouterView), [composables](/routing/composable/useRoute) and [types](/routing/types) for the full API reference.
 
 ## Related packages
 

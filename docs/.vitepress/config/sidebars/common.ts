@@ -12,27 +12,52 @@ export const common: DefaultTheme.SidebarItem[] = [
         text: 'Composables',
         collapsed: false,
         items: [
-            {text: 'useClickOutside', link: '/common/composable/useClickOutside'},
-            {text: 'useComponentId', link: '/common/composable/useComponentId'},
-            {text: 'useCopy', link: '/common/composable/useCopy'},
-            {text: 'useDataTable', link: '/common/composable/useDataTable'},
-            {text: 'useDebounced', link: '/common/composable/useDebounced'},
-            {text: 'useDebouncedRef', link: '/common/composable/useDebouncedRef'},
-            {text: 'useDtoForm', link: '/common/composable/useDtoForm'},
-            {text: 'useEventListener', link: '/common/composable/useEventListener'},
-            {text: 'useHotKey', link: '/common/composable/useHotKey'},
-            {text: 'useInterval', link: '/common/composable/useInterval'},
-            {text: 'useInView', link: '/common/composable/useInView'},
-            {text: 'useLoaded', link: '/common/composable/useLoaded'},
-            {text: 'useLoadedAction', link: '/common/composable/useLoadedAction'},
-            {text: 'useLocalFile', link: '/common/composable/useLocalFile'},
-            {text: 'useMounted', link: '/common/composable/useMounted'},
-            {text: 'useMutationObserver', link: '/common/composable/useMutationObserver'},
-            {text: 'usePagination', link: '/common/composable/usePagination'},
-            {text: 'usePasswordStrength', link: '/common/composable/usePasswordStrength'},
-            {text: 'useResizeObserver', link: '/common/composable/useResizeObserver'},
-            {text: 'useScrollPosition', link: '/common/composable/useScrollPosition'},
-            {text: 'useService', link: '/common/composable/useService'}
+            {
+                text: 'Reactivity & lifecycle',
+                collapsed: false,
+                items: [
+                    {text: 'useComponentId', link: '/common/composable/useComponentId'},
+                    {text: 'useDebounced', link: '/common/composable/useDebounced'},
+                    {text: 'useDebouncedRef', link: '/common/composable/useDebouncedRef'},
+                    {text: 'useInterval', link: '/common/composable/useInterval'},
+                    {text: 'useLoaded', link: '/common/composable/useLoaded'},
+                    {text: 'useLoadedAction', link: '/common/composable/useLoadedAction'},
+                    {text: 'useMounted', link: '/common/composable/useMounted'}
+                ]
+            },
+            {
+                text: 'DOM & observers',
+                collapsed: false,
+                items: [
+                    {text: 'useClickOutside', link: '/common/composable/useClickOutside'},
+                    {text: 'useEventListener', link: '/common/composable/useEventListener'},
+                    {text: 'useInView', link: '/common/composable/useInView'},
+                    {text: 'useMutationObserver', link: '/common/composable/useMutationObserver'},
+                    {text: 'useResizeObserver', link: '/common/composable/useResizeObserver'},
+                    {text: 'useScrollPosition', link: '/common/composable/useScrollPosition'}
+                ]
+            },
+            {
+                text: 'Forms & data',
+                collapsed: false,
+                items: [
+                    {text: 'useDataTable', link: '/common/composable/useDataTable'},
+                    {text: 'useDtoForm', link: '/common/composable/useDtoForm'},
+                    {text: 'usePagination', link: '/common/composable/usePagination'},
+                    {text: 'usePasswordStrength', link: '/common/composable/usePasswordStrength'}
+                ]
+            },
+            {
+                text: 'Browser & state',
+                collapsed: false,
+                items: [
+                    {text: 'useCopy', link: '/common/composable/useCopy'},
+                    {text: 'useHotKey', link: '/common/composable/useHotKey'},
+                    {text: 'useLocalFile', link: '/common/composable/useLocalFile'},
+                    {text: 'useService', link: '/common/composable/useService'},
+                    {text: 'useUrlState', link: '/common/composable/useUrlState'}
+                ]
+            }
         ]
     },
     {

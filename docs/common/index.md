@@ -1,12 +1,43 @@
 ---
 outline: deep
+
+cards:
+    highlights:
+        -   title: useDtoForm
+            code: true
+            details: 'Drive a form from a reactive DTO with dirty tracking and submit guards.'
+            link: /common/composable/useDtoForm
+        -   title: useDataTable
+            code: true
+            details: 'Paginated, sortable data tables backed by an async fetcher.'
+            link: /common/composable/useDataTable
+        -   title: useService
+            code: true
+            details: 'Lazily instantiate and memoize an HTTP service per component.'
+            link: /common/composable/useService
+        -   title: useHotKey
+            code: true
+            details: 'Bind keyboard shortcuts with modifiers, targeting and repeat.'
+            link: /common/composable/useHotKey
+        -   title: persistentRef
+            code: true
+            details: 'A ref that mirrors localStorage and survives reloads.'
+            link: /common/util/persistentRef
+        -   title: defineStore
+            code: true
+            details: 'A Pinia setup store that hands back refs by default.'
+            link: /common/store/
 ---
 
 # Common
 
 A set of Vue 3 composables, router helpers, Pinia store helpers, error classes and small utilities shared across the `@basmilius` ecosystem. The package is opinionated about its peer dependencies — it expects a Vue 3 application with Vue Router and Pinia available — but is otherwise unobtrusive.
 
-## Categories
+## Highlights
+
+<LinkCards group="highlights"/>
+
+## Explore by category
 
 - [Composables](/common/composable/useClickOutside) — Vue 3 composables for clipboard, debouncing, observers, pagination and more
 - [Router helpers](/common/router/) — small wrappers around `vue-router` for typed parameters, navigation and named views
@@ -22,7 +53,7 @@ The package leans on three peers that you almost certainly already have in any V
 - [`vue-router`](https://router.vuejs.org/) — required by everything in [`/common/router/`](/common/router/)
 - [`pinia`](https://pinia.vuejs.org/) — required by [`defineStore`](/common/store/)
 
-`@basmilius/http-client` is an optional peer that unlocks the data-oriented composables [`useDataTable`](/common/composable/useDataTable), [`useDtoForm`](/common/composable/useDtoForm) and [`useService`](/common/composable/useService).
+[`@basmilius/http-client`](/http-client/) is an optional peer that unlocks the data-oriented composables [`useDataTable`](/common/composable/useDataTable), [`useDtoForm`](/common/composable/useDtoForm) and [`useService`](/common/composable/useService).
 
 ## Quick example
 

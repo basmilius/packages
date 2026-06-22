@@ -5,6 +5,7 @@ import './custom.css';
 import ApiSignature from './components/ApiSignature.vue';
 import Emits from './components/Emits.vue';
 import FrontmatterDocs from './components/FrontmatterDocs.vue';
+import LinkCards from './components/LinkCards.vue';
 import PackageBadge from './components/PackageBadge.vue';
 import Props from './components/Props.vue';
 import Slots from './components/Slots.vue';
@@ -15,6 +16,7 @@ export default {
         app.component('ApiSignature', ApiSignature);
         app.component('Emits', Emits);
         app.component('FrontmatterDocs', FrontmatterDocs);
+        app.component('LinkCards', LinkCards);
         app.component('PackageBadge', PackageBadge);
         app.component('Props', Props);
         app.component('Slots', Slots);

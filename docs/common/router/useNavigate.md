@@ -65,3 +65,8 @@ declare function useNavigate(...wrap: Wrap[]): {
     replace(to: To): Promise<Result>;
 };
 ```
+
+## See also
+
+- [`useNavigate` in `@basmilius/routing`](/routing/composable/useNavigate) — the modal-aware version, used inside a `@basmilius/routing` app
+- [Router helpers overview](/common/router/)
