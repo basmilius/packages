@@ -67,6 +67,20 @@ import { useDataTable } from '@basmilius/common';
 
 The fetcher receives a single `query` object with the calculated `offset`, the active `limit`, the debounced `search`, the current `filters` and the active `sort`. Map those onto your API however you like — `useDataTable` stays agnostic about how filters or sorting are serialized. Returning `false` skips the update — useful when a request was cancelled or aborted upstream. Throwing an [`UnresolvedDependencyException`](/common/error/) silently swallows the call, which pairs nicely with [`unrefAll`](/common/util/unrefAll).
 
+When the fetcher throws, the error is captured in the `error` ref instead of being re-thrown, so you can react to it in the template without wrapping the fetcher yourself. It is reset to `null` at the start of every fetch. Control-flow exceptions are excluded: `UnresolvedDependencyException` is still swallowed, and `ForbiddenException`, `UnauthorizedException` and `HandledException` (thrown by [`guarded`](/common/util/guarded)) are re-thrown so your global error handler keeps catching them. Because `error` is typed as `unknown`, narrow it with a type guard such as [`isRequestError`](/http-client/) before reading its fields:
+
+```ts
+import { isRequestError } from '@basmilius/http-client';
+
+const {error, items} = useDataTable({fetcher});
+
+watch(error, err => {
+    if (isRequestError(err)) {
+        console.error(err.errorDescription);
+    }
+});
+```
+
 `search`, `filters` and `sort` are plain refs you mutate directly. Changing any of them resets the page back to one and re-fetches. The `filters` ref is deep-watched, so both `filters.value.status = 'open'` and `filters.value = {...}` work. For column headers, `toggleSort(field)` cycles that column through `asc → desc → none`, while `setSort` sets it imperatively.
 
 Pass a `dependencies` array of additional reactive sources to trigger a re-fetch when they change.
@@ -93,6 +107,7 @@ useDataTable({fetcher, dependencies: [tenant]});
 | Property          | Type                            | Description                                          |
 | ----------------- | ------------------------------- | ---------------------------------------------------- |
 | `displayEmpty`    | `Ref<boolean>`                  | `true` when the first load returned no items         |
+| `error`           | `Ref<unknown>`                  | Last fetch error (e.g. a `RequestError`), or `null`; control-flow exceptions are re-thrown |
 | `isLoading`       | `ComputedRef<boolean>`          | Loading flag from [`useLoaded`](/common/composable/useLoaded) |
 | `items`           | `Ref<TItem[]>`                  | Latest page of items                                 |
 | `limits`          | `Ref<number[]>`                 | Available page-size options (5, 10, 25, 50, 100)     |

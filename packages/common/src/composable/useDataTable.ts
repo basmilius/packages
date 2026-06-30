@@ -1,6 +1,6 @@
 import { BaseResponse, Paginated } from '@basmilius/http-client';
 import { type ComputedRef, type MultiWatchSources, ref, type Ref, unref, watch } from 'vue';
-import { UnresolvedDependencyException } from '../error';
+import { ForbiddenException, HandledException, UnauthorizedException, UnresolvedDependencyException } from '../error';
 import useDebouncedRef from './useDebouncedRef';
 import useLoaded from './useLoaded';
 import usePagination from './usePagination';
@@ -37,6 +37,7 @@ export type UseDataTableOptions<TItem, TFilter> = {
 
 export type UseDataTable<TItem, TFilter> = {
     readonly displayEmpty: Ref<boolean>;
+    readonly error: Ref<unknown>;
     readonly filters: Ref<TFilter>;
     readonly isLoading: ComputedRef<boolean>;
     readonly items: Ref<TItem[]>;
@@ -83,6 +84,7 @@ export default function <TItem, TFilter = Record<string, unknown>>(options: UseD
     }
 
     const displayEmpty = ref(false);
+    const error = ref<unknown>(null);
     const isFirstLoad = ref(true);
     const items = ref<TItem[]>([]) as Ref<TItem[]>;
 
@@ -95,6 +97,8 @@ export default function <TItem, TFilter = Record<string, unknown>>(options: UseD
     async function fetch(): Promise<void> {
         const _page = unref(page);
         const _perPage = unref(perPage);
+
+        error.value = null;
 
         try {
             const response = await loaded(fetcher)({
@@ -126,7 +130,11 @@ export default function <TItem, TFilter = Record<string, unknown>>(options: UseD
                 return;
             }
 
-            throw err;
+            if (err instanceof ForbiddenException || err instanceof UnauthorizedException || err instanceof HandledException) {
+                throw err;
+            }
+
+            error.value = err;
         }
     }
 
@@ -158,6 +166,7 @@ export default function <TItem, TFilter = Record<string, unknown>>(options: UseD
 
     return {
         displayEmpty,
+        error,
         filters,
         isLoading,
         items,
