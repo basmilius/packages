@@ -1,10 +1,68 @@
 import { BaseResponse, Paginated } from '@basmilius/http-client';
 import { type ComputedRef, type MultiWatchSources, ref, type Ref, unref, watch } from 'vue';
 import { UnresolvedDependencyException } from '../error';
+import useDebouncedRef from './useDebouncedRef';
 import useLoaded from './useLoaded';
 import usePagination from './usePagination';
 
-export default function <T>(fetcher: (offset: number, limit: number) => Promise<BaseResponse<Paginated<T>> | false>, dependencies: MultiWatchSources = []): UseDataTable<T> {
+const DEFAULT_PAGE = 1;
+const DEFAULT_SEARCH_DEBOUNCE_MS = 300;
+
+export type DataTableSortDirection = 'asc' | 'desc';
+
+export type DataTableSort = {
+    readonly direction: DataTableSortDirection;
+    readonly field: string;
+};
+
+export type DataTableQuery<TFilter> = {
+    readonly filters: TFilter;
+    readonly limit: number;
+    readonly offset: number;
+    readonly search: string;
+    readonly sort: DataTableSort | null;
+};
+
+export type DataTableFetcher<TItem, TFilter> = (query: DataTableQuery<TFilter>) => Promise<BaseResponse<Paginated<TItem>> | false>;
+
+export type UseDataTableOptions<TItem, TFilter> = {
+    readonly dependencies?: MultiWatchSources;
+    readonly fetcher: DataTableFetcher<TItem, TFilter>;
+    readonly filters?: TFilter;
+    readonly perPage?: number;
+    readonly search?: string;
+    readonly searchDebounceMs?: number;
+    readonly sort?: DataTableSort | null;
+};
+
+export type UseDataTable<TItem, TFilter> = {
+    readonly displayEmpty: Ref<boolean>;
+    readonly filters: Ref<TFilter>;
+    readonly isLoading: ComputedRef<boolean>;
+    readonly items: Ref<TItem[]>;
+    readonly limits: Ref<number[]>;
+    readonly page: Ref<number>;
+    readonly perPage: Ref<number>;
+    readonly search: Ref<string>;
+    readonly sort: Ref<DataTableSort | null>;
+    readonly total: Ref<number>;
+
+    reload(): Promise<void>;
+    setPage(num: number): void;
+    setPerPage(num: number): void;
+    setSort(sort: DataTableSort | null): void;
+    setTotal(num: number): void;
+    toggleSort(field: string): void;
+};
+
+export default function <TItem, TFilter = Record<string, unknown>>(options: UseDataTableOptions<TItem, TFilter>): UseDataTable<TItem, TFilter> {
+    const {
+        fetcher,
+        dependencies = []
+    } = options;
+
+    const defaults = options.filters ?? ({} as TFilter);
+
     const {
         isLoading,
         loaded
@@ -20,16 +78,32 @@ export default function <T>(fetcher: (offset: number, limit: number) => Promise<
         setTotal
     } = usePagination();
 
+    if (options.perPage !== undefined) {
+        setPerPage(options.perPage);
+    }
+
     const displayEmpty = ref(false);
     const isFirstLoad = ref(true);
-    const items = ref<T[]>([]) as Ref<T[]>;
+    const items = ref<TItem[]>([]) as Ref<TItem[]>;
+
+    const search = ref(options.search ?? '');
+    const filters = ref({...defaults}) as Ref<TFilter>;
+    const sort = ref(options.sort ?? null) as Ref<DataTableSort | null>;
+
+    const debouncedSearch = useDebouncedRef(search, options.searchDebounceMs ?? DEFAULT_SEARCH_DEBOUNCE_MS);
 
     async function fetch(): Promise<void> {
         const _page = unref(page);
         const _perPage = unref(perPage);
 
         try {
-            const response = await loaded(fetcher)((_page - 1) * _perPage, _perPage);
+            const response = await loaded(fetcher)({
+                offset: (_page - 1) * _perPage,
+                limit: _perPage,
+                search: unref(debouncedSearch),
+                filters: filters.value,
+                sort: sort.value
+            });
 
             if (response === false) {
                 return;
@@ -58,33 +132,47 @@ export default function <T>(fetcher: (offset: number, limit: number) => Promise<
 
     watch([page, perPage, ...dependencies], fetch, {immediate: true});
 
+    watch([debouncedSearch, filters, sort], () => {
+        if (page.value !== DEFAULT_PAGE) {
+            setPage(DEFAULT_PAGE);
+        } else {
+            fetch();
+        }
+    }, {deep: true});
+
+    function setSort(value: DataTableSort | null): void {
+        sort.value = value;
+    }
+
+    function toggleSort(field: string): void {
+        const current = sort.value;
+
+        if (current === null || current.field !== field) {
+            sort.value = {field, direction: 'asc'};
+        } else if (current.direction === 'asc') {
+            sort.value = {field, direction: 'desc'};
+        } else {
+            sort.value = null;
+        }
+    }
+
     return {
         displayEmpty,
+        filters,
         isLoading,
         items,
         limits,
         page,
         perPage,
+        search,
+        sort,
         total,
 
         reload: fetch,
         setPage,
         setPerPage,
-        setTotal
+        setSort,
+        setTotal,
+        toggleSort
     };
 }
-
-type UseDataTable<T> = {
-    readonly displayEmpty: Ref<boolean>;
-    readonly isLoading: ComputedRef<boolean>;
-    readonly items: Ref<T[]>;
-    readonly limits: Ref<number[]>;
-    readonly page: Ref<number>;
-    readonly perPage: Ref<number>;
-    readonly total: Ref<number>;
-
-    reload(): Promise<void>;
-    setPage(num: number): void;
-    setPerPage(num: number): void;
-    setTotal(num: number): void;
-};
