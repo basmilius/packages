@@ -141,6 +141,27 @@ router.push({ path: '/users/42', modal: true });
 
 Modifier-clicks (cmd, ctrl, middle-click) still open the URL in a new tab — the link only opts into modal navigation for primary clicks. Modal routes must therefore be valid stand-alone URLs.
 
+### Named-view layouts inside a modal
+
+The `depth` (`:modal="1"`, `:modal="2"`, …) controls how many parent records render inside the wrapper. The modal renders each record's `default` view, but when a record declares no `default` — a layout registered solely under a named view — it falls back to that record's first declared view. This lets a layout that also renders outside the modal (via its own named `<RouterView>`) double as the modal's in-wrapper layout:
+
+```ts
+{
+    path: ':id',
+    // No `default` — this layout is registered under `overlay`.
+    components: { overlay: () => import('./RequestLayout.vue') },
+    children: [
+        { name: 'request', path: '', component: () => import('./Summary.vue') }
+    ]
+}
+```
+
+```vue
+<RouterLink :to="{ name: 'request', params: { id }, modal: 1 }">Open request</RouterLink>
+```
+
+`:modal="1"` starts the modal at the `:id` record, and the named-view fallback renders its `overlay` layout; `RequestLayout.vue`'s own `<RouterView>` then renders the `request` child. The same `overlay` view can still be mounted elsewhere for non-modal navigation — the two are independent.
+
 ## 5. Close modals
 
 The wrapper emits `close` when the user dismisses the modal. The default listener installed by `RouterView` calls `router.back()`. To close imperatively from anywhere:

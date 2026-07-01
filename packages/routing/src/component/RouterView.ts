@@ -1,8 +1,9 @@
-import { type Component, defineComponent, Fragment, h, inject, nextTick, onBeforeUnmount, provide, type Ref, shallowRef, unref, type VNodeChild, watch } from 'vue';
+import { type Component, computed, defineComponent, Fragment, h, inject, nextTick, onBeforeUnmount, provide, type Ref, shallowRef, unref, type VNodeChild, watch } from 'vue';
 import { RouterView as VueRouterView, useRoute, useRouter, viewDepthKey } from 'vue-router';
 import { BackgroundProvider, ModalProvider } from '../internal/RoutedView';
 import resolveModal from '../internal/resolveModal';
-import { innerReadyKey, modalContextKey, routeOverrideKey } from '../symbol';
+import resolveViewName from '../internal/resolveViewName';
+import { innerReadyKey, modalContextKey, modalViewNameKey, routeOverrideKey } from '../symbol';
 import type { ModalConfig } from '../types';
 
 const RouterView: Component = defineComponent({
@@ -80,6 +81,21 @@ const RouterView: Component = defineComponent({
         // note: Exposed so `ModalRouterView` inside consumer wrapper
         //  templates honours the same one-tick delay as the fallback slot.
         provide(innerReadyKey, innerReady);
+
+        // note: Name of the view the modal renders at its current depth.
+        //  `undefined` -> default view; falls back to the first declared
+        //  view when the matched record has no `default` (e.g. a layout
+        //  registered solely under `overlay`). Provided so `ModalRouterView`
+        //  inside consumer wrappers renders the same view without re-deriving
+        //  depth. Mirrors the `viewDepth` computed used in the render below.
+        const modalViewName = computed<string | undefined>(() => {
+            const parentCount = ctx?.depth.value ?? 0;
+            const depth = Math.max(0, route.matched.length - 1 - parentCount);
+
+            return resolveViewName(route, depth);
+        });
+
+        provide(modalViewNameKey, modalViewName);
 
         if (ctx && isModalHost) {
             watch(() => ctx.backgroundRoute.value !== null, async (isOpen) => {
@@ -165,8 +181,11 @@ const RouterView: Component = defineComponent({
             //  wrapper's internal Teleport still inherits the provider
             //  context. Inner is `undefined` while closed or gated, so
             //  the wrapper's `<Transition>` observes an empty slot.
+            //  `name` falls back to the first declared view when the record
+            //  at `viewDepth` has no `default` (named-view layout).
+            const innerViewName = modalViewName.value;
             const modalInner = modalActive && innerReady.value
-                ? h(VueRouterView)
+                ? h(VueRouterView, innerViewName !== undefined ? {name: innerViewName} : {})
                 : undefined;
 
             const wrappedModalInner = wrapperConfig
