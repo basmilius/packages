@@ -55,7 +55,7 @@ Pass a single shortcut or an array of shortcuts that all trigger the same handle
 
 Combine tokens with `+`. Recognised modifiers are `ctrl`, `meta` (aliases `cmd`/`command`), `shift`, `alt` (aliases `option`/`opt`) and `mod` (`⌘` on macOS, `Ctrl` elsewhere). Modifiers must match exactly, so `'s'` only fires for a bare `S` and never for `⌘S`. Keys are matched case-insensitively against `KeyboardEvent.key`, with aliases for common keys: `esc`, `space`, `up`/`down`/`left`/`right`, `enter`/`return`, `del` and `plus`.
 
-Single-character keys already carry their shifted character in `KeyboardEvent.key` — `?` is Shift + `/` — so the Shift state is ignored for them unless you write `shift` explicitly. That means `'?'` matches without spelling it out as `'shift+?'`.
+Punctuation, symbol and digit keys already carry their shifted character in `KeyboardEvent.key` — `?` is Shift + `/` — so the Shift state is ignored for them unless you write `shift` explicitly. That means `'?'` matches without spelling it out as `'shift+?'`. Letter keys are matched case-insensitively, so Shift stays a meaningful modifier for them: `'mod+d'` and `'mod+shift+d'` are distinct shortcuts.
 
 ### Options
 

@@ -64,10 +64,14 @@ export default function (shortcuts: string | string[], handler: HotKeyHandler, o
             const requiresMeta = shortcut.meta || (shortcut.mod && apple);
             const requiresCtrl = shortcut.ctrl || (shortcut.mod && !apple);
 
-            // For single-character keys the shift state is already baked into
-            // `evt.key` (e.g. `?` is Shift + `/`), so only enforce shift when it
-            // was requested explicitly — otherwise `'?'` would never match.
-            const ignoreShift = !shortcut.shift && shortcut.key.length === 1;
+            // For punctuation/symbol/digit keys the shift state is already baked
+            // into `evt.key` (`?` is Shift + `/`, and on some layouts a digit
+            // needs Shift), so only enforce shift when it was requested explicitly
+            // — otherwise `'?'` would never match. Letters are exempt: shift only
+            // changes their case (which we normalise via `toLowerCase`), so shift
+            // stays a meaningful modifier and `mod+d` must not also fire for
+            // `mod+shift+d`.
+            const ignoreShift = !shortcut.shift && shortcut.key.length === 1 && !/^[a-z]$/.test(shortcut.key);
 
             const matches = evt.metaKey === requiresMeta
                 && evt.ctrlKey === requiresCtrl
