@@ -156,12 +156,15 @@ const RouterView: Component = defineComponent({
                 }
             }
 
+            // note: Always render the same vnode shape below, even before
+            //  the first modal or when none is active. Falling back to a bare
+            //  `h(VueRouterView)` here would make the root vnode switch type
+            //  (VueRouterView -> Fragment) the first time a modal opens; Vue
+            //  diffs vnode type first, so that switch unmounts + remounts the
+            //  whole subtree — remounting the background view (re-triggering
+            //  its data fetching) and denying the wrapper its enter animation.
+            //  Keeping the structure invariant avoids that first-open remount.
             const wrapperConfig = lastModal.value;
-
-            // note: Never been a modal here -> plain RouterView.
-            if (!modalActive && !wrapperConfig) {
-                return h(VueRouterView, attrs, slots);
-            }
 
             // note: Background renders the stored route while open; the
             //  current route while closed (wrapper lingering for leave
