@@ -24,7 +24,7 @@ cards:
             details: 'Exit the Node process when the bundle finishes (CI).'
             link: /vite-preset/closeBundle
         -   title: Pre-composed libraries
-            details: 'flux, fluxApplication, fluxDashboard, fluxStatistics.'
+            details: 'flux, fluxApplication, fluxDashboard, fluxStatistics, fluxVisuals.'
             link: /vite-preset/libraries
 ---
 

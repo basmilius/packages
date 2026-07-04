@@ -26,3 +26,9 @@ export const fluxStatistics: LibraryPlugin = composeLibrary({
     alias: '~flux/statistics',
     peerDependencies: ['apexcharts', 'lodash-es', 'vue', 'vue-i18n', 'vue3-apexcharts']
 });
+
+export const fluxVisuals: LibraryPlugin = composeLibrary({
+    name: '@flux-ui/visuals',
+    alias: '~flux/visuals',
+    peerDependencies: ['vue']
+});
