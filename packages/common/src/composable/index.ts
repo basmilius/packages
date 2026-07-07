@@ -1,8 +1,10 @@
 export { default as useClickOutside } from './useClickOutside';
 export { default as useComponentId } from './useComponentId';
 export { default as useCopy } from './useCopy';
+export { default as useDataReport } from './useDataReport';
+export type { DataReportFetcher, DataReportPreload, DataReportPreloadContext, DataReportQuery, UseDataReport, UseDataReportOptions } from './useDataReport';
 export { default as useDataTable } from './useDataTable';
-export type { DataTableFetcher, DataTableQuery, DataTableSort, DataTableSortDirection, UseDataTable, UseDataTableOptions } from './useDataTable';
+export type { DataTableFetcher, DataTablePreload, DataTablePreloadContext, DataTableQuery, DataTableSort, DataTableSortDirection, UseDataTable, UseDataTableOptions } from './useDataTable';
 export { default as useDebounced } from './useDebounced';
 export { default as useDebouncedRef } from './useDebouncedRef';
 export { default as useDtoForm } from './useDtoForm';

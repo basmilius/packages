@@ -41,6 +41,7 @@ export const common: DefaultTheme.SidebarItem[] = [
                 text: 'Forms & data',
                 collapsed: false,
                 items: [
+                    {text: 'useDataReport', link: '/common/composable/useDataReport'},
                     {text: 'useDataTable', link: '/common/composable/useDataTable'},
                     {text: 'useDtoForm', link: '/common/composable/useDtoForm'},
                     {text: 'usePagination', link: '/common/composable/usePagination'},

@@ -113,11 +113,16 @@ export default function <TItem, TFilter = Record<string, unknown>>(options: UseD
 
     const debouncedSearch = useDebouncedRef(search, options.searchDebounceMs ?? DEFAULT_SEARCH_DEBOUNCE_MS);
 
+    // note(Bas): monotonic request id so a slow, superseded response can't
+    //  overwrite the result of a newer fetch after rapid filter changes.
+    let latestRequest = 0;
+
     async function fetch(): Promise<void> {
         if (unref(isPreloading)) {
             return;
         }
 
+        const request = ++latestRequest;
         const _page = unref(page);
         const _perPage = unref(perPage);
 
@@ -132,7 +137,7 @@ export default function <TItem, TFilter = Record<string, unknown>>(options: UseD
                 sort: sort.value
             });
 
-            if (response === false) {
+            if (request !== latestRequest || response === false) {
                 return;
             }
 
