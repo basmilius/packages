@@ -1,5 +1,5 @@
 import { BaseResponse, Paginated } from '@basmilius/http-client';
-import { type ComputedRef, type MultiWatchSources, ref, type Ref, unref, watch } from 'vue';
+import { computed, type ComputedRef, type MultiWatchSources, ref, type Ref, unref, watch } from 'vue';
 import { ForbiddenException, HandledException, UnauthorizedException, UnresolvedDependencyException } from '../error';
 import useDebouncedRef from './useDebouncedRef';
 import useLoaded from './useLoaded';
@@ -25,11 +25,26 @@ export type DataTableQuery<TFilter> = {
 
 export type DataTableFetcher<TItem, TFilter> = (query: DataTableQuery<TFilter>) => Promise<BaseResponse<Paginated<TItem>> | false>;
 
+export type DataTablePreloadContext<TFilter> = {
+    readonly filters: Ref<TFilter>;
+    readonly search: Ref<string>;
+};
+
+export type DataTablePreload<TFilter> = (context: DataTablePreloadContext<TFilter>) => void | Promise<void>;
+
 export type UseDataTableOptions<TItem, TFilter> = {
     readonly dependencies?: MultiWatchSources;
     readonly fetcher: DataTableFetcher<TItem, TFilter>;
     readonly filters?: TFilter;
     readonly perPage?: number;
+
+    /**
+     * Runs once before the very first fetch. While it is pending the table stays in
+     * its loading state and every fetch is held back, so setting up an initial filter
+     * (through the provided `filters` ref) results in a single load instead of a
+     * throwaway fetch followed by a filtered one.
+     */
+    readonly preload?: DataTablePreload<TFilter>;
     readonly search?: string;
     readonly searchDebounceMs?: number;
     readonly sort?: DataTableSort | null;
@@ -59,15 +74,19 @@ export type UseDataTable<TItem, TFilter> = {
 export default function <TItem, TFilter = Record<string, unknown>>(options: UseDataTableOptions<TItem, TFilter>): UseDataTable<TItem, TFilter> {
     const {
         fetcher,
-        dependencies = []
+        dependencies = [],
+        preload
     } = options;
 
     const defaults = options.filters ?? ({} as TFilter);
 
     const {
-        isLoading,
+        isLoading: loadedIsLoading,
         loaded
     } = useLoaded();
+
+    const isPreloading = ref(preload !== undefined);
+    const isLoading = computed(() => unref(isPreloading) || unref(loadedIsLoading));
 
     const {
         limits,
@@ -95,6 +114,10 @@ export default function <TItem, TFilter = Record<string, unknown>>(options: UseD
     const debouncedSearch = useDebouncedRef(search, options.searchDebounceMs ?? DEFAULT_SEARCH_DEBOUNCE_MS);
 
     async function fetch(): Promise<void> {
+        if (unref(isPreloading)) {
+            return;
+        }
+
         const _page = unref(page);
         const _perPage = unref(perPage);
 
@@ -147,6 +170,16 @@ export default function <TItem, TFilter = Record<string, unknown>>(options: UseD
             fetch();
         }
     }, {deep: true});
+
+    if (preload !== undefined) {
+        void Promise.resolve()
+            .then(() => preload({filters, search}))
+            .catch(() => {})
+            .finally(() => {
+                isPreloading.value = false;
+                void fetch();
+            });
+    }
 
     function setSort(value: DataTableSort | null): void {
         sort.value = value;

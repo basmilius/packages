@@ -90,6 +90,22 @@ const tenant = ref(1);
 useDataTable({fetcher, dependencies: [tenant]});
 ```
 
+## Preloading
+
+Use `preload` to run asynchronous setup once before the very first fetch. While it is pending the table stays in its loading state and every fetch is held back, so seeding an initial filter through the provided `filters` ref results in a single load instead of a throwaway fetch followed by a filtered one. The callback may be synchronous or return a promise; both a synchronous throw and a rejected promise are swallowed, after which the first fetch runs regardless.
+
+```ts
+useDataTable<Order, OrderFilters>({
+    fetcher: query => orders.list(query),
+    preload: async ({filters}) => {
+        const {status} = await orders.defaultFilters();
+        filters.value.status = status;
+    }
+});
+```
+
+Seed `filters` (deep-watched) rather than `search` here: mutating `search` is debounced, so it would still trigger an extra fetch shortly after the initial load.
+
 ## Options
 
 | Option             | Type                              | Description                                                  |
@@ -100,6 +116,7 @@ useDataTable({fetcher, dependencies: [tenant]});
 | `search`           | `string`                          | Initial search term                                          |
 | `searchDebounceMs` | `number`                          | Debounce for the search ref (default `300`)                  |
 | `perPage`          | `number`                          | Initial page size (default `25` from `usePagination`)        |
+| `preload`          | `DataTablePreload<TFilter>`       | Runs once before the first fetch; holds back fetching while pending |
 | `dependencies`     | `MultiWatchSources`               | Extra reactive sources that trigger a re-fetch               |
 
 ## Returned bindings
@@ -143,6 +160,13 @@ type DataTableQuery<TFilter> = {
 };
 
 type DataTableFetcher<TItem, TFilter> = (query: DataTableQuery<TFilter>) => Promise<BaseResponse<Paginated<TItem>> | false>;
+
+type DataTablePreloadContext<TFilter> = {
+    readonly filters: Ref<TFilter>;
+    readonly search: Ref<string>;
+};
+
+type DataTablePreload<TFilter> = (context: DataTablePreloadContext<TFilter>) => void | Promise<void>;
 
 declare function useDataTable<TItem, TFilter = Record<string, unknown>>(
     options: UseDataTableOptions<TItem, TFilter>
