@@ -25,7 +25,7 @@
         "slide-over"
     ],
     "scripts": {
-        "build": "tsgo --noEmit && tsdown"
+        "build": "tsc --noEmit && tsdown"
     },
     "files": [
         "dist",
@@ -56,7 +56,7 @@
     },
     "devDependencies": {
         "@types/lodash-es": "^4.17.12",
-        "tsdown": "^0.22.3",
+        "tsdown": "^0.22.4",
         "vue": "^3.6.0-beta.17",
         "vue-router": "^5.1.0"
     }

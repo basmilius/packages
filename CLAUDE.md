@@ -25,7 +25,7 @@ bun docs:dev                        # docs locally (aliases every @basmilius/* t
 bun docs:build                      # static docs → docs/.vitepress/dist
 ```
 
-- Per-package build = `tsgo --noEmit && tsdown`: first type-check via the TypeScript native preview (`@typescript/native-preview`), then bundle with tsdown.
+- Per-package build = `tsc --noEmit && tsdown`: first type-check via the TypeScript native preview (`@typescript/native-preview`), then bundle with tsdown.
 - **No test suite** present; no test runner configured.
 - Never start a dev server yourself; ask for one.
 
