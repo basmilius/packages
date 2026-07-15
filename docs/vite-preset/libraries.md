@@ -9,7 +9,7 @@ outline: deep
 ## Importing
 
 ```ts
-import { flux, fluxApplication, fluxDashboard, fluxStatistics, fluxVisuals } from '@basmilius/vite-preset';
+import { flux, fluxApplication, fluxFlow, fluxStatistics, fluxVisuals } from '@basmilius/vite-preset';
 ```
 
 ## Available libraries
@@ -18,7 +18,7 @@ import { flux, fluxApplication, fluxDashboard, fluxStatistics, fluxVisuals } fro
 |-------------------|---------------------------|----------------------|
 | `flux`            | `@flux-ui/components`     | `~flux/components`   |
 | `fluxApplication` | `@flux-ui/application`    | `~flux/application`  |
-| `fluxDashboard`   | `@flux-ui/dashboard`      | `~flux/dashboard`    |
+| `fluxFlow`        | `@flux-ui/flow`           | `~flux/flow`         |
 | `fluxStatistics`  | `@flux-ui/statistics`     | `~flux/statistics`   |
 | `fluxVisuals`     | `@flux-ui/visuals`        | `~flux/visuals`      |
 
