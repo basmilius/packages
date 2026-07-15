@@ -83,6 +83,13 @@ export const common: DefaultTheme.SidebarItem[] = [
         ]
     },
     {
+        text: 'Plugins',
+        collapsed: false,
+        items: [
+            {text: 'createAutomationId', link: '/common/plugin/createAutomationId'}
+        ]
+    },
+    {
         text: 'Errors',
         collapsed: false,
         items: [
