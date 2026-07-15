@@ -5,6 +5,7 @@ import { httpClient } from './http-client';
 import { packages } from './packages';
 import { routing } from './routing';
 import { utils } from './utils';
+import { validation } from './validation';
 import { vitePreset } from './vite-preset';
 import { worker } from './worker';
 
@@ -15,6 +16,7 @@ export const sidebar: DefaultTheme.SidebarMulti = {
     '/http-client/': httpClient,
     '/routing/': routing,
     '/utils/': utils,
+    '/validation/': validation,
     '/vite-preset/': vitePreset,
     '/worker/': worker
 };

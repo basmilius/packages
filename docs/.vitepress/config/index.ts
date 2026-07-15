@@ -15,6 +15,7 @@ const alias = {
     '@basmilius/http-client': resolve(repo, 'packages/http-client/src/index.ts'),
     '@basmilius/routing': resolve(repo, 'packages/routing/src/index.ts'),
     '@basmilius/utils': resolve(repo, 'packages/utils/src/index.ts'),
+    '@basmilius/validation': resolve(repo, 'packages/validation/src/index.ts'),
     '@basmilius/vite-preset': resolve(repo, 'packages/vite-preset/src/index.ts'),
     '@basmilius/worker': resolve(repo, 'packages/worker/src/index.ts')
 };
@@ -22,7 +23,7 @@ const alias = {
 export default defineConfig({
     title: 'Packages',
     titleTemplate: ':title — Packages',
-    description: 'Documentation for the @basmilius monorepo: common, http-client, routing, utils, vite-preset and worker.',
+    description: 'Documentation for the @basmilius monorepo: common, http-client, routing, utils, validation, vite-preset and worker.',
     cleanUrls: true,
     lastUpdated: true,
     sitemap: {
@@ -53,7 +54,8 @@ export default defineConfig({
                 '@basmilius/common',
                 '@basmilius/http-client',
                 '@basmilius/routing',
-                '@basmilius/utils'
+                '@basmilius/utils',
+                '@basmilius/validation'
             ]
         }
     },

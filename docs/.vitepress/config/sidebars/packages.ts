@@ -13,7 +13,8 @@ export const packages: DefaultTheme.SidebarItem[] = [
         items: [
             {text: 'Common', link: '/common/'},
             {text: 'HTTP Client', link: '/http-client/'},
-            {text: 'Routing', link: '/routing/'}
+            {text: 'Routing', link: '/routing/'},
+            {text: 'Validation', link: '/validation/'}
         ]
     },
     {

@@ -1,0 +1,74 @@
+{
+    "name": "@basmilius/validation",
+    "description": "Form validation for personal projects, built on Regle.",
+    "version": "0.0.0",
+    "type": "module",
+    "license": "MIT",
+    "funding": "https://github.com/sponsors/basmilius",
+    "homepage": "https://github.com/basmilius/packages",
+    "author": {
+        "name": "Bas Milius",
+        "email": "bas@mili.us",
+        "url": "https://bas.dev"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/basmilius/packages.git",
+        "directory": "packages/validation"
+    },
+    "keywords": [
+        "validation",
+        "forms",
+        "bun",
+        "vue",
+        "regle"
+    ],
+    "scripts": {
+        "build": "vue-tsc --noEmit && tsdown"
+    },
+    "files": [
+        "dist",
+        "src",
+        "CODEOWNERS",
+        "LICENSE"
+    ],
+    "publishConfig": {
+        "access": "public",
+        "provenance": true
+    },
+    "main": "./dist/index.mjs",
+    "types": "./dist/index.d.mts",
+    "typings": "./dist/index.d.mts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.mts",
+            "default": "./dist/index.mjs"
+        },
+        "./*": "./*"
+    },
+    "dependencies": {
+        "@basmilius/http-client": "workspace:*",
+        "@regle/core": "^1.28.3",
+        "@regle/rules": "^1.28.3"
+    },
+    "devDependencies": {
+        "@flux-ui/components": "^3.5.0",
+        "@types/luxon": "^3.7.1",
+        "luxon": "^3.7.2",
+        "tsdown": "^0.22.8",
+        "typescript": "^5.9.3",
+        "unplugin-vue": "^7.2.0",
+        "vue": "^3.6.0-beta.17",
+        "vue-tsc": "^3.3.7"
+    },
+    "peerDependencies": {
+        "@flux-ui/components": "^3.5.0",
+        "luxon": "^3.7.2",
+        "vue": "^3.6.0-beta.17"
+    },
+    "peerDependenciesMeta": {
+        "luxon": {
+            "optional": true
+        }
+    }
+}

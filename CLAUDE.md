@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Bun monorepo with six independently published `@basmilius/*` packages plus a VitePress docs site. Read `.editorconfig` before writing code (4-space indent, source of truth).
+Bun monorepo with seven independently published `@basmilius/*` packages plus a VitePress docs site. Read `.editorconfig` before writing code (4-space indent, source of truth).
 
 ## Packages (`packages/*`)
 
@@ -10,10 +10,11 @@ Bun monorepo with six independently published `@basmilius/*` packages plus a Vit
 | `http-client` | `@basmilius/http-client` | Typed HTTP client with reactive DTOs, decorators (`@dto`/`@bound`/`@debounce`/`@adapter`) and serialization |
 | `routing`     | `@basmilius/routing`     | `vue-router` wrapper with modal/overlay/slide-over routing                                                  |
 | `utils`       | `@basmilius/utils`       | Standalone utilities (date, color, math, DOM, geo) — tree-shakeable                                         |
+| `validation`  | `@basmilius/validation`  | Regle-based form validation: `useValidation()`, localized rules, Flux validation components                 |
 | `vite-preset` | `@basmilius/vite-preset` | Opinionated Vite/Vue preset: CSS modules, library composition, chunk splitting                              |
 | `worker`      | `@basmilius/worker`      | Cloudflare Worker primitives: routing, request helpers, structured errors                                   |
 
-**Dependencies:** `common` → `http-client` → `utils`, and `common` → `utils`. The rest are standalone. `common`/`http-client`/`routing` have Vue peers (`vue`, `vue-router`, `pinia`); `utils`/`worker` peer `luxon`; `vite-preset` peers `vite`.
+**Dependencies:** `common` → `http-client` → `utils`, `common` → `utils`, and `validation` → `http-client`. The rest are standalone. `common`/`http-client`/`routing` have Vue peers (`vue`, `vue-router`, `pinia`); `validation` peers `vue`, `@flux-ui/components` and (optionally) `luxon`; `utils`/`worker` peer `luxon`; `vite-preset` peers `vite`.
 
 ## Commands
 
@@ -40,6 +41,7 @@ bun docs:build                      # static docs → docs/.vitepress/dist
 
 - **`routing/src/index.ts`**: re-exports all of `vue-router` via `export *`, then deliberately overrides `createRouter`/`RouterView`/etc. with its own versions (named exports shadow the star export). The `import './augmentations'` is a side-effect import registering the `declare module 'vue-router'` augmentations — do not remove it.
 - **`http-client`**: consumers must enable `experimentalDecorators`.
+- **`validation`**: the only package with `.vue` SFCs. It type-checks with `vue-tsc` + a package-local TypeScript 5 (vue-tsc is incompatible with the repo-wide TypeScript 7), bundles via `unplugin-vue`, and has `isolatedDeclarations` off (the generated `.vue` exports cannot be annotated).
 
 ## Releases
 

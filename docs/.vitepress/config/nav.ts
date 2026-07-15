@@ -8,7 +8,7 @@ export const nav: DefaultTheme.NavItem[] = [
     },
     {
         text: 'Packages',
-        activeMatch: '^/(packages|common|http-client|routing|utils|vite-preset|worker)/',
+        activeMatch: '^/(packages|common|http-client|routing|utils|validation|vite-preset|worker)/',
         items: [
             {text: 'Overview', link: '/packages/'},
             {
@@ -16,7 +16,8 @@ export const nav: DefaultTheme.NavItem[] = [
                 items: [
                     {text: 'Common', link: '/common/'},
                     {text: 'HTTP Client', link: '/http-client/'},
-                    {text: 'Routing', link: '/routing/'}
+                    {text: 'Routing', link: '/routing/'},
+                    {text: 'Validation', link: '/validation/'}
                 ]
             },
             {

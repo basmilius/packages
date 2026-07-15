@@ -12,6 +12,7 @@
         "@basmilius/http-client": "workspace:*",
         "@basmilius/routing": "workspace:*",
         "@basmilius/utils": "workspace:*",
+        "@basmilius/validation": "workspace:*",
         "@basmilius/vite-preset": "workspace:*",
         "@basmilius/worker": "workspace:*"
     },
