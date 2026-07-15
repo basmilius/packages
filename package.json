@@ -14,7 +14,7 @@
     },
     "devDependencies": {
         "typescript": "^7.0.2",
-        "wrangler": "^4.108.0"
+        "wrangler": "^4.111.0"
     },
     "overrides": {
         "@microsoft/api-extractor": "7.57.1"
