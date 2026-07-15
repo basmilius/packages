@@ -52,7 +52,7 @@
         "@regle/rules": "^1.28.3"
     },
     "devDependencies": {
-        "@flux-ui/components": "^3.5.0",
+        "@flux-ui/components": "^3.7.0",
         "@types/luxon": "^3.7.1",
         "luxon": "^3.7.2",
         "tsdown": "^0.22.8",
@@ -62,7 +62,7 @@
         "vue-tsc": "^3.3.7"
     },
     "peerDependencies": {
-        "@flux-ui/components": "^3.5.0",
+        "@flux-ui/components": "^3.7.0",
         "luxon": "^3.7.2",
         "vue": "^3.6.0-beta.17"
     },
