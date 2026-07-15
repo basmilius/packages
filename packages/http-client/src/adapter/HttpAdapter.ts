@@ -40,7 +40,7 @@ export class HttpAdapter {
         return new RequestError(
             data.code,
             data.error,
-            data.error_description,
+            data.error_description ?? data.errorDescription,
             statusCode
         );
     }
@@ -59,7 +59,7 @@ export class HttpAdapter {
         return new ValidationError(
             data.code,
             data.error,
-            data.error_description,
+            data.error_description ?? data.errorDescription,
             errors,
             data.params
         );

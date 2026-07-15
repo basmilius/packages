@@ -121,8 +121,8 @@ export default class RequestBuilder {
         if (response.status !== 200) {
             const data = await response.json();
 
-            if ('code' in data && 'error' in data && 'error_description' in data) {
-                throw new RequestError(data.code, data.error, data.error_description, response.status as HttpStatusCode);
+            if ('code' in data && 'error' in data && ('error_description' in data || 'errorDescription' in data)) {
+                throw new RequestError(data.code, data.error, data.error_description ?? data.errorDescription, response.status as HttpStatusCode);
             }
 
             throw new RequestError(-1, 'failed_without_info', 'Request failed without any information from the backend.', response.status as HttpStatusCode);
@@ -219,7 +219,7 @@ export default class RequestBuilder {
         if (response.headers.has('content-type') && response.headers.get('content-type')?.startsWith('application/json')) {
             const data = await response.json();
 
-            if (data && typeof data === 'object' && 'code' in data && 'error' in data && 'error_description' in data) {
+            if (data && typeof data === 'object' && 'code' in data && 'error' in data && ('error_description' in data || 'errorDescription' in data)) {
                 if ('errors' in data) {
                     throw HttpAdapter.parseValidationError(data);
                 }
