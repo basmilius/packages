@@ -53,6 +53,6 @@ export const bsn: RegleRuleDefinition<'bsn', string> = createRule({
 
 export const postalCode: RegleRuleDefinition<'postalCode', string> = createRule({
     type: 'postalCode',
-    validator: (value: Maybe<string>) => !isFilled(value) || /^[0-9]{4}\s?[a-zA-Z]{0,2}$/.test(value),
+    validator: (value: Maybe<string>) => !isFilled(value) || /^[0-9]{4}\s?[a-zA-Z]{2}$/.test(value),
     message: () => translate('validator.postalCode')
 });
