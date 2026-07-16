@@ -4,7 +4,7 @@ outline: deep
 
 # useMutationObserver
 
-Attach a `MutationObserver` to an element ref. The observer is created when the ref resolves, disconnected when the ref changes or the component scope is disposed, and re-attached automatically when the ref points at a new element.
+Attach a `MutationObserver` to an element ref. Consumers that observe the same element with the same options share a single `MutationObserver` instance under the hood. The element is observed when the ref resolves, unobserved when the ref changes or the component scope is disposed, and re-attached automatically when the ref points at a new element. A shared observer is disconnected once its last consumer is gone.
 
 ## Demo
 
@@ -44,7 +44,7 @@ import { useMutationObserver } from '@basmilius/common';
 
 The string passed to `useTemplateRef` must match the `ref="…"` attribute on the template node. The returned `ShallowRef` is `null` until the component mounts.
 
-When `options` is omitted, the observer is created with `{ attributes: true }`. Component refs are unwrapped via [`unwrapElement`](/common/util/unwrapElement), so passing a component instance ref works as well.
+When `options` is omitted, the observer is created with `{ attributes: true }`. Options are compared structurally (order of keys and of `attributeFilter` entries does not matter) to decide whether an existing observer can be shared. Component refs are unwrapped via [`unwrapElement`](/common/util/unwrapElement), so passing a component instance ref works as well.
 
 ## Type signature
 

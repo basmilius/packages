@@ -4,7 +4,7 @@ outline: deep
 
 # useResizeObserver
 
-Attach a `ResizeObserver` to an element ref. The observer is created when the ref resolves, disconnected when the ref changes or the component scope is disposed, and re-attached automatically when the ref points at a new element.
+Attach a `ResizeObserver` to an element ref. All consumers share a single `ResizeObserver` instance under the hood: the element is observed when the ref resolves, unobserved when the ref changes or the component scope is disposed, and re-attached automatically when the ref points at a new element. The shared observer is disposed once the last element is unobserved.
 
 ## Demo
 
@@ -48,7 +48,7 @@ import { useResizeObserver } from '@basmilius/common';
 
 `useTemplateRef('target')` is Vue 3.5's preferred way to obtain a template ref — it binds to the element that has `ref="target"` and returns a `ShallowRef` so the observer reattaches automatically when the underlying element changes.
 
-Pass `ResizeObserverOptions` (e.g. `{ box: 'border-box' }`) when you need to opt into a different box model. Component refs are unwrapped via [`unwrapElement`](/common/util/unwrapElement).
+Pass `ResizeObserverOptions` (e.g. `{ box: 'border-box' }`) when you need to opt into a different box model. Because the observer is shared, the options apply per element: when the same element is observed from multiple places, the options of the first observation win. Component refs are unwrapped via [`unwrapElement`](/common/util/unwrapElement).
 
 ## Type signature
 
