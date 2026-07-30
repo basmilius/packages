@@ -7,12 +7,18 @@ type ScrollPosition = {
     readonly y: Ref<number>;
 };
 
-export default function (target: MaybeRefOrGetter<EligibleTarget | null | undefined>): ScrollPosition {
+export default function (target?: MaybeRefOrGetter<EligibleTarget | null | undefined>): ScrollPosition {
     const x = ref(0);
     const y = ref(0);
 
+    if (typeof document === 'undefined') {
+        return {x, y};
+    }
+
+    const resolved = target ?? ref(document);
+
     function update(): void {
-        const element = unwrapTarget(target);
+        const element = unwrapTarget(resolved);
 
         if (!element) {
             return;
@@ -22,17 +28,17 @@ export default function (target: MaybeRefOrGetter<EligibleTarget | null | undefi
             x.value = element.scrollX;
             y.value = element.scrollY;
         } else if (element instanceof Document) {
-            x.value = element.documentElement.scrollLeft;
-            y.value = element.documentElement.scrollTop;
+            x.value = element.scrollingElement?.scrollLeft ?? 0;
+            y.value = element.scrollingElement?.scrollTop ?? 0;
         } else {
             x.value = element.scrollLeft;
             y.value = element.scrollTop;
         }
     }
 
-    useEventListener(target, 'scroll', update, {passive: true});
+    useEventListener(resolved, 'scroll', update, {passive: true});
 
-    watch(() => unwrapTarget(target), update, {immediate: true});
+    watch(() => unwrapTarget(resolved), update, {immediate: true});
 
     return {x, y};
 }

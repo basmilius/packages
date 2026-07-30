@@ -4,6 +4,7 @@ import { unwrapElement } from '../util';
 type EligibleElement = HTMLElement | ComponentPublicInstance;
 
 type UseInViewOptions = {
+    readonly initial?: boolean;
     readonly root?: Element | Document | null;
     readonly rootMargin?: string;
     readonly threshold?: number | number[];
@@ -11,8 +12,8 @@ type UseInViewOptions = {
 };
 
 export default function <TElement extends EligibleElement>(target: MaybeRefOrGetter<TElement | null | undefined>, options?: UseInViewOptions): Ref<boolean> {
-    const {root, rootMargin, threshold, once} = options ?? {};
-    const isInView = ref(false);
+    const {initial, root, rootMargin, threshold, once} = options ?? {};
+    const isInView = ref(initial ?? false);
 
     let observer: IntersectionObserver | undefined;
 
