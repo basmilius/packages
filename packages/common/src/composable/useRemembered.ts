@@ -7,7 +7,9 @@ export type UseRememberedOptions<T> = {
 };
 
 export default function <T>(key: string, initialValue: T, options: UseRememberedOptions<T> = {}): Ref<T> {
-    if (typeof localStorage === 'undefined') {
+    // Guarding on document rather than localStorage: merely touching the
+    // localStorage global on the server emits a Node warning.
+    if (typeof document === 'undefined') {
         return ref(initialValue) as Ref<T>;
     }
 
