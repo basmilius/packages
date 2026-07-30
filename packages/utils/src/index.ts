@@ -36,6 +36,7 @@ export { default as hslToRGB } from './hslToRGB';
 export { default as hsvToHSL } from './hsvToHSL';
 export { default as hsvToRGB } from './hsvToRGB';
 export { default as hueToRGB } from './hueToRGB';
+export { default as isDangerousUrl } from './isDangerousUrl';
 export { default as isHtmlElement } from './isHtmlElement';
 export { default as isNorthernHemisphere } from './isNorthernHemisphere';
 export { default as isPointInPolygon } from './isPointInPolygon';
