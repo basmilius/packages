@@ -55,8 +55,18 @@ export const common: DefaultTheme.SidebarItem[] = [
                     {text: 'useCopy', link: '/common/composable/useCopy'},
                     {text: 'useHotKey', link: '/common/composable/useHotKey'},
                     {text: 'useLocalFile', link: '/common/composable/useLocalFile'},
+                    {text: 'useRemembered', link: '/common/composable/useRemembered'},
                     {text: 'useService', link: '/common/composable/useService'},
                     {text: 'useUrlState', link: '/common/composable/useUrlState'}
+                ]
+            },
+            {
+                text: 'Gestures & motion',
+                collapsed: false,
+                items: [
+                    {text: 'usePointerDrag', link: '/common/composable/usePointerDrag'},
+                    {text: 'useSpring', link: '/common/composable/useSpring'},
+                    {text: 'useWheelDrag', link: '/common/composable/useWheelDrag'}
                 ]
             }
         ]

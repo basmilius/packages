@@ -71,6 +71,7 @@ export const utils: DefaultTheme.SidebarItem[] = [
         collapsed: false,
         items: [
             {text: 'Overview', link: '/utils/math/'},
+            {text: 'clamp', link: '/utils/math/clamp'},
             {text: 'clampWithStepPrecision', link: '/utils/math/clampWithStepPrecision'},
             {text: 'countDecimals', link: '/utils/math/countDecimals'},
             {text: 'formatNumber', link: '/utils/math/formatNumber'},
@@ -90,6 +91,7 @@ export const utils: DefaultTheme.SidebarItem[] = [
             {text: 'downloadUrl', link: '/utils/dom/downloadUrl'},
             {text: 'isHtmlElement', link: '/utils/dom/isHtmlElement'},
             {text: 'openUrl', link: '/utils/dom/openUrl'},
+            {text: 'prefersReducedMotion', link: '/utils/dom/prefersReducedMotion'},
             {text: 'printHtml', link: '/utils/dom/printHtml'},
             {text: 'viewTransition', link: '/utils/dom/viewTransition'}
         ]
@@ -118,8 +120,20 @@ export const utils: DefaultTheme.SidebarItem[] = [
         collapsed: false,
         items: [
             {text: 'Overview', link: '/utils/function/'},
+            {text: 'animationFrameDebounce', link: '/utils/function/animationFrameDebounce'},
             {text: 'debounce', link: '/utils/function/debounce'},
             {text: 'waitFor', link: '/utils/function/waitFor'}
+        ]
+    },
+    {
+        text: 'String & HTML',
+        collapsed: false,
+        items: [
+            {text: 'Overview', link: '/utils/string/'},
+            {text: 'escapeAttr', link: '/utils/string/escapeAttr'},
+            {text: 'escapeHtml', link: '/utils/string/escapeHtml'},
+            {text: 'sanitizeUrl', link: '/utils/string/sanitizeUrl'},
+            {text: 'upperFirst', link: '/utils/string/upperFirst'}
         ]
     }
 ];
