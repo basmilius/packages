@@ -6,6 +6,8 @@ outline: deep
 
 Track the scroll position of an element ref, a raw `HTMLElement`, `window` or `document`. Returns two reactive refs — `x` and `y` — that update on every `scroll` event and re-read when the target changes.
 
+Both start at `0` and take their first real value on mount, not during setup. A server render has no scroll position to report, so reading one while a component is still hydrating would render it from a value the server never had.
+
 ## Demo
 
 ::: example

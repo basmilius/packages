@@ -1,4 +1,4 @@
-import { type MaybeRefOrGetter, type Ref, ref, watch } from 'vue';
+import { type MaybeRefOrGetter, onMounted, type Ref, ref, watch } from 'vue';
 import { type EligibleTarget, unwrapTarget } from '../util';
 import useEventListener from './useEventListener';
 
@@ -38,7 +38,12 @@ export default function (target?: MaybeRefOrGetter<EligibleTarget | null | undef
 
     useEventListener(resolved, 'scroll', update, {passive: true});
 
-    watch(() => unwrapTarget(resolved), update, {immediate: true});
+    // Reading during setup would put the restored scroll offset into a component
+    // that is still hydrating from a server render at 0. The watcher stays for a
+    // target that only arrives later.
+    onMounted(update);
+
+    watch(() => unwrapTarget(resolved), update);
 
     return {x, y};
 }
