@@ -4,6 +4,7 @@ export { countries, getCountry, type Countries, type Country, type CountryCode }
 export { default as animationFrameDebounce } from './animationFrameDebounce';
 export { default as clamp } from './clamp';
 export { default as clampWithStepPrecision } from './clampWithStepPrecision';
+export { default as copyToClipboard } from './copyToClipboard';
 export { default as countDecimals } from './countDecimals';
 export { default as debounce } from './debounce';
 export { default as downloadBlob } from './downloadBlob';
