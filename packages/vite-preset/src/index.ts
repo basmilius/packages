@@ -14,6 +14,7 @@ export {
 
 export {
     flux,
+    fluxAi,
     fluxApplication,
     fluxFlow,
     fluxStatistics,

@@ -9,6 +9,12 @@ export const flux: LibraryPlugin = composeLibrary({
     peerDependencies: ['luxon', 'vue']
 });
 
+export const fluxAi: LibraryPlugin = composeLibrary({
+    name: '@flux-ui/ai',
+    alias: '~flux/ai',
+    peerDependencies: ['vue']
+});
+
 export const fluxApplication: LibraryPlugin = composeLibrary({
     name: '@flux-ui/application',
     alias: '~flux/application',
