@@ -4,12 +4,12 @@ outline: deep
 
 # Pre-composed libraries
 
-`@basmilius/vite-preset` ships with five `composeLibrary` factories pre-configured for the [Flux](https://github.com/basmilius/flux) ecosystem. Use them when consuming Flux from a workspace.
+`@basmilius/vite-preset` ships with six `composeLibrary` factories pre-configured for the [Flux](https://github.com/basmilius/flux) ecosystem. Use them when consuming Flux from a workspace.
 
 ## Importing
 
 ```ts
-import { flux, fluxApplication, fluxFlow, fluxStatistics, fluxVisuals } from '@basmilius/vite-preset';
+import { flux, fluxAi, fluxApplication, fluxFlow, fluxStatistics, fluxVisuals } from '@basmilius/vite-preset';
 ```
 
 ## Available libraries
@@ -17,6 +17,7 @@ import { flux, fluxApplication, fluxFlow, fluxStatistics, fluxVisuals } from '@b
 | Factory           | Package name              | Alias                |
 |-------------------|---------------------------|----------------------|
 | `flux`            | `@flux-ui/components`     | `~flux/components`   |
+| `fluxAi`          | `@flux-ui/ai`             | `~flux/ai`           |
 | `fluxApplication` | `@flux-ui/application`    | `~flux/application`  |
 | `fluxFlow`        | `@flux-ui/flow`           | `~flux/flow`         |
 | `fluxStatistics`  | `@flux-ui/statistics`     | `~flux/statistics`   |
