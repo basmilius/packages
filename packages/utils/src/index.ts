@@ -1,12 +1,16 @@
 export type Constructor<T = {}> = new (...args: any[]) => T;
 export type Descriptors = Record<string | symbol, TypedPropertyDescriptor<unknown> | PropertyDescriptor>;
 
+export { default as animationFrameDebounce } from './animationFrameDebounce';
+export { default as clamp } from './clamp';
 export { default as clampWithStepPrecision } from './clampWithStepPrecision';
 export { default as countDecimals } from './countDecimals';
 export { default as debounce } from './debounce';
 export { default as downloadBlob } from './downloadBlob';
 export { default as downloadString } from './downloadString';
 export { default as downloadUrl } from './downloadUrl';
+export { default as escapeAttr } from './escapeAttr';
+export { default as escapeHtml } from './escapeHtml';
 export { default as formatDate } from './formatDate';
 export { default as formatDateFull } from './formatDateFull';
 export { default as formatDateTime } from './formatDateTime';
@@ -37,6 +41,7 @@ export { default as isPointInPolygon } from './isPointInPolygon';
 export { default as isToday } from './isToday';
 export { default as mulberry32, type Mulberry32 } from './mulberry32';
 export { default as openUrl } from './openUrl';
+export { default as prefersReducedMotion } from './prefersReducedMotion';
 export { default as printHtml } from './printHtml';
 export { default as rgbToHEX } from './rgbToHEX';
 export { default as rgbToHSL } from './rgbToHSL';
