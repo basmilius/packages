@@ -3,6 +3,7 @@
     "description": "Common code shared in personal projects.",
     "version": "0.0.0",
     "type": "module",
+    "sideEffects": false,
     "license": "MIT",
     "funding": "https://github.com/sponsors/basmilius",
     "homepage": "https://github.com/basmilius/packages",
@@ -64,5 +65,13 @@
         "pinia": "^4.0.2",
         "vue": "^3.6.0-rc.2",
         "vue-router": "^5.2.0"
+    },
+    "peerDependenciesMeta": {
+        "pinia": {
+            "optional": true
+        },
+        "vue-router": {
+            "optional": true
+        }
     }
 }
