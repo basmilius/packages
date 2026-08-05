@@ -5,6 +5,10 @@ type EventMap = HTMLElementEventMap & WindowEventMap & DocumentEventMap;
 type StopHandle = () => void;
 
 export default function <TType extends keyof EventMap>(target: MaybeRefOrGetter<EligibleTarget | null | undefined>, type: TType | TType[], listener: (evt: EventMap[TType]) => void, options?: boolean | AddEventListenerOptions): StopHandle {
+    if (typeof document === 'undefined') {
+        return () => {};
+    }
+
     const types = Array.isArray(type) ? type : [type];
 
     let cleanup: (() => void) | undefined;

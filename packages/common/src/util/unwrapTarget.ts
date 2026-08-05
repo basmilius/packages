@@ -10,7 +10,7 @@ export default function (target: MaybeRefOrGetter<EligibleTarget | null | undefi
         return null;
     }
 
-    if (value instanceof Window || value instanceof Document || isHtmlElement(value)) {
+    if (typeof Window !== 'undefined' && (value instanceof Window || value instanceof Document) || isHtmlElement(value)) {
         return value;
     }
 
