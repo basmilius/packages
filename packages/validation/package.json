@@ -48,23 +48,23 @@
     },
     "dependencies": {
         "@basmilius/http-client": "workspace:*",
-        "@regle/core": "^1.28.5",
-        "@regle/rules": "^1.28.5"
+        "@regle/core": "^1.29.1",
+        "@regle/rules": "^1.29.1"
     },
     "devDependencies": {
         "@flux-ui/components": "^3.13.1",
-        "@types/luxon": "^3.7.1",
+        "@types/luxon": "^3.7.5",
         "luxon": "^3.7.2",
         "tsdown": "^0.22.14",
         "typescript": "^5.9.3",
         "unplugin-vue": "^7.2.0",
-        "vue": "^3.6.0-rc.2",
-        "vue-tsc": "^3.3.8"
+        "vue": "^3.6.0-rc.5",
+        "vue-tsc": "^3.3.11"
     },
     "peerDependencies": {
         "@flux-ui/components": "^3.13.1",
         "luxon": "^3.7.2",
-        "vue": "^3.6.0-rc.2"
+        "vue": "^3.6.0-rc.5"
     },
     "peerDependenciesMeta": {
         "luxon": {

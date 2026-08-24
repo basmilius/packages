@@ -56,14 +56,14 @@
     "devDependencies": {
         "@types/culori": "^4.0.1",
         "@types/lodash-es": "^4.17.12",
-        "pinia": "^4.0.2",
+        "pinia": "^4.0.3",
         "tsdown": "^0.22.14",
-        "vue": "^3.6.0-rc.2",
+        "vue": "^3.6.0-rc.5",
         "vue-router": "^5.2.0"
     },
     "peerDependencies": {
-        "pinia": "^4.0.2",
-        "vue": "^3.6.0-rc.2",
+        "pinia": "^4.0.3",
+        "vue": "^3.6.0-rc.5",
         "vue-router": "^5.2.0"
     },
     "peerDependenciesMeta": {

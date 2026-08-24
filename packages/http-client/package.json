@@ -55,16 +55,16 @@
         "@basmilius/utils": "workspace:*"
     },
     "devDependencies": {
-        "@types/luxon": "^3.7.2",
+        "@types/luxon": "^3.7.5",
         "luxon": "^3.7.2",
         "tsdown": "^0.22.14",
-        "vite": "^8.1.5",
-        "vue": "^3.6.0-rc.2"
+        "vite": "^8.2.2",
+        "vue": "^3.6.0-rc.5"
     },
     "peerDependencies": {
         "luxon": "^3.7.2",
-        "vite": ">=5",
-        "vue": "^3.6.0-rc.2"
+        "vite": ">=8.2.2",
+        "vue": "^3.6.0-rc.5"
     },
     "peerDependenciesMeta": {
         "vite": {

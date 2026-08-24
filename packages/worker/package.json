@@ -48,9 +48,9 @@
         "luxon": "^3.7.2"
     },
     "devDependencies": {
-        "@types/bun": "^1.3.14",
+        "@types/bun": "^1.4.0",
         "@types/cloudflare": "^3.0.0",
-        "@types/luxon": "^3.7.2",
+        "@types/luxon": "^3.7.5",
         "tsdown": "^0.22.14"
     }
 }
