@@ -1,7 +1,8 @@
-import { type Component, computed, defineComponent, Fragment, h, inject, nextTick, onBeforeUnmount, provide, type Ref, shallowRef, unref, type VNodeChild, watch } from 'vue';
+import { type Component, computed, defineComponent, Fragment, h, inject, nextTick, onBeforeUnmount, provide, shallowRef, unref, type VNodeChild, watch } from 'vue';
 import { RouterView as VueRouterView, useRoute, useRouter, viewDepthKey } from 'vue-router';
 import { BackgroundProvider, ModalProvider } from '../internal/RoutedView';
 import resolveModal from '../internal/resolveModal';
+import resolveViewKey from '../internal/resolveViewKey';
 import resolveViewName from '../internal/resolveViewName';
 import { innerReadyKey, modalContextKey, modalViewNameKey, routeOverrideKey } from '../symbol';
 import type { ModalConfig } from '../types';
@@ -59,10 +60,13 @@ const RouterView: Component = defineComponent({
         //  consecutive modals share the same wrapper.
         const lastModal = shallowRef<ModalConfig | null>(null);
 
-        // note: Held as a ref because Vue's runtime `h()` can miss
-        //  primitive prop updates on `ModalProvider` when route changes
-        //  patch in the same tick. Ref identity stays stable.
-        const modalDepthRef: Ref<number> = shallowRef(0);
+        // note: Translates the user-supplied parent count in `ctx.depth` to an
+        //  absolute `matched[]` index: 0 renders the deepest record, N renders
+        //  the record N levels above it. A computed rather than a plain number
+        //  because `ModalProvider` needs a stable ref identity; Vue's runtime
+        //  `h()` can miss primitive prop updates when route changes patch in
+        //  the same tick.
+        const modalDepth = computed(() => Math.max(0, route.matched.length - 1 - (ctx?.depth.value ?? 0)));
 
         // note: Gates whether the modal's inner `<RouterView>` is attached.
         //  On a user-triggered open we hold it back one tick so the
@@ -87,15 +91,14 @@ const RouterView: Component = defineComponent({
         //  view when the matched record has no `default` (e.g. a layout
         //  registered solely under `overlay`). Provided so `ModalRouterView`
         //  inside consumer wrappers renders the same view without re-deriving
-        //  depth. Mirrors the `viewDepth` computed used in the render below.
-        const modalViewName = computed<string | undefined>(() => {
-            const parentCount = ctx?.depth.value ?? 0;
-            const depth = Math.max(0, route.matched.length - 1 - parentCount);
-
-            return resolveViewName(route, depth);
-        });
+        //  depth.
+        const modalViewName = computed<string | undefined>(() => resolveViewName(route, modalDepth.value));
 
         provide(modalViewNameKey, modalViewName);
+
+        // note: Handed to wrappers as the key for their inner `<component>`.
+        //  See `ModalWrapperProps`.
+        const modalViewKey = computed(() => resolveViewKey(route, modalDepth.value));
 
         if (ctx && isModalHost) {
             watch(() => ctx.backgroundRoute.value !== null, async (isOpen) => {
@@ -171,21 +174,12 @@ const RouterView: Component = defineComponent({
             //  animation). Keeps layout-level `useRoute()` stable.
             const bgRoute = modalActive ? backgroundRoute : route;
 
-            // note: `ctx.depth` is the user-supplied parent count. Translate
-            //  to an absolute `matched[]` index:
-            //    depth 0 -> matched[length - 1] (deepest only)
-            //    depth N -> matched[length - 1 - N]
-            const parentCount = ctx.depth.value;
-            const viewDepth = Math.max(0, route.matched.length - 1 - parentCount);
-
-            modalDepthRef.value = viewDepth;
-
             // note: ModalProvider wraps the wrapper component so the
             //  wrapper's internal Teleport still inherits the provider
             //  context. Inner is `undefined` while closed or gated, so
             //  the wrapper's `<Transition>` observes an empty slot.
             //  `name` falls back to the first declared view when the record
-            //  at `viewDepth` has no `default` (named-view layout).
+            //  at `modalDepth` has no `default` (named-view layout).
             const innerViewName = modalViewName.value;
             const modalInner = modalActive && innerReady.value
                 ? h(VueRouterView, innerViewName !== undefined ? {name: innerViewName} : {})
@@ -200,6 +194,7 @@ const RouterView: Component = defineComponent({
                     //  inner `<ModalRouterView>` — `modalActive` is true
                     //  at mount and would skip the enter animation.
                     modalRoute: route,
+                    modalViewKey: modalViewKey.value,
                     modalActive,
                     modalReady: modalActive && innerReady.value,
                     onClose: (): void => {
@@ -210,7 +205,7 @@ const RouterView: Component = defineComponent({
                 })
                 : modalInner;
 
-            const modalLayer = h(ModalProvider, {route, depthRef: modalDepthRef}, {
+            const modalLayer = h(ModalProvider, {route, depthRef: modalDepth}, {
                 default: (): VNodeChild => wrappedModalInner
             });
 

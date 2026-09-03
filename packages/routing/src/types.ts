@@ -8,6 +8,10 @@ export type ModalConfig = {
 
 // note: Props our `RouterView` passes to every modal wrapper component
 //  at runtime. Declare on your wrapper via `defineProps<ModalWrapperProps>()`.
+//  - `modalViewKey`: key for the wrapper's inner `<component>`. Identifies
+//    the matched record the modal renders plus that record's params.
+//    `modalRoute.fullPath` is the wrong key: it also changes for navigations
+//    inside the modal, remounting the shell on every tab switch.
 //  - `modalActive`: open/close flag for script-level use (disable inputs
 //    while closing, etc.).
 //  - `modalReady`: v-if gate for the inner `<ModalRouterView>`. False at
@@ -15,6 +19,7 @@ export type ModalConfig = {
 //    an empty slot to animate from / to.
 export type ModalWrapperProps = {
     readonly modalRoute: RouteLocationNormalized;
+    readonly modalViewKey: string;
     readonly modalActive: boolean;
     readonly modalReady: boolean;
 };
