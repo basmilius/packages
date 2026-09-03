@@ -72,6 +72,11 @@ export default function createModalContext(
     //  them, then assign once.
     const backgroundRoute = shallowRef<RouteLocationNormalized | null>(null);
 
+    // note: Path currently held by `backgroundRoute`, so the watcher can skip
+    //  an unchanged background. A fresh `router.resolve` object re-renders the
+    //  whole background tree.
+    let backgroundPath: string | null = null;
+
     // note: Number of parent matched records (above the deepest) that
     //  render inside the modal wrapper. `0` renders only the deepest;
     //  higher values include ancestors as in-modal layout.
@@ -95,6 +100,7 @@ export default function createModalContext(
 
         if (isFullyLoaded(snapshot)) {
             backgroundRoute.value = snapshot;
+            backgroundPath = initial.backgroundPath;
             initiallyOpen.value = false;
         } else {
             loadRouteLocation(snapshot)
@@ -104,6 +110,7 @@ export default function createModalContext(
                     }
 
                     backgroundRoute.value = resolveBackground(initial.backgroundPath);
+                    backgroundPath = initial.backgroundPath;
                     initiallyOpen.value = false;
                 })
                 .catch(() => {
@@ -112,6 +119,7 @@ export default function createModalContext(
                     }
 
                     backgroundRoute.value = null;
+                    backgroundPath = null;
                     initiallyOpen.value = false;
                 });
         }
@@ -122,6 +130,7 @@ export default function createModalContext(
     watch(router.currentRoute, () => {
         if (typeof history === 'undefined') {
             backgroundRoute.value = null;
+            backgroundPath = null;
             depth.value = 0;
 
             return;
@@ -132,6 +141,7 @@ export default function createModalContext(
         if (state === null) {
             loadToken++;
             backgroundRoute.value = null;
+            backgroundPath = null;
             depth.value = 0;
             initiallyOpen.value = false;
 
@@ -140,15 +150,20 @@ export default function createModalContext(
 
         depth.value = state.depth;
 
+        if (state.backgroundPath === backgroundPath && backgroundRoute.value !== null) {
+            return;
+        }
+
         const token = ++loadToken;
-        const backgroundPath = state.backgroundPath;
-        const snapshot = resolveBackground(backgroundPath);
+        const nextPath = state.backgroundPath;
+        const snapshot = resolveBackground(nextPath);
 
         // note: Fast path — chunks already loaded (typical navigation),
         //  assign synchronously to avoid a flash of modal-as-fullpage.
         //  Slow path — hard refresh, await load to avoid promise vnodes.
         if (isFullyLoaded(snapshot)) {
             backgroundRoute.value = snapshot;
+            backgroundPath = nextPath;
 
             return;
         }
@@ -159,7 +174,8 @@ export default function createModalContext(
                     return;
                 }
 
-                backgroundRoute.value = resolveBackground(backgroundPath);
+                backgroundRoute.value = resolveBackground(nextPath);
+                backgroundPath = nextPath;
             })
             .catch(() => {
                 if (token !== loadToken) {
@@ -167,6 +183,7 @@ export default function createModalContext(
                 }
 
                 backgroundRoute.value = null;
+                backgroundPath = null;
             });
     }, {flush: 'pre'});
 
