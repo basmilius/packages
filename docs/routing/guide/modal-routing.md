@@ -122,6 +122,7 @@ Notes:
 
 - `modalActive` controls the outer `<Transition>` — keeps the wrapper mounted across the close animation.
 - `modalReady` is the gate the package flips one tick after `modalActive` becomes `true`. Use it to `v-if` the inner `<ModalRouterView>` so the inner `<Transition>` plays its enter animation.
+- `modalViewKey` is the key for the inner `<component>` when the wrapper renders the view itself through `<ModalRouterView v-slot="{ Component }">`. `modalRoute.fullPath` also changes for navigations inside the modal, so keying on it reloads the entire shell on every tab switch.
 - The wrapper receives an automatic `onClose` listener that calls `router.back()`. Bind it via `@close="..."` or rely on the default emit-driven flow.
 
 ## 4. Open modals from the UI

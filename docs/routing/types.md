@@ -37,12 +37,14 @@ The runtime props that [`RouterView`](/routing/component/RouterView) injects int
 ```ts
 type ModalWrapperProps = {
     readonly modalRoute: RouteLocationNormalized;
+    readonly modalViewKey: string;
     readonly modalActive: boolean;
     readonly modalReady: boolean;
 };
 ```
 
 - **`modalRoute`** — the currently active modal route. Stable across the entire open-modal lifecycle.
+- **`modalViewKey`** - the matched record the modal renders, plus that record's params. Key the wrapper's inner `<component>` on this when the wrapper renders the view itself. `modalRoute.fullPath` is the wrong key, because it also changes for navigations inside the modal, so a tab switch remounts the whole shell.
 - **`modalActive`** — open/close flag for script-level use (disable inputs while closing, schedule cleanup, etc.). True from the first render until the route stops being a modal.
 - **`modalReady`** — `v-if` gate for the inner `<ModalRouterView>`. False at mount and during the close phase so the wrapper's `<Transition>` has an empty slot to animate from / to. Use this prop (not `modalActive`) when you need an enter animation.
 
